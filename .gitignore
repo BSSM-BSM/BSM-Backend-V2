@@ -1,3 +1,4 @@
+src/main/resources/env.properties
 HELP.md
 .gradle
 build/
