@@ -13,23 +13,27 @@ import java.util.Date;
 class UserRepositoryTest {
 
     @Autowired
-    private UserRepository repository;
+    private UserRepository userRepository;
 
     @Test
     @DisplayName("유저 DB 저장 확인")
     void save() {
-        User user = new User();
-        user.setId("testId");
-        user.setPw("testPw");
-        user.setPwSalt("testPwSalt");
-        user.setNickname("testNickname");
-        user.setLevel(0);
-        user.setCreatedAt(new Date());
-        user.setUniqNo("0");
+        User user = User.builder()
+                        .id("testId")
+                        .pw("testPw")
+                        .pwSalt("testPwSalt")
+                        .nickname("testNickname")
+                        .level(0)
+                        .createdAt(new Date())
+                        .uniqNo("0")
+                        .build();
 
-        repository.save(user);
+        userRepository.save(user);
 
-        User result = repository.findById("testId").get();
+        User result = userRepository.findById("testId").get();
         Assertions.assertThat(result.getNickname()).isEqualTo("testNickname");
+
+        // Test clear
+        userRepository.delete(user);
     }
 }

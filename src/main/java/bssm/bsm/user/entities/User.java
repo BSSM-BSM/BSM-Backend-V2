@@ -1,8 +1,15 @@
 package bssm.bsm.user.entities;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "user")
 public class User {
@@ -32,69 +39,4 @@ public class User {
 
     @Column(name = "pw_salt", nullable = false, length = 64)
     private String pwSalt;
-
-
-    public long getUsercode() {
-        return usercode;
-    }
-
-    public void setUsercode(long usercode) {
-        this.usercode = usercode;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getUniqNo() {
-        return uniqNo;
-    }
-
-    public void setUniqNo(String uniqNo) {
-        this.uniqNo = uniqNo;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getPw() {
-        return pw;
-    }
-
-    public void setPw(String pw) {
-        this.pw = pw;
-    }
-
-    public String getPwSalt() {
-        return pwSalt;
-    }
-
-    public void setPwSalt(String pwSalt) {
-        this.pwSalt = pwSalt;
-    }
 }
