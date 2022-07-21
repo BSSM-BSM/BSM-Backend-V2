@@ -1,5 +1,8 @@
 package bssm.bsm.user;
 
+import bssm.bsm.global.exceptions.BadRequestException;
+import bssm.bsm.global.exceptions.ConflictException;
+import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.dto.request.UserSignUpDto;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.entities.User;
@@ -28,16 +31,16 @@ public class UserService {
         User user = dto.toEntity();
 
         if (!dto.getPw().equals(dto.getCheckPw())) {
-            throw new Exception("비밀번호 재입력이 맞지 않습니다");
+            throw new BadRequestException("비밀번호 재입력이 맞지 않습니다");
         }
 
         validateDuplicateUser(user);
         Student studentInfo = studentRepository.findByAuthCode(dto.getAuthCode())
                 .orElseThrow(() -> {
-                    throw new IllegalStateException("인증코드를 찾을 수 없습니다");
+                    throw new NotFoundException("인증코드를 찾을 수 없습니다");
                 });
         if (!studentInfo.isCodeAvailable()) {
-            throw new IllegalStateException("이미 사용된 인증코드입니다");
+            throw new BadRequestException("이미 사용된 인증코드입니다");
         }
 
         studentInfo.setCodeAvailable(false);
@@ -64,11 +67,11 @@ public class UserService {
     private void validateDuplicateUser(User user) {
         userRepository.findById(user.getId())
                 .ifPresent(u -> {
-                    throw new IllegalStateException("이미 존재하는 ID 입니다");
+                    throw new ConflictException("이미 존재하는 ID 입니다");
                 });
         userRepository.findByNickname(user.getNickname())
                 .ifPresent(u -> {
-                    throw new IllegalStateException("이미 존재하는 닉네임 입니다");
+                    throw new ConflictException("이미 존재하는 닉네임 입니다");
                 });
     }
 }
