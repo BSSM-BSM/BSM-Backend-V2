@@ -3,9 +3,11 @@ package bssm.bsm.user.dto.request;
 import bssm.bsm.user.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class UserSignUpDto {
     private String id;
 

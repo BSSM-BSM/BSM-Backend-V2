@@ -1,4 +1,4 @@
-package bssm.bsm.user.service;
+package bssm.bsm.user;
 
 import bssm.bsm.user.dto.request.UserSignUpDto;
 import bssm.bsm.user.entities.Student;
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HexFormat;
 
