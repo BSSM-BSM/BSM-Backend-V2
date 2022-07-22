@@ -19,10 +19,10 @@ public class User {
     @Column(columnDefinition = "INT UNSIGNED")
     private long usercode;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String id;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false, length = 40, unique = true)
     private String nickname;
 
     @Column(name = "uniq_no", nullable = false, length = 10)
