@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class UserLoginDto {
-    private String id;
 
+    private String id;
     private String pw;
 }

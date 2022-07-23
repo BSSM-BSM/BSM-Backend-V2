@@ -11,13 +11,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user")
+@Table
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "INT UNSIGNED")
-    private long usercode;
+    private int usercode;
 
     @Column(nullable = false, length = 20, unique = true)
     private String id;
@@ -25,18 +25,22 @@ public class User {
     @Column(nullable = false, length = 40, unique = true)
     private String nickname;
 
-    @Column(name = "uniq_no", nullable = false, length = 10)
+    @Column(nullable = false, length = 10)
     private String uniqNo;
 
-    @Column(name = "level", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "uniqNo", insertable = false, updatable = false)
+    private Student student;
+
+    @Column(nullable = false)
     private int level;
 
-    @Column(name = "created_at", nullable = false, length = 40)
+    @Column(nullable = false, length = 40)
     private Date createdAt;
 
     @Column(nullable = false, length = 64)
     private String pw;
 
-    @Column(name = "pw_salt", nullable = false, length = 64)
+    @Column(nullable = false, length = 64)
     private String pwSalt;
 }

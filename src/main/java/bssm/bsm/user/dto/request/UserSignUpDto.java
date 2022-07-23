@@ -9,14 +9,11 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class UserSignUpDto {
+
     private String id;
-
     private String pw;
-
     private String checkPw;
-
     private String nickname;
-
     private String authCode;
 
     public User toEntity() {

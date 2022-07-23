@@ -1,19 +1,25 @@
 package bssm.bsm.user;
 
+import bssm.bsm.global.utils.UserUtil;
 import bssm.bsm.user.dto.request.UserSignUpDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import bssm.bsm.user.entities.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
+    private final UserUtil userUtil;
+
+    @GetMapping()
+    public User getUserInfo() {
+        return userUtil.getCurrentUser();
+    }
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.OK)
     public void signUp(@RequestBody UserSignUpDto dto) throws Exception {
         userService.signUp(dto);
     }

@@ -1,6 +1,7 @@
 package bssm.bsm.user.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,30 +10,31 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
-@Table(name = "student")
+@Table
 public class Student {
 
     @Id
-    @Column(name = "uniq_no", length = 10)
+    @Column(length = 10)
     private String uniqNo;
 
-    @Column(name = "code_available", columnDefinition = "INT(1) UNSIGNED")
+    @Column(columnDefinition = "INT(1) UNSIGNED")
     private boolean codeAvailable;
 
-    @Column(name = "auth_code", length = 8)
+    @Column(length = 8)
     private String authCode;
 
     @Column(columnDefinition = "INT(1) UNSIGNED")
     private int level;
 
-    @Column(name = "enrolled_at", columnDefinition = "year")
+    @Column(columnDefinition = "year")
     private int enrolledAt;
 
     @Column(columnDefinition = "INT(1) UNSIGNED")
     private int grade;
 
-    @Column(name = "class_no", columnDefinition = "INT(1) UNSIGNED")
+    @Column(columnDefinition = "INT(1) UNSIGNED")
     private int classNo;
 
     @Column(columnDefinition = "INT(2) UNSIGNED")

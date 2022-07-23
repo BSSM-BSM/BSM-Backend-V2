@@ -1,4 +1,4 @@
-package bssm.bsm.env;
+package bssm.bsm.global.env;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

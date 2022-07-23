@@ -67,6 +67,7 @@ public class UserService {
             throw new BadRequestException("id 또는 password가 맞지 않습니다");
         }
 
+        System.out.println(user.getStudent());
         return user;
     }
 
