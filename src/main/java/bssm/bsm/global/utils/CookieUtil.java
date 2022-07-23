@@ -12,7 +12,7 @@ public class CookieUtil {
     @Value("${COOKIE_DOMAIN}")
     private String COOKIE_DOMAIN;
 
-    public Cookie setCookie(String name, String value, long time) {
+    public Cookie createCookie(String name, String value, long time) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
 //        cookie.setSecure(true);

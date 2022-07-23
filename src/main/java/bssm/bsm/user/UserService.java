@@ -66,8 +66,6 @@ public class UserService {
         if (!user.getPw().equals(encryptPw(user.getPwSalt(), dto.getPw()))) {
             throw new BadRequestException("id 또는 password가 맞지 않습니다");
         }
-
-        System.out.println(user.getStudent());
         return user;
     }
 

@@ -26,8 +26,12 @@ public class UserController {
 
     @Value("${TOKEN_COOKIE_NAME}")
     private String TOKEN_COOKIE_NAME;
+    @Value("${REFRESH_TOKEN_COOKIE_NAME}")
+    private String REFRESH_TOKEN_COOKIE_NAME;
     @Value("${JWT_TOKEN_MAX_TIME}")
     private long JWT_TOKEN_MAX_TIME;
+    @Value("${JWT_REFRESH_TOKEN_MAX_TIME}")
+    private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     @GetMapping()
     public User getUserInfo() {
@@ -44,11 +48,15 @@ public class UserController {
         User user = userService.login(dto);
 
         String token = jwtUtil.createAccessToken(user);
-        Cookie tokenCookie = cookieUtil.setCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
+        String refreshToken = jwtUtil.createRefreshToken(user.getUsercode());
+        Cookie tokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
+        Cookie refreshTokenCookie = cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, JWT_REFRESH_TOKEN_MAX_TIME);
         res.addCookie(tokenCookie);
+        res.addCookie(refreshTokenCookie);
 
         return LoginResponseDto.builder()
                 .accessToken(token)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

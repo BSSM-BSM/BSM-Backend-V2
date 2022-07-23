@@ -19,6 +19,8 @@ public class JwtUtil {
     private String JWT_SECRET_KEY;
     @Value("${JWT_TOKEN_MAX_TIME}")
     private long JWT_TOKEN_MAX_TIME;
+    @Value("${JWT_REFRESH_TOKEN_MAX_TIME}")
+    private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     public String createAccessToken(User user) {
         Claims claims = Jwts.claims();
@@ -35,6 +37,12 @@ public class JwtUtil {
         return createToken(claims, JWT_TOKEN_MAX_TIME);
     }
 
+    public String createRefreshToken(int usercode) {
+        Claims claims = Jwts.claims();
+        claims.put("code", usercode);
+        return createToken(claims, JWT_REFRESH_TOKEN_MAX_TIME);
+    }
+
     private String createToken(Claims claims, long time) {
         Date date = new Date();
         return Jwts.builder()
@@ -43,6 +51,11 @@ public class JwtUtil {
                 .setExpiration(new Date(date.getTime() + time))
                 .signWith(Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public int getUserCode(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("code", Integer.class);
     }
 
     public User getUser(String token) {
