@@ -5,10 +5,12 @@ import bssm.bsm.global.exceptions.ConflictException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.dto.request.UserLoginDto;
 import bssm.bsm.user.dto.request.UserSignUpDto;
+import bssm.bsm.user.dto.request.UserUpdatePwDto;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.StudentRepository;
 import bssm.bsm.user.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,12 +23,11 @@ import java.util.Date;
 import java.util.HexFormat;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private StudentRepository studentRepository;
+    private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
 
     @Transactional
     public User signUp(UserSignUpDto dto) throws Exception {
@@ -67,6 +68,24 @@ public class UserService {
             throw new BadRequestException("id 또는 password가 맞지 않습니다");
         }
         return user;
+    }
+
+    public void updatePw(User user, UserUpdatePwDto dto) throws Exception {
+        if (!dto.getNewPw().equals(dto.getCheckNewPw())) {
+            throw new BadRequestException("비밀번호 재입력이 맞지 않습니다");
+        }
+        User newUser = userRepository.findById(user.getUsercode()).orElseThrow(
+                () -> {throw new NotFoundException("유저를 찾을 수 없습니다");}
+        );
+
+        // 새 비밀번호 솔트 값 생성
+        String newSalt = createSalt();
+        // 새 비밀번호 암호화
+        String newPw = encryptPw(newSalt, dto.getNewPw());
+
+        newUser.setPw(newPw);
+        newUser.setPwSalt(newSalt);
+        userRepository.save(newUser);
     }
 
     private void validateDuplicateUser(User user) {

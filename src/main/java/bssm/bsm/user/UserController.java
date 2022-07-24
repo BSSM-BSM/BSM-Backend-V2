@@ -5,6 +5,7 @@ import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.global.utils.UserUtil;
 import bssm.bsm.user.dto.request.UserLoginDto;
 import bssm.bsm.user.dto.request.UserSignUpDto;
+import bssm.bsm.user.dto.request.UserUpdatePwDto;
 import bssm.bsm.user.dto.response.LoginResponseDto;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,11 @@ public class UserController {
     @PostMapping()
     public void signUp(@RequestBody UserSignUpDto dto) throws Exception {
         userService.signUp(dto);
+    }
+
+    @PutMapping()
+    public void updatePw(@RequestBody UserUpdatePwDto dto) throws Exception {
+        userService.updatePw(userUtil.getCurrentUser(), dto);
     }
 
     @PostMapping("login")

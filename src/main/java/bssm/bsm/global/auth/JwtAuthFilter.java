@@ -6,6 +6,7 @@ import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,14 +24,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Service
+@RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private CookieUtil cookieUtil;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
     @Value("${TOKEN_COOKIE_NAME}")
     private String TOKEN_COOKIE_NAME;
@@ -44,7 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         Cookie tokenCookie = cookieUtil.getCookie(req, TOKEN_COOKIE_NAME);
         try {
             String token = tokenCookie.getValue();
-            setAuthentication(token, req);
+            authentication(token, req);
         } catch (Exception e) {
             Cookie refreshTokenCookie = cookieUtil.getCookie(req, REFRESH_TOKEN_COOKIE_NAME);
             if (refreshTokenCookie == null) {
@@ -59,7 +58,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String newToken = jwtUtil.createAccessToken(user);
                 Cookie newTokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
                 res.addCookie(newTokenCookie);
-                setAuthentication(newToken, req);
+                authentication(newToken, req);
             } catch (Exception e1) {
                 throw new UnAuthorizedException("다시 로그인 해주세요");
             }
@@ -67,7 +66,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(req, res);
     }
 
-    private void setAuthentication(String token, HttpServletRequest req) throws Exception {
+    private void authentication(String token, HttpServletRequest req) {
         UserDetails userDetails = new UserInfo(jwtUtil.getUser(token));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
