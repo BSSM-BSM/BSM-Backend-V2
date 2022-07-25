@@ -5,6 +5,7 @@ import bssm.bsm.global.exceptions.ConflictException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.dto.request.UserLoginDto;
 import bssm.bsm.user.dto.request.UserSignUpDto;
+import bssm.bsm.user.dto.request.UserUpdateNicknameDto;
 import bssm.bsm.user.dto.request.UserUpdatePwDto;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.entities.User;
@@ -37,7 +38,11 @@ public class UserService {
             throw new BadRequestException("비밀번호 재입력이 맞지 않습니다");
         }
 
-        validateDuplicateUser(user);
+        userRepository.findById(user.getId())
+                .ifPresent(u -> {throw new ConflictException("이미 존재하는 ID 입니다");});
+        userRepository.findByNickname(user.getNickname())
+                .ifPresent(u -> {throw new ConflictException("이미 존재하는 닉네임 입니다");});
+
         Student studentInfo = studentRepository.findByAuthCode(dto.getAuthCode())
                 .orElseThrow(() -> {throw new NotFoundException("인증코드를 찾을 수 없습니다");});
         if (!studentInfo.isCodeAvailable()) {
@@ -88,11 +93,15 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    private void validateDuplicateUser(User user) {
-        userRepository.findById(user.getId())
-                .ifPresent(u -> {throw new ConflictException("이미 존재하는 ID 입니다");});
-        userRepository.findByNickname(user.getNickname())
+    public User updateNickname(User user, UserUpdateNicknameDto dto) throws Exception {
+        userRepository.findByNickname(dto.getNewNickname())
                 .ifPresent(u -> {throw new ConflictException("이미 존재하는 닉네임 입니다");});
+        User newUser = userRepository.findById(user.getUsercode()).orElseThrow(
+                () -> {throw new NotFoundException("유저를 찾을 수 없습니다");}
+        );
+
+        newUser.setNickname(dto.getNewNickname());
+        return userRepository.save(newUser);
     }
 
     private String createSalt() {
