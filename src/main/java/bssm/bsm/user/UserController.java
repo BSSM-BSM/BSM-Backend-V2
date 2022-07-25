@@ -41,6 +41,12 @@ public class UserController {
         return userUtil.getCurrentUser();
     }
 
+    @DeleteMapping("logout")
+    public void logout(HttpServletResponse res) {
+        res.addCookie(cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0));
+        res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
+    }
+
     @PostMapping()
     public void signUp(@RequestBody UserSignUpDto dto) throws Exception {
         userService.signUp(dto);
