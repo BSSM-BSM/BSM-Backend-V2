@@ -1,20 +1,27 @@
 package bssm.bsm.global.utils;
 
+import bssm.bsm.user.entities.RefreshToken;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.entities.User;
+import bssm.bsm.user.repositories.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Date;
+import java.util.HexFormat;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
 
+    private final RefreshTokenRepository refreshTokenRepository;
     @Value("${JWT_SECRET_KEY}")
     private String JWT_SECRET_KEY;
     @Value("${JWT_TOKEN_MAX_TIME}")
@@ -38,8 +45,21 @@ public class JwtUtil {
     }
 
     public String createRefreshToken(int usercode) {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[32];
+        secureRandom.nextBytes(randomBytes);
+        String newRandomToken = HexFormat.of().formatHex(randomBytes);
+
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .token(newRandomToken)
+                .usercode(usercode)
+                .isAvailable(true)
+                .createdAt(new Date())
+                .build();
+        refreshTokenRepository.save(newRefreshToken);
+
         Claims claims = Jwts.claims();
-        claims.put("code", usercode);
+        claims.put("token", newRandomToken);
         return createToken(claims, JWT_REFRESH_TOKEN_MAX_TIME);
     }
 
@@ -53,9 +73,9 @@ public class JwtUtil {
                 .compact();
     }
 
-    public int getUserCode(String token) {
+    public String getRefreshToken(String token) {
         Claims claims = extractAllClaims(token);
-        return claims.get("code", Integer.class);
+        return claims.get("token", String.class);
     }
 
     public User getUser(String token) {

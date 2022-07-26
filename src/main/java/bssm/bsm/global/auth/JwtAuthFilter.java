@@ -5,6 +5,7 @@ import bssm.bsm.global.exceptions.UnAuthorizedException;
 import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.user.entities.User;
+import bssm.bsm.user.repositories.RefreshTokenRepository;
 import bssm.bsm.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
 
@@ -46,20 +48,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             authentication(token, req);
         } catch (Exception e) {
             Cookie refreshTokenCookie = cookieUtil.getCookie(req, REFRESH_TOKEN_COOKIE_NAME);
+            // 엑세스 토큰 인증에 실패했으면서 리프레시 토큰도 없으면 인증 실패
             if (refreshTokenCookie == null) {
                 filterChain.doFilter(req, res);
                 return;
             }
             try {
                 String refreshToken = refreshTokenCookie.getValue();
-                User user = userRepository.findById(jwtUtil.getUserCode(refreshToken)).orElseThrow(
-                        () -> {throw new NotFoundException("User not found");}
-                );
+
+                // 리프레시 토큰 만료 기간 확인은 JWT 발급할 때 이미 했으므로 DB에서 사용할 수 있는지 확인
+                User user = refreshTokenRepository.findByTokenAndIsAvailable(
+                        jwtUtil.getRefreshToken(refreshToken), true
+                ).orElseThrow(
+                        () -> {throw new NotFoundException("토큰을 찾을 수 없습니다");}
+                ).getUser();
+
+                // 새 엑세스 토큰 발급
                 String newToken = jwtUtil.createAccessToken(user);
+                // 쿠키 생성 및 적용
                 Cookie newTokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
                 res.addCookie(newTokenCookie);
+
                 authentication(newToken, req);
+            } catch (NotFoundException e1) {
+              throw e1;
             } catch (Exception e1) {
+                e1.printStackTrace();
                 throw new UnAuthorizedException("다시 로그인 해주세요");
             }
         }

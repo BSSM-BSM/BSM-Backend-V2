@@ -35,7 +35,7 @@ public class User {
     @Column(nullable = false)
     private int level;
 
-    @Column(nullable = false, length = 40)
+    @Column(nullable = false)
     private Date createdAt;
 
     @Column(nullable = false, length = 64)
