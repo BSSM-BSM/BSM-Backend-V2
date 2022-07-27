@@ -12,7 +12,6 @@ import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.StudentRepository;
 import bssm.bsm.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
