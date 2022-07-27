@@ -31,17 +31,11 @@ public class Board {
     private int writePostLevel;
 
     @Column(nullable = false)
-    private boolean postIsPublic;
-
-    @Column(nullable = false)
-    private boolean postIsAnonymous;
+    private boolean publicPost;
 
     @Column(nullable = false, columnDefinition = "tinyint")
     private int writeCommentLevel;
 
     @Column(nullable = false)
-    private boolean commentIsPublic;
-
-    @Column(nullable = false)
-    private boolean commentIsAnonymous;
+    private boolean publicComment;
 }
