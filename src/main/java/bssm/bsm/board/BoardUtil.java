@@ -23,44 +23,36 @@ public class BoardUtil {
     }
 
     public String getBoardName(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.getName();
+        return getBoard(id).getName();
     }
 
     public String getSubBoardName(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.getSubBoardName();
+        return getBoard(id).getSubBoardName();
     }
 
     public String getSubBoardId(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.getSubBoardId();
+        return getBoard(id).getSubBoardId();
     }
 
     public boolean isPublicPost(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.isPublicPost();
+        return getBoard(id).isPublicPost();
     }
 
     public int getWritePostLevel(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.getWritePostLevel();
+        return getBoard(id).getWritePostLevel();
     }
 
     public boolean isPublicComment(String id) {
-        Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
-        return board.isPublicComment();
+        return getBoard(id).isPublicComment();
     }
 
     public int getWriteCommentLevel(String id) {
+        return getBoard(id).getWriteCommentLevel();
+    }
+
+    private Board getBoard(String id) throws NotFoundException {
         Board board = boardList.get(id);
         if (board == null) throw new NotFoundException("Board not found");
-        return board.getWriteCommentLevel();
+        return board;
     }
 }
