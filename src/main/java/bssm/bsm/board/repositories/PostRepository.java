@@ -29,5 +29,5 @@ public interface PostRepository extends JpaRepository<Post, PostId> {
     // WHERE board_id = :#{#boardId}
     @Query (value = "INSERT INTO post (id, board_id, category_id, usercode, title, content, created_at) SELECT COUNT(id)+1, :#{#boardId}, :#{#categoryId}, :#{#post.usercode}, :#{#post.title}, :#{#post.content}, now() FROM post WHERE board_id = :#{#boardId}", nativeQuery = true)
     @Modifying
-    void insertPost(@Param("post") Post post, @Param("boardId") String boardId, @Param("categoryId") String categoryId);
+    int insertPost(@Param("post") Post post, @Param("boardId") String boardId, @Param("categoryId") String categoryId);
 }

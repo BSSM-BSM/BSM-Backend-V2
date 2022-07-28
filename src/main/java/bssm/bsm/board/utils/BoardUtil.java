@@ -1,4 +1,4 @@
-package bssm.bsm.board;
+package bssm.bsm.board.utils;
 
 import bssm.bsm.board.entities.Board;
 import bssm.bsm.board.repositories.BoardRepository;

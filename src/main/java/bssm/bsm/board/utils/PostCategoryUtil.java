@@ -1,4 +1,4 @@
-package bssm.bsm.board;
+package bssm.bsm.board.utils;
 
 import bssm.bsm.board.entities.PostCategory;
 import bssm.bsm.board.entities.PostCategoryId;

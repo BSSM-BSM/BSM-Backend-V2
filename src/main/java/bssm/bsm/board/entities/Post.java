@@ -1,10 +1,7 @@
 package bssm.bsm.board.entities;
 
 import bssm.bsm.user.entities.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,6 +13,7 @@ import java.util.Date;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table
 public class Post {

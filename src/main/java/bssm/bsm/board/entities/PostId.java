@@ -1,8 +1,15 @@
 package bssm.bsm.board.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class PostId implements Serializable {
 

@@ -1,7 +1,9 @@
 package bssm.bsm.board.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Getter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table
 public class Board {
