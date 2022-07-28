@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -33,6 +34,7 @@ public class Post {
     private PostCategory category;
 
     @Column(name = "isDelete", nullable = false)
+    @ColumnDefault("0")
     private boolean delete;
 
     @Column(columnDefinition = "INT UNSIGNED")
@@ -53,11 +55,14 @@ public class Post {
     private Date createdAt;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("0")
     private int hit;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("0")
     private int totalComments;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    @ColumnDefault("0")
     private int totalLikes;
 }

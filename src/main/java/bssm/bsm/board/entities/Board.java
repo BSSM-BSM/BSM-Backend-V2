@@ -21,10 +21,10 @@ public class Board {
     @Column(nullable = false, length = 10)
     private String name;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String subBoardId;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String subBoardName;
 
     @Column(nullable = false, columnDefinition = "tinyint")
