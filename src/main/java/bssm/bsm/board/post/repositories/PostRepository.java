@@ -1,7 +1,7 @@
-package bssm.bsm.board.repositories;
+package bssm.bsm.board.post.repositories;
 
-import bssm.bsm.board.entities.Post;
-import bssm.bsm.board.entities.PostId;
+import bssm.bsm.board.post.entities.Post;
+import bssm.bsm.board.post.entities.PostId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

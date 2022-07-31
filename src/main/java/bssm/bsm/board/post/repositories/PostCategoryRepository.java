@@ -1,7 +1,7 @@
-package bssm.bsm.board.repositories;
+package bssm.bsm.board.post.repositories;
 
-import bssm.bsm.board.entities.PostCategory;
-import bssm.bsm.board.entities.PostCategoryId;
+import bssm.bsm.board.post.entities.PostCategory;
+import bssm.bsm.board.post.entities.PostCategoryId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostCategoryRepository extends JpaRepository<PostCategory, PostCategoryId> {

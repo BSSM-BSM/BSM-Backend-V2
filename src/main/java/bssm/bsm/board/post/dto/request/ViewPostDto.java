@@ -1,4 +1,4 @@
-package bssm.bsm.board.dto.request;
+package bssm.bsm.board.post.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class WritePostDto {
+public class ViewPostDto {
 
-    private String title;
-    private String content;
     private String boardId;
-    private String categoryId;
+    private int postId;
 }

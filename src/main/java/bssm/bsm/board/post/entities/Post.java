@@ -1,4 +1,4 @@
-package bssm.bsm.board.entities;
+package bssm.bsm.board.post.entities;
 
 import bssm.bsm.user.entities.User;
 import lombok.*;

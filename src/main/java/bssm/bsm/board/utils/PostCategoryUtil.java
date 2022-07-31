@@ -1,20 +1,18 @@
 package bssm.bsm.board.utils;
 
-import bssm.bsm.board.entities.PostCategory;
-import bssm.bsm.board.entities.PostCategoryId;
-import bssm.bsm.board.repositories.PostCategoryRepository;
+import bssm.bsm.board.post.entities.PostCategory;
+import bssm.bsm.board.post.entities.PostCategoryId;
+import bssm.bsm.board.post.repositories.PostCategoryRepository;
 import bssm.bsm.global.exceptions.NotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PostCategoryUtil {
 
-    private HashMap<PostCategoryId, PostCategory> categoryList;
+    private final HashMap<PostCategoryId, PostCategory> categoryList = new HashMap<>();
 
     public PostCategoryUtil(PostCategoryRepository postCategoryRepository) {
         List<PostCategory> postCategories = postCategoryRepository.findAll();

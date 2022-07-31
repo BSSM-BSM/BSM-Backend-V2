@@ -1,5 +1,6 @@
 package bssm.bsm.user.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Table
 public class User {

@@ -1,11 +1,11 @@
 package bssm.bsm.board.service;
 
-import bssm.bsm.board.PostService;
-import bssm.bsm.board.dto.request.WritePostDto;
-import bssm.bsm.board.entities.Board;
-import bssm.bsm.board.entities.Post;
-import bssm.bsm.board.entities.PostId;
-import bssm.bsm.board.repositories.PostRepository;
+import bssm.bsm.board.post.PostService;
+import bssm.bsm.board.post.dto.request.WritePostDto;
+import bssm.bsm.board.post.entities.Board;
+import bssm.bsm.board.post.entities.Post;
+import bssm.bsm.board.post.entities.PostId;
+import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.user.entities.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

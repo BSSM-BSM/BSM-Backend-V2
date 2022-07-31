@@ -1,19 +1,17 @@
 package bssm.bsm.board.utils;
 
-import bssm.bsm.board.entities.Board;
-import bssm.bsm.board.repositories.BoardRepository;
+import bssm.bsm.board.post.entities.Board;
+import bssm.bsm.board.post.repositories.BoardRepository;
 import bssm.bsm.global.exceptions.NotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class BoardUtil {
 
-    private HashMap<String, Board> boardList;
+    private final HashMap<String, Board> boardList = new HashMap<>();
 
     public BoardUtil(BoardRepository boardRepository) {
         List<Board> boards = boardRepository.findAll();
@@ -50,7 +48,7 @@ public class BoardUtil {
         return getBoard(id).getWriteCommentLevel();
     }
 
-    private Board getBoard(String id) throws NotFoundException {
+    public Board getBoard(String id) throws NotFoundException {
         Board board = boardList.get(id);
         if (board == null) throw new NotFoundException("Board not found");
         return board;
