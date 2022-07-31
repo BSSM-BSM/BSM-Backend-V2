@@ -1,5 +1,6 @@
 package bssm.bsm.board.post;
 
+import bssm.bsm.board.post.dto.request.DeletePostDto;
 import bssm.bsm.board.post.dto.request.ViewPostDto;
 import bssm.bsm.board.post.dto.request.WritePostDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
@@ -8,6 +9,7 @@ import bssm.bsm.board.post.entities.Post;
 import bssm.bsm.board.post.entities.PostId;
 import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.board.utils.BoardUtil;
+import bssm.bsm.global.exceptions.ForbiddenException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +43,7 @@ public class PostService {
                 .totalComments(post.getTotalComments())
                 .totalLikes(post.getTotalLikes())
                 .like(false)
-                .permission(post.getUsercode() == user.getUsercode() || user.getLevel() >= 3)
+                .permission(checkPermission(user, post))
                 .build();
     }
 
@@ -55,5 +57,20 @@ public class PostService {
                 .build();
 
         return postRepository.insertPost(newPost, dto.getBoardId(), dto.getCategoryId());
+    }
+
+    @Transactional
+    public void deletePost(User user, DeletePostDto dto) {
+        Board board = boardUtil.getBoard(dto.getBoardId());
+        Post post = postRepository.findById(new PostId(dto.getPostId(), board)).orElseThrow(
+                () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
+        );
+        if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
+
+        postRepository.delete(post);
+    }
+
+    private boolean checkPermission(User user, Post post) {
+        return post.getUsercode() == user.getUsercode() || user.getLevel() >= 3;
     }
 }

@@ -1,5 +1,6 @@
 package bssm.bsm.board.post;
 
+import bssm.bsm.board.post.dto.request.DeletePostDto;
 import bssm.bsm.board.post.dto.request.ViewPostDto;
 import bssm.bsm.board.post.dto.request.WritePostDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
@@ -23,5 +24,10 @@ public class PostController {
     @PostMapping("/{boardId}")
     public void writePost(@RequestBody WritePostDto dto) {
         postService.writePost(userUtil.getCurrentUser(), dto);
+    }
+
+    @DeleteMapping("/{boardId}/{postId}")
+    public void deletePost(@PathVariable String boardId, @PathVariable int postId) {
+        postService.deletePost(userUtil.getCurrentUser(), new DeletePostDto(boardId, postId));
     }
 }
