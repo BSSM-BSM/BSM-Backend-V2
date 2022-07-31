@@ -1,5 +1,6 @@
 package bssm.bsm.board.post;
 
+import bssm.bsm.board.post.dto.PostDto;
 import bssm.bsm.board.post.dto.request.*;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
 import bssm.bsm.board.post.entities.Board;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +26,36 @@ public class PostService {
     private final BoardUtil boardUtil;
     private final PostRepository postRepository;
 
+    public List<PostDto> postList(String boardId) {
+        Board board = boardUtil.getBoard(boardId);
+        List<Post> posts = postRepository.findByPostIdBoard(board);
+
+        List<PostDto> postDtoList = new ArrayList<>();
+        posts.forEach(post -> {
+            postDtoList.add(PostDto.builder()
+                    .user(User.builder()
+                            .usercode(post.getUsercode())
+                            .nickname(post.getUser().getNickname())
+                            .build())
+                    .title(post.getTitle())
+                    .createdAt(post.getCreatedAt())
+                    .hit(post.getHit())
+                    .totalComments(post.getTotalComments())
+                    .totalLikes(post.getTotalLikes())
+                    .build()
+            );
+        });
+
+        return postDtoList;
+    }
+
     public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
         Post post = getPost(postIdDto);
 
         return ViewPostResponseDto.builder()
                 .user(User.builder()
-                        .usercode(user.getUsercode())
-                        .nickname(user.getNickname())
+                        .usercode(post.getUsercode())
+                        .nickname(post.getUser().getNickname())
                         .build())
                 .title(post.getTitle())
                 .content(post.getContent())
