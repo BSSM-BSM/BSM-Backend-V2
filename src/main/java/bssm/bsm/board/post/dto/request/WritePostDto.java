@@ -9,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class WritePostDto {
 
+    private String category;
     private String title;
     private String content;
-    private String boardId;
-    private String categoryId;
 }

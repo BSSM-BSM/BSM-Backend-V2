@@ -23,12 +23,12 @@ public class PostServiceTest {
     @Test
     @DisplayName("게시글 작성 테스트")
     void writePost() {
-        WritePostDto dto = new WritePostDto("게시글 제목", "게시글 내용", "test", "test");
+        WritePostDto dto = new WritePostDto("test", "게시글 제목", "게시글 내용");
         User user = User.builder()
                 .usercode(10)
                 .build();
 
-        int newPostId = postService.writePost(user, dto);
+        int newPostId = postService.writePost(user, "test", dto);
 
         PostId postId = PostId.builder()
                 .id(newPostId)

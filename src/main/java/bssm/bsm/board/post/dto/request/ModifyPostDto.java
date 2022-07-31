@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ViewPostDto {
+public class ModifyPostDto {
 
-    private String boardId;
-    private int postId;
+    private String category;
+    private String title;
+    private String content;
 }

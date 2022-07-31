@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class DeletePostDto {
+public class PostIdDto {
 
-    private String boardId;
-    private int postId;
+    private String board;
+    private int post;
 }
