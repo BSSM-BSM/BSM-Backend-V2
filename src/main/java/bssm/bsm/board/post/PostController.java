@@ -24,9 +24,10 @@ public class PostController {
             @PathVariable String boardId,
             @RequestParam(value = "p", defaultValue = "1") int page,
             @RequestParam(value = "l", defaultValue = "15") int limit,
-            @RequestParam(value = "c", defaultValue = "all") String category
+            @RequestParam(value = "c", defaultValue = "all") String category,
+            @RequestParam(value = "i", defaultValue = "-1") int startPostId
     ) {
-        return postService.postList(boardId, new GetPostListDto(page, limit, category));
+        return postService.postList(boardId, new GetPostListDto(page, limit, category, startPostId));
     }
 
     @GetMapping("/{boardId}/{postId}")

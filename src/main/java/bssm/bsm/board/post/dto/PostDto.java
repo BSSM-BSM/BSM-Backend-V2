@@ -11,6 +11,7 @@ import java.util.Date;
 @SuperBuilder
 public class PostDto {
 
+    private int id;
     private User user;
     private String title;
     private Date createdAt;

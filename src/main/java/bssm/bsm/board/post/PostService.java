@@ -33,33 +33,47 @@ public class PostService {
     public PostListResponseDto postList(String boardId, GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategoryId postCategoryId = new PostCategoryId(board, dto.getCategoryId());
+        boolean pageMode = dto.getStartPostId() < 0;
 
-        Page<Post> pages = getPostListByOffset(postCategoryId, dto);
-        List<Post> posts = pages.getContent();
-        long totalPages = pages.getTotalPages();
+        List<Post> posts;
+        Page<Post> pages = null;
+        if (pageMode) {
+             pages = getPostListByOffset(postCategoryId, dto);
+             posts = pages.getContent();
+        } else {
+            posts = getPostListByCursor(postCategoryId, dto);
+        }
 
         List<PostDto> postDtoList = new ArrayList<>();
-        posts.forEach(post -> {
-            postDtoList.add(PostDto.builder()
-                    .user(User.builder()
-                            .usercode(post.getUsercode())
-                            .nickname(post.getUser().getNickname())
-                            .build())
-                    .title(post.getTitle())
-                    .createdAt(post.getCreatedAt())
-                    .hit(post.getHit())
-                    .totalComments(post.getTotalComments())
-                    .totalLikes(post.getTotalLikes())
-                    .build()
-            );
-        });
+        posts.forEach(post ->
+                postDtoList.add(PostDto.builder()
+                            .id(post.getPostId().getId())
+                            .user(User.builder()
+                                    .usercode(post.getUsercode())
+                                    .nickname(post.getUser().getNickname())
+                                    .build())
+                            .title(post.getTitle())
+                            .createdAt(post.getCreatedAt())
+                            .hit(post.getHit())
+                            .totalComments(post.getTotalComments())
+                            .totalLikes(post.getTotalLikes())
+                            .build()
+                )
+        );
 
-        return PostListResponseDto.builder()
-                .posts(postDtoList)
-                .totalPages(totalPages)
-                .page(dto.getPage())
-                .limit(dto.getLimit())
-                .build();
+        if (pageMode) {
+            return PostListResponseDto.builder()
+                    .posts(postDtoList)
+                    .totalPages(pages.getTotalPages())
+                    .page(dto.getPage())
+                    .limit(dto.getLimit())
+                    .build();
+        } else {
+            return PostListResponseDto.builder()
+                    .posts(postDtoList)
+                    .limit(dto.getLimit())
+                    .build();
+        }
     }
 
     public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
@@ -145,5 +159,21 @@ public class PostService {
         }
         // 카테고리 있는 게시글
         return postRepository.findByCategoryAndDeleteOrderByPostIdDesc(postCategory, false, pageable);
+    }
+
+    private List<Post> getPostListByCursor(PostCategoryId postCategoryId, GetPostListDto dto) {
+        PostId postId = new PostId(dto.getStartPostId(), postCategoryId.getBoard());
+        Pageable pageable = Pageable.ofSize(dto.getLimit());
+        // 전체 게시글
+        if (postCategoryId.getCategoryId().equals("all")) {
+            return postRepository.findByPostIdLessThanAndDeleteOrderByPostIdDesc(postId, false, pageable);
+        }
+        PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
+        // 카테고리 없는 게시글
+        if (postCategory == null) {
+            return postRepository.findByPostIdLessThanAndCategoryIdAndDeleteOrderByPostIdDesc(postId, null, false, pageable);
+        }
+        // 카테고리 있는 게시글
+        return postRepository.findByPostIdLessThanAndCategoryAndDeleteOrderByPostIdDesc(postId, postCategory, false, pageable);
     }
 }

@@ -2,11 +2,13 @@ package bssm.bsm.board.post.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Getter
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor

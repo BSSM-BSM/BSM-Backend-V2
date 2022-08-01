@@ -12,4 +12,5 @@ public class GetPostListDto {
     private int page;
     private int limit;
     private String categoryId;
+    private int startPostId;
 }

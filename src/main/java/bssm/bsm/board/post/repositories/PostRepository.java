@@ -11,17 +11,24 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, PostId> {
 
     Optional<Post> findByPostIdAndDelete(PostId postId, boolean delete);
 
+    // 전체 게시글
     Page<Post> findByPostIdBoardAndDeleteOrderByPostIdDesc(Board board, boolean delete, Pageable pageable);
+    List<Post> findByPostIdLessThanAndDeleteOrderByPostIdDesc(PostId postId, boolean delete, Pageable pageable);
 
+    // 카테고리 있는 게시글
     Page<Post> findByCategoryAndDeleteOrderByPostIdDesc(PostCategory postCategory, boolean delete, Pageable pageable);
+    List<Post> findByPostIdLessThanAndCategoryAndDeleteOrderByPostIdDesc(PostId postId, PostCategory postCategory, boolean delete, Pageable pageable);
 
+    // 카테고리 없는 게시글
     Page<Post> findByPostIdBoardAndCategoryIdAndDeleteOrderByPostIdDesc(Board board, String categoryId, boolean delete, Pageable pageable);
+    List<Post> findByPostIdLessThanAndCategoryIdAndDeleteOrderByPostIdDesc(PostId postId, String categoryId, boolean delete, Pageable pageable);
 
     // INSERT INTO post (
     //     id,
