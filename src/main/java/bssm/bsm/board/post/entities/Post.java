@@ -21,13 +21,13 @@ public class Post {
     @EmbeddedId
     private PostId postId;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String categoryId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumns({
-            @JoinColumn(name = "categoryId", insertable = false, updatable = false),
-            @JoinColumn(name = "board_id", insertable = false, updatable = false)
+            @JoinColumn(name = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "categoryId", insertable = false, updatable = false)
     })
     private PostCategory category;
 

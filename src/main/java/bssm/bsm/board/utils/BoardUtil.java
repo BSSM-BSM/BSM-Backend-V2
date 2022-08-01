@@ -50,7 +50,7 @@ public class BoardUtil {
 
     public Board getBoard(String id) throws NotFoundException {
         Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("Board not found");
+        if (board == null) throw new NotFoundException("게시판을 찾을 수 없습니다");
         return board;
     }
 }

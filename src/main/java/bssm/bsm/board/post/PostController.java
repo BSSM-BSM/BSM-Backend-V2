@@ -1,6 +1,7 @@
 package bssm.bsm.board.post;
 
 import bssm.bsm.board.post.dto.PostDto;
+import bssm.bsm.board.post.dto.request.GetPostListDto;
 import bssm.bsm.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.board.post.dto.request.PostIdDto;
 import bssm.bsm.board.post.dto.request.WritePostDto;
@@ -20,8 +21,13 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{boardId}")
-    public List<PostDto> postList(@PathVariable String boardId) {
-        return postService.postList(boardId);
+    public List<PostDto> postList(
+            @PathVariable String boardId,
+            @RequestParam(value = "p", defaultValue = "1") int page,
+            @RequestParam(value = "l", defaultValue = "15") int limit,
+            @RequestParam(value = "c", defaultValue = "all") String category
+    ) {
+        return postService.postList(boardId, new GetPostListDto(page, limit, category));
     }
 
     @GetMapping("/{boardId}/{postId}")
