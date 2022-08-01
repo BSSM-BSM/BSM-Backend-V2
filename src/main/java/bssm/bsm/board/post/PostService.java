@@ -2,6 +2,7 @@ package bssm.bsm.board.post;
 
 import bssm.bsm.board.post.dto.PostDto;
 import bssm.bsm.board.post.dto.request.*;
+import bssm.bsm.board.post.dto.response.PostListResponseDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
 import bssm.bsm.board.post.entities.*;
 import bssm.bsm.board.post.repositories.PostRepository;
@@ -11,6 +12,9 @@ import bssm.bsm.global.exceptions.ForbiddenException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +30,13 @@ public class PostService {
     private final PostCategoryUtil categoryUtil;
     private final PostRepository postRepository;
 
-    public List<PostDto> postList(String boardId, GetPostListDto dto) {
+    public PostListResponseDto postList(String boardId, GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategoryId postCategoryId = new PostCategoryId(board, dto.getCategoryId());
 
-        long totalPosts = getTotalPosts(postCategoryId);
-        System.out.println(totalPosts);
-        List<Post> posts = getPostList(postCategoryId);
+        Page<Post> pages = getPostListByOffset(postCategoryId, dto);
+        List<Post> posts = pages.getContent();
+        long totalPages = pages.getTotalPages();
 
         List<PostDto> postDtoList = new ArrayList<>();
         posts.forEach(post -> {
@@ -50,7 +54,12 @@ public class PostService {
             );
         });
 
-        return postDtoList;
+        return PostListResponseDto.builder()
+                .posts(postDtoList)
+                .totalPages(totalPages)
+                .page(dto.getPage())
+                .limit(dto.getLimit())
+                .build();
     }
 
     public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
@@ -123,31 +132,18 @@ public class PostService {
         return post.getUsercode() == user.getUsercode() || user.getLevel() >= 3;
     }
 
-    private long getTotalPosts(PostCategoryId postCategoryId) {
+    private Page<Post> getPostListByOffset(PostCategoryId postCategoryId, GetPostListDto dto) {
+        Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
         if (postCategoryId.getCategoryId().equals("all")) {
-            return postRepository.countByPostIdBoardAndDelete(postCategoryId.getBoard(), false);
+            return postRepository.findByPostIdBoardAndDeleteOrderByPostIdDesc(postCategoryId.getBoard(), false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.countByPostIdBoardAndCategoryIdAndDelete(postCategoryId.getBoard(), null, false);
+            return postRepository.findByPostIdBoardAndCategoryIdAndDeleteOrderByPostIdDesc(postCategoryId.getBoard(), null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.countByCategoryAndDelete(postCategory, false);
-    }
-
-    private List<Post> getPostList(PostCategoryId postCategoryId) {
-        // 전체 게시글
-        if (postCategoryId.getCategoryId().equals("all")) {
-            return postRepository.findByPostIdBoardAndDelete(postCategoryId.getBoard(), false);
-        }
-        PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
-        // 카테고리 없는 게시글
-        if (postCategory == null) {
-            return postRepository.findByPostIdBoardAndCategoryIdAndDelete(postCategoryId.getBoard(), null, false);
-        }
-        // 카테고리 있는 게시글
-        return postRepository.findByCategoryAndDelete(postCategory, false);
+        return postRepository.findByCategoryAndDeleteOrderByPostIdDesc(postCategory, false, pageable);
     }
 }

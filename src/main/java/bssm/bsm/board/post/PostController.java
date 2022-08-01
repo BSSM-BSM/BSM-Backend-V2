@@ -5,12 +5,11 @@ import bssm.bsm.board.post.dto.request.GetPostListDto;
 import bssm.bsm.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.board.post.dto.request.PostIdDto;
 import bssm.bsm.board.post.dto.request.WritePostDto;
+import bssm.bsm.board.post.dto.response.PostListResponseDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("post")
@@ -21,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{boardId}")
-    public List<PostDto> postList(
+    public PostListResponseDto postList(
             @PathVariable String boardId,
             @RequestParam(value = "p", defaultValue = "1") int page,
             @RequestParam(value = "l", defaultValue = "15") int limit,

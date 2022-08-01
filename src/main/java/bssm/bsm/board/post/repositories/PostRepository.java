@@ -4,29 +4,24 @@ import bssm.bsm.board.post.entities.Board;
 import bssm.bsm.board.post.entities.Post;
 import bssm.bsm.board.post.entities.PostCategory;
 import bssm.bsm.board.post.entities.PostId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, PostId> {
 
     Optional<Post> findByPostIdAndDelete(PostId postId, boolean delete);
 
-    long countByPostIdBoardAndDelete(Board board, boolean delete);
+    Page<Post> findByPostIdBoardAndDeleteOrderByPostIdDesc(Board board, boolean delete, Pageable pageable);
 
-    long countByCategoryAndDelete(PostCategory postCategory, boolean delete);
+    Page<Post> findByCategoryAndDeleteOrderByPostIdDesc(PostCategory postCategory, boolean delete, Pageable pageable);
 
-    long countByPostIdBoardAndCategoryIdAndDelete(Board board, String categoryId, boolean delete);
-
-    List<Post> findByPostIdBoardAndDelete(Board board, boolean delete);
-
-    List<Post> findByCategoryAndDelete(PostCategory postCategory, boolean delete);
-
-    List<Post> findByPostIdBoardAndCategoryIdAndDelete(Board board, String categoryId, boolean delete);
+    Page<Post> findByPostIdBoardAndCategoryIdAndDeleteOrderByPostIdDesc(Board board, String categoryId, boolean delete, Pageable pageable);
 
     // INSERT INTO post (
     //     id,
