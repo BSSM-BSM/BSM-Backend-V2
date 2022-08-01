@@ -60,7 +60,7 @@ public class Post {
     @ColumnDefault("0")
     private int totalComments;
 
-    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    @Column(nullable = false)
     @ColumnDefault("0")
     private int totalLikes;
 }

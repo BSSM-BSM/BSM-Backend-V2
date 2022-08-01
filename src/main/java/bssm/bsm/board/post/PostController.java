@@ -1,6 +1,5 @@
 package bssm.bsm.board.post;
 
-import bssm.bsm.board.post.dto.PostDto;
 import bssm.bsm.board.post.dto.request.GetPostListDto;
 import bssm.bsm.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.board.post.dto.request.PostIdDto;

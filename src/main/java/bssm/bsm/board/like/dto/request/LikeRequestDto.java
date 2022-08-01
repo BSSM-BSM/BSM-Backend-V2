@@ -1,14 +1,14 @@
-package bssm.bsm.board.post.dto.request;
+package bssm.bsm.board.like.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class PostIdDto {
+public class LikeRequestDto {
 
-    private String board;
-    private int postId;
+    int like;
 }

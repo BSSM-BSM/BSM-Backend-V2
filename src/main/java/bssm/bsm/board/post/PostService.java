@@ -137,7 +137,7 @@ public class PostService {
 
     private Post getPost(PostIdDto dto) {
         Board board = boardUtil.getBoard(dto.getBoard());
-        return postRepository.findByPostIdAndDelete(new PostId(dto.getPost(), board), false).orElseThrow(
+        return postRepository.findByPostIdAndDelete(new PostId(dto.getPostId(), board), false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
     }
