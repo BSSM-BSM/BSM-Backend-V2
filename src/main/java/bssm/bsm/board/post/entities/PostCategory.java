@@ -16,7 +16,11 @@ import javax.persistence.*;
 public class PostCategory {
 
     @EmbeddedId
-    private PostCategoryId id;
+    @JoinColumns({
+            @JoinColumn(name = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "categoryId", insertable = false, updatable = false)
+    })
+    private PostCategoryPk postCategoryPk;
 
     @Column(nullable = false, length = 10)
     private String name;

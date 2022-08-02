@@ -7,7 +7,7 @@ import bssm.bsm.board.like.repository.LikeRepository;
 import bssm.bsm.board.post.dto.request.PostIdDto;
 import bssm.bsm.board.post.entities.Board;
 import bssm.bsm.board.post.entities.Post;
-import bssm.bsm.board.post.entities.PostId;
+import bssm.bsm.board.post.entities.PostPk;
 import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.board.utils.BoardUtil;
 import bssm.bsm.global.exceptions.BadRequestException;
@@ -28,7 +28,7 @@ public class LikeService {
 
     public LikeResponseDto like(User user, PostIdDto postIdDto, LikeRequestDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
-        PostId postId = new PostId(postIdDto.getPostId(), board);
+        PostPk postId = new PostPk(postIdDto.getPostId(), board);
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
@@ -48,7 +48,7 @@ public class LikeService {
             if (like == 0) throw new BadRequestException();
             likeRepository.save(
                     PostLike.builder()
-                            .postId(postId)
+                            .postPk(postId)
                             .usercode(user.getUsercode())
                             .like(like)
                             .build()

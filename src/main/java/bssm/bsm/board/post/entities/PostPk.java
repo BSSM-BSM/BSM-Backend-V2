@@ -13,7 +13,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class PostId implements Serializable {
+public class PostPk implements Serializable {
 
     @Column(columnDefinition = "INT UNSIGNED")
     private int id;

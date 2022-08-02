@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,7 +20,7 @@ import java.util.Date;
 public class Post {
 
     @EmbeddedId
-    private PostId postId;
+    private PostPk postPk;
 
     @Column(length = 10)
     private String categoryId;
@@ -49,7 +50,7 @@ public class Post {
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
 
-    @Column(nullable = false)
+    @CreatedDate
     private Date createdAt;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")

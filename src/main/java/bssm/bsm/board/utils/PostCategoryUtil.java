@@ -1,7 +1,7 @@
 package bssm.bsm.board.utils;
 
 import bssm.bsm.board.post.entities.PostCategory;
-import bssm.bsm.board.post.entities.PostCategoryId;
+import bssm.bsm.board.post.entities.PostCategoryPk;
 import bssm.bsm.board.post.repositories.PostCategoryRepository;
 import bssm.bsm.global.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,29 +16,29 @@ import java.util.List;
 public class PostCategoryUtil {
 
     private final BoardUtil boardUtil;
-    private final HashMap<PostCategoryId, PostCategory> categoryList = new HashMap<>();
+    private final HashMap<PostCategoryPk, PostCategory> categoryList = new HashMap<>();
     private final PostCategoryRepository postCategoryRepository;
 
     @PostConstruct
     public void init() {
         List<PostCategory> postCategories = postCategoryRepository.findAll();
         postCategories.forEach(category -> {
-            category.setId(
-                    new PostCategoryId(
-                            this.boardUtil.getBoard(category.getId().getBoard().getId()),
-                            category.getId().getCategoryId()
+            category.setPostCategoryPk(
+                    new PostCategoryPk(
+                            category.getPostCategoryPk().getId(),
+                            this.boardUtil.getBoard(category.getPostCategoryPk().getBoard().getId())
                     )
             );
-            categoryList.put(category.getId(), category);
+            categoryList.put(category.getPostCategoryPk(), category);
         });
     }
 
-    public String getCategoryName(PostCategoryId id) {
+    public String getCategoryName(PostCategoryPk id) {
         return getCategory(id).getName();
     }
 
-    public PostCategory getCategory(PostCategoryId id) throws NotFoundException {
-        if (id.getCategoryId().equals("normal")) return null;
+    public PostCategory getCategory(PostCategoryPk id) throws NotFoundException {
+        if (id.getId().equals("normal")) return null;
 
         PostCategory category = categoryList.get(id);
         if (category == null) throw new NotFoundException("카테고리를 찾을 수 없습니다");

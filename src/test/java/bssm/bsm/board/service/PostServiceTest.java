@@ -4,7 +4,7 @@ import bssm.bsm.board.post.PostService;
 import bssm.bsm.board.post.dto.request.WritePostDto;
 import bssm.bsm.board.post.entities.Board;
 import bssm.bsm.board.post.entities.Post;
-import bssm.bsm.board.post.entities.PostId;
+import bssm.bsm.board.post.entities.PostPk;
 import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.user.entities.User;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +30,7 @@ public class PostServiceTest {
 
         int newPostId = postService.writePost(user, "test", dto);
 
-        PostId postId = PostId.builder()
+        PostPk postId = PostPk.builder()
                 .id(newPostId)
                 .board(Board.builder().id("test").build())
                 .build();

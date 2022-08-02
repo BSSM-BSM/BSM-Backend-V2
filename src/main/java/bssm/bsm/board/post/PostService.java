@@ -32,7 +32,7 @@ public class PostService {
 
     public PostListResponseDto postList(String boardId, GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
-        PostCategoryId postCategoryId = new PostCategoryId(board, dto.getCategoryId());
+        PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
         boolean pageMode = dto.getStartPostId() < 0;
 
         List<Post> posts;
@@ -47,7 +47,7 @@ public class PostService {
         List<PostDto> postDtoList = new ArrayList<>();
         posts.forEach(post ->
                 postDtoList.add(PostDto.builder()
-                            .id(post.getPostId().getId())
+                            .id(post.getPostPk().getId())
                             .user(User.builder()
                                     .usercode(post.getUsercode())
                                     .nickname(post.getUser().getNickname())
@@ -98,11 +98,11 @@ public class PostService {
     @Transactional
     public int writePost(User user, String boardId, WritePostDto dto) {
         Board board = boardUtil.getBoard(boardId);
-        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryId(board, dto.getCategory()));
+        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
 
         Post newPost = Post.builder()
                 .usercode(user.getUsercode())
-                .category(postCategory)
+                .categoryId(postCategory == null? null: postCategory.getPostCategoryPk().getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .createdAt(new Date())
@@ -117,7 +117,7 @@ public class PostService {
         Post post = getPost(postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
 
-        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryId(board, dto.getCategory()));
+        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
 
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
@@ -137,7 +137,7 @@ public class PostService {
 
     private Post getPost(PostIdDto dto) {
         Board board = boardUtil.getBoard(dto.getBoard());
-        return postRepository.findByPostIdAndDelete(new PostId(dto.getPostId(), board), false).orElseThrow(
+        return postRepository.findByPostPkAndDelete(new PostPk(dto.getPostId(), board), false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
     }
@@ -146,34 +146,34 @@ public class PostService {
         return post.getUsercode() == user.getUsercode() || user.getLevel() >= 3;
     }
 
-    private Page<Post> getPostListByOffset(PostCategoryId postCategoryId, GetPostListDto dto) {
+    private Page<Post> getPostListByOffset(PostCategoryPk postCategoryId, GetPostListDto dto) {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
-        if (postCategoryId.getCategoryId().equals("all")) {
-            return postRepository.findByPostIdBoardAndDeleteOrderByPostIdDesc(postCategoryId.getBoard(), false, pageable);
+        if (postCategoryId.getId().equals("all")) {
+            return postRepository.findByPostPkBoardAndDeleteOrderByPostPkIdDesc(postCategoryId.getBoard(), false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPostIdBoardAndCategoryIdAndDeleteOrderByPostIdDesc(postCategoryId.getBoard(), null, false, pageable);
+            return postRepository.findByPostPkBoardAndCategoryIdAndDeleteOrderByPostPkIdDesc(postCategoryId.getBoard(), null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByCategoryAndDeleteOrderByPostIdDesc(postCategory, false, pageable);
+        return postRepository.findByCategoryAndDeleteOrderByPostPkIdDesc(postCategory, false, pageable);
     }
 
-    private List<Post> getPostListByCursor(PostCategoryId postCategoryId, GetPostListDto dto) {
-        PostId postId = new PostId(dto.getStartPostId(), postCategoryId.getBoard());
+    private List<Post> getPostListByCursor(PostCategoryPk postCategoryId, GetPostListDto dto) {
+        PostPk postId = new PostPk(dto.getStartPostId(), postCategoryId.getBoard());
         Pageable pageable = Pageable.ofSize(dto.getLimit());
         // 전체 게시글
-        if (postCategoryId.getCategoryId().equals("all")) {
-            return postRepository.findByPostIdLessThanAndDeleteOrderByPostIdDesc(postId, false, pageable);
+        if (postCategoryId.getId().equals("all")) {
+            return postRepository.findByPostPkLessThanAndDeleteOrderByPostPkIdDesc(postId, false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPostIdLessThanAndCategoryIdAndDeleteOrderByPostIdDesc(postId, null, false, pageable);
+            return postRepository.findByPostPkLessThanAndCategoryIdAndDeleteOrderByPostPkIdDesc(postId, null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByPostIdLessThanAndCategoryAndDeleteOrderByPostIdDesc(postId, postCategory, false, pageable);
+        return postRepository.findByPostPkLessThanAndCategoryAndDeleteOrderByPostPkIdDesc(postId, postCategory, false, pageable);
     }
 }

@@ -1,6 +1,6 @@
 package bssm.bsm.board.like.entity;
 
-import bssm.bsm.board.post.entities.PostId;
+import bssm.bsm.board.post.entities.PostPk;
 import bssm.bsm.user.entities.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class PostLike {
 
     @EmbeddedId
-    private PostId postId;
+    private PostPk postPk;
 
     @Column(columnDefinition = "INT UNSIGNED")
     private int usercode;

@@ -12,27 +12,27 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class PostCategoryId implements Serializable {
+public class PostCategoryPk implements Serializable {
+
+    @Column(length = 10)
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Board board;
-
-    @Column(length = 10)
-    private String categoryId;
 
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        PostCategoryId other = (PostCategoryId)o;
+        PostCategoryPk other = (PostCategoryPk)o;
 
-        return other.board == board && Objects.equals(other.categoryId, categoryId);
+        return other.board == board && Objects.equals(other.id, id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, categoryId);
+        return Objects.hash(board, id);
     }
 }
