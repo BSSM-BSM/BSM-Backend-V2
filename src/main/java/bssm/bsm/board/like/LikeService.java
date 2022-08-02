@@ -3,6 +3,7 @@ package bssm.bsm.board.like;
 import bssm.bsm.board.like.dto.request.LikeRequestDto;
 import bssm.bsm.board.like.dto.response.LikeResponseDto;
 import bssm.bsm.board.like.entity.PostLike;
+import bssm.bsm.board.like.entity.PostLikePk;
 import bssm.bsm.board.like.repository.LikeRepository;
 import bssm.bsm.board.post.dto.request.PostIdDto;
 import bssm.bsm.board.post.entities.Board;
@@ -15,6 +16,7 @@ import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ public class LikeService {
     private final PostRepository postRepository;
     private final BoardUtil boardUtil;
 
+    @Transactional
     public LikeResponseDto like(User user, PostIdDto postIdDto, LikeRequestDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         PostPk postId = new PostPk(postIdDto.getPostId(), board);
@@ -41,17 +44,23 @@ public class LikeService {
             like = 0;
         }
 
-        Optional<PostLike> postLikeCheck = likeRepository.findById(postId);
+        Optional<PostLike> postLikeCheck = likeRepository.findByPostLikePkPost(post);
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
         if (postLikeCheck.isEmpty()) {
             if (like == 0) throw new BadRequestException();
-            likeRepository.save(
+            likeRepository.insertLike(
                     PostLike.builder()
-                            .postPk(postId)
+                            .postLikePk(
+                                    PostLikePk.builder()
+                                            .post(post)
+                                            .build()
+                            )
                             .usercode(user.getUsercode())
                             .like(like)
-                            .build()
+                            .build(),
+                    board.getId(),
+                    postId.getId()
             );
             post.setTotalLikes(post.getTotalLikes() + like);
             postRepository.save(post);

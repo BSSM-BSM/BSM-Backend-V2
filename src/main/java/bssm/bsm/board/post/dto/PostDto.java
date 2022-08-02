@@ -13,6 +13,7 @@ public class PostDto {
 
     private int id;
     private User user;
+    private String category;
     private String title;
     private Date createdAt;
     private int hit;

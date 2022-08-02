@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class PostLike {
 
     @EmbeddedId
-    private PostPk postPk;
+    private PostLikePk postLikePk;
 
     @Column(columnDefinition = "INT UNSIGNED")
     private int usercode;

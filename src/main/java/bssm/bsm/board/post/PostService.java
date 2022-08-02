@@ -52,6 +52,7 @@ public class PostService {
                                     .usercode(post.getUsercode())
                                     .nickname(post.getUser().getNickname())
                                     .build())
+                            .category(post.getCategoryId())
                             .title(post.getTitle())
                             .createdAt(post.getCreatedAt())
                             .hit(post.getHit())
