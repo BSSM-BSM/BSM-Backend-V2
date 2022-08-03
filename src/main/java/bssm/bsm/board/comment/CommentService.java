@@ -1,6 +1,7 @@
 package bssm.bsm.board.comment;
 
 import bssm.bsm.board.comment.dto.request.WriteCommentDto;
+import bssm.bsm.board.comment.dto.response.CommentDto;
 import bssm.bsm.board.comment.entity.Comment;
 import bssm.bsm.board.comment.entity.CommentPk;
 import bssm.bsm.board.comment.repository.CommentRepository;
@@ -15,6 +16,10 @@ import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,9 +64,96 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .usercode(user.getUsercode())
                 .depth(dto.getDepth())
-                .parent(parentComment)
+                .parentId(parentComment == null? null: parentComment.getCommentPk().getId())
                 .content(dto.getContent())
                 .build();
         commentRepository.insertComment(comment, board.getId(), postIdDto.getPostId());
+    }
+
+    public List<CommentDto> viewCommentList(User user, PostIdDto postIdDto) {
+        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        PostPk postPk = PostPk.builder()
+                .id(postIdDto.getPostId())
+                .board(board)
+                .build();
+        Post post = postRepository.findByPostPkAndDelete(postPk, false).orElseThrow(
+                () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
+        );
+
+        return commentTree(user, 0, commentRepository.findByCommentPkPost(post));
+    }
+
+    private List<CommentDto> commentTree(User user, int depth, List<Comment> commentList) {
+        List<CommentDto> commentDtoList = new ArrayList<>();
+        List<Comment> deleteList = new ArrayList<>();
+
+        for (Iterator<Comment> iterator = commentList.iterator(); iterator.hasNext();) {
+            Comment comment = iterator.next();
+            // 만약 최적화를 위해 삭제 예정 리스트에 들어있는 댓글이라면
+            if (deleteList.contains(comment)) {
+                deleteList.remove(comment);
+                iterator.remove();
+                continue;
+            }
+
+            // 대댓글의 깊이가 현재 불러오려는 깊이와 같은지 확인
+            if (comment.getDepth() != depth) {
+                continue;
+            }
+
+            CommentDto commentDto = convertCommentDtoAndDeleteCheck(user, comment);
+
+            // 자식 댓글이 있다면
+            if (comment.isHaveChild()) {
+                List<Comment> childList = new ArrayList<>();
+
+                commentList.forEach(child -> {
+                    if (child.getDepth() == depth + 1) { // 자식의 댓글의 깊이가 바로 밑이라면
+                        if (child.getParentId() == comment.getCommentPk().getId()) { // 자식 댓글의 부모가 현재 댓글이라면
+                            childList.add(child);
+                            // 해당 자식 댓글은 최적화를 위해 나중에 삭제할 댓글 리스트에 추가
+                            deleteList.add(child);
+                        }
+                    } else { // 아니라면 자식 댓글의 자식 댓글일 수도 있으니 일단 넣음
+                        childList.add(child);
+                    }
+                });
+
+                commentDto.setChild(commentTree(user, depth+1, childList));
+            }
+            commentDtoList.add(commentDto);
+
+            // 해당 댓글은 처리가 완료되었으므로 최적화를 위해 리스트에서 제외
+            iterator.remove();
+        }
+
+        return commentDtoList;
+    }
+
+    private CommentDto convertCommentDtoAndDeleteCheck(User user, Comment comment) {
+        if (comment.isDelete()) {
+            return CommentDto.builder()
+                    .id(comment.getCommentPk().getId())
+                    .isDelete(true)
+                    .depth(comment.getDepth())
+                    .permission(false)
+                    .build();
+        }
+        return CommentDto.builder()
+                .id(comment.getCommentPk().getId())
+                .isDelete(false)
+                .user(User.builder()
+                        .usercode(comment.getUsercode())
+                        .nickname(comment.getUser().getNickname())
+                        .build())
+                .createdAt(comment.getCreatedAt())
+                .content(comment.getContent())
+                .depth(comment.getDepth())
+                .permission(checkPermission(user, comment))
+                .build();
+    }
+
+    private boolean checkPermission(User user, Comment comment) {
+        return comment.getUsercode() == user.getUsercode() || user.getLevel() >= 3;
     }
 }
