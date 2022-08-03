@@ -12,4 +12,5 @@ public class ModifyPostDto {
     private String category;
     private String title;
     private String content;
+    private boolean anonymous;
 }

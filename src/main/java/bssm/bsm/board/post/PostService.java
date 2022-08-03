@@ -48,10 +48,7 @@ public class PostService {
         posts.forEach(post ->
                 postDtoList.add(PostDto.builder()
                             .id(post.getPostPk().getId())
-                            .user(User.builder()
-                                    .usercode(post.getUsercode())
-                                    .nickname(post.getUser().getNickname())
-                                    .build())
+                            .user(getUserData(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
                             .title(post.getTitle())
                             .createdAt(post.getCreatedAt())
@@ -81,10 +78,7 @@ public class PostService {
         Post post = getPost(postIdDto);
 
         return ViewPostResponseDto.builder()
-                .user(User.builder()
-                        .usercode(post.getUsercode())
-                        .nickname(post.getUser().getNickname())
-                        .build())
+                .user(getUserData(post.getUser(), post.isAnonymous()))
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
@@ -107,6 +101,7 @@ public class PostService {
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .createdAt(new Date())
+                .anonymous(dto.isAnonymous())
                 .build();
 
         return postRepository.insertPost(newPost, boardId);
@@ -123,6 +118,7 @@ public class PostService {
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
         post.setCategory(postCategory);
+        post.setAnonymous(dto.isAnonymous());
 
         postRepository.save(post);
     }
@@ -176,5 +172,18 @@ public class PostService {
         }
         // 카테고리 있는 게시글
         return postRepository.findByPostPkLessThanAndCategoryAndDeleteOrderByPostPkIdDesc(postId, postCategory, false, pageable);
+    }
+
+    private User getUserData(User user, boolean anonymous) {
+        if (anonymous) {
+            return User.builder()
+                    .usercode(-1)
+                    .nickname("ㅇㅇ")
+                    .build();
+        }
+        return User.builder()
+                .usercode(user.getUsercode())
+                .nickname(user.getNickname())
+                .build();
     }
 }

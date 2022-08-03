@@ -64,4 +64,7 @@ public class Post {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int totalLikes;
+
+    @Column(nullable = false, name = "is_anonymous")
+    private boolean anonymous;
 }
