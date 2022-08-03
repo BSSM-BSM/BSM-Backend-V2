@@ -79,6 +79,7 @@ public class PostService {
 
         return ViewPostResponseDto.builder()
                 .user(getUserData(post.getUser(), post.isAnonymous()))
+                .category(post.getCategoryId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .createdAt(post.getCreatedAt())
