@@ -26,6 +26,15 @@ public class CommentController {
         commentService.writeComment(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), dto);
     }
 
+    @DeleteMapping("/{boardId}/{postId}/{commentId}")
+    public void deleteComment(
+            @PathVariable String boardId,
+            @PathVariable int postId,
+            @PathVariable int commentId
+    ) {
+        commentService.deleteComment(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), commentId);
+    }
+
     @GetMapping("/{boardId}/{postId}")
     public List<CommentDto> viewComment(
             @PathVariable String boardId,

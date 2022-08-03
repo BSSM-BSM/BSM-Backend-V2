@@ -11,6 +11,7 @@ import bssm.bsm.board.post.entities.Post;
 import bssm.bsm.board.post.entities.PostPk;
 import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.board.utils.BoardUtil;
+import bssm.bsm.global.exceptions.ForbiddenException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,30 @@ public class CommentService {
                 .content(dto.getContent())
                 .build();
         commentRepository.insertComment(comment, board.getId(), postIdDto.getPostId());
+    }
+
+    public void deleteComment(User user, PostIdDto postIdDto, int commnetId) {
+        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        PostPk postPk = PostPk.builder()
+                .id(postIdDto.getPostId())
+                .board(board)
+                .build();
+        Post post = postRepository.findByPostPkAndDelete(postPk, false).orElseThrow(
+                () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
+        );
+
+        Comment comment = commentRepository.findById(
+                CommentPk.builder()
+                        .id(commnetId)
+                        .post(post)
+                        .build()
+        ).orElseThrow(
+                () -> {throw new NotFoundException("댓글을 찾을 수 없습니다");}
+        );
+        if (!checkPermission(user, comment)) throw new ForbiddenException("권한이 없습니다");
+
+        comment.setDelete(true);
+        commentRepository.save(comment);
     }
 
     public List<CommentDto> viewCommentList(User user, PostIdDto postIdDto) {
