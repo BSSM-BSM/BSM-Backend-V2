@@ -67,8 +67,11 @@ public class CommentService {
                 .depth(dto.getDepth())
                 .parentId(parentComment == null? null: parentComment.getCommentPk().getId())
                 .content(dto.getContent())
+                .anonymous(dto.isAnonymous())
                 .build();
         commentRepository.insertComment(comment, board.getId(), postIdDto.getPostId());
+        post.setTotalComments(post.getTotalComments() + 1);
+        postRepository.save(post);
     }
 
     public void deleteComment(User user, PostIdDto postIdDto, int commnetId) {
@@ -93,6 +96,8 @@ public class CommentService {
 
         comment.setDelete(true);
         commentRepository.save(comment);
+        post.setTotalComments(post.getTotalComments() - 1);
+        postRepository.save(post);
     }
 
     public List<CommentDto> viewCommentList(User user, PostIdDto postIdDto) {
@@ -167,10 +172,7 @@ public class CommentService {
         return CommentDto.builder()
                 .id(comment.getCommentPk().getId())
                 .isDelete(false)
-                .user(User.builder()
-                        .usercode(comment.getUsercode())
-                        .nickname(comment.getUser().getNickname())
-                        .build())
+                .user(getUserData(comment.getUser(), comment.isAnonymous()))
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .depth(comment.getDepth())
@@ -180,5 +182,18 @@ public class CommentService {
 
     private boolean checkPermission(User user, Comment comment) {
         return comment.getUsercode() == user.getUsercode() || user.getLevel() >= 3;
+    }
+
+    private User getUserData(User user, boolean anonymous) {
+        if (anonymous) {
+            return User.builder()
+                    .usercode(-1)
+                    .nickname("ㅇㅇ")
+                    .build();
+        }
+        return User.builder()
+                .usercode(user.getUsercode())
+                .nickname(user.getNickname())
+                .build();
     }
 }

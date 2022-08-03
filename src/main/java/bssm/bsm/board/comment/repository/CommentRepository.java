@@ -23,6 +23,7 @@ public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
     //     depth,
     //     parent_id,
     //     content,
+    //     is_anonymous,
     //     created_at)
     // SELECT
     //     COUNT(id)+1,
@@ -33,12 +34,13 @@ public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
     //     :#{#c.depth},
     //     :#{#c.parentId},
     //     :#{#c.content},
+    //     :#{#c.anonymous},
     //     now()
     // FROM comment
     // WHERE
     //     board_id = :#{#boardId} AND
     //     post_id = :#{#postId}
-    @Query(value = "INSERT INTO comment (id, board_id, post_id, usercode, have_child, depth, parent_id, content, created_at) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#c.usercode}, :#{#c.haveChild}, :#{#c.depth}, :#{#c.parentId}, :#{#c.content}, now() FROM comment WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
+    @Query(value = "INSERT INTO comment (id, board_id, post_id, usercode, have_child, depth, parent_id, content, is_anonymous, created_at) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#c.usercode}, :#{#c.haveChild}, :#{#c.depth}, :#{#c.parentId}, :#{#c.content}, :#{#c.anonymous}, now() FROM comment WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
     @Modifying
     int insertComment(@Param("c") Comment comment, @Param("boardId") String boardId, @Param("postId") int postId);
 }

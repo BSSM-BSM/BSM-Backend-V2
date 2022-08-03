@@ -50,9 +50,6 @@ public class Post {
     @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
     private String content;
 
-    @CreatedDate
-    private Date createdAt;
-
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
     private int hit;
@@ -67,4 +64,7 @@ public class Post {
 
     @Column(nullable = false, name = "is_anonymous")
     private boolean anonymous;
+
+    @CreatedDate
+    private Date createdAt;
 }

@@ -12,4 +12,5 @@ public class WriteCommentDto {
     private int depth;
     private int parentId;
     private String content;
+    private boolean anonymous;
 }

@@ -58,6 +58,9 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(nullable = false, name = "is_anonymous")
+    private boolean anonymous;
+
     @CreatedDate
     private Date createdAt;
 }
