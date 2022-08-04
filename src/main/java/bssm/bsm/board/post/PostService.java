@@ -3,21 +3,28 @@ package bssm.bsm.board.post;
 import bssm.bsm.board.post.dto.PostDto;
 import bssm.bsm.board.post.dto.request.*;
 import bssm.bsm.board.post.dto.response.PostListResponseDto;
+import bssm.bsm.board.post.dto.response.UploadFileResponseDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
 import bssm.bsm.board.post.entities.*;
 import bssm.bsm.board.post.repositories.PostRepository;
 import bssm.bsm.board.utils.BoardUtil;
 import bssm.bsm.board.utils.PostCategoryUtil;
+import bssm.bsm.global.exceptions.BadRequestException;
 import bssm.bsm.global.exceptions.ForbiddenException;
+import bssm.bsm.global.exceptions.InternalServerException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +36,10 @@ public class PostService {
     private final BoardUtil boardUtil;
     private final PostCategoryUtil categoryUtil;
     private final PostRepository postRepository;
+    @Value("${PUBLIC_RESOURCE_PATH}")
+    private String PUBLIC_RESOURCE_PATH;
+    @Value("${BOARD_UPLOAD_RESOURCE_PATH}")
+    private String BOARD_UPLOAD_RESOURCE_PATH;
 
     public PostListResponseDto postList(String boardId, GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
@@ -131,6 +142,34 @@ public class PostService {
         post.setDelete(true);
 
         postRepository.save(post);
+    }
+
+    public UploadFileResponseDto uploadFile(MultipartFile file) {
+        if (file.getOriginalFilename() == null) throw new BadRequestException();
+        String fileExt = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+        String fileId = String.valueOf(new Date().getTime());
+
+        File dir = new File(PUBLIC_RESOURCE_PATH + BOARD_UPLOAD_RESOURCE_PATH);
+        File newFile = new File(dir.getPath() + "/" + fileId + "." + fileExt);
+        if (!dir.exists()) {
+            try {
+                dir.mkdirs();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new InternalServerException("파일 업로드에 실패하였습니다");
+            }
+        }
+
+        try {
+            file.transferTo(newFile);
+            return UploadFileResponseDto.builder()
+                    .id(fileId)
+                    .fileExt(fileExt)
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new InternalServerException("파일 업로드에 실패하였습니다");
+        }
     }
 
     private Post getPost(PostIdDto dto) {

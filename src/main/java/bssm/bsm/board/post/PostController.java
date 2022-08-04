@@ -4,11 +4,13 @@ import bssm.bsm.board.post.dto.request.GetPostListDto;
 import bssm.bsm.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.board.post.dto.request.PostIdDto;
 import bssm.bsm.board.post.dto.request.WritePostDto;
+import bssm.bsm.board.post.dto.response.UploadFileResponseDto;
 import bssm.bsm.board.post.dto.response.PostListResponseDto;
 import bssm.bsm.board.post.dto.response.ViewPostResponseDto;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("post")
@@ -51,5 +53,10 @@ public class PostController {
     @DeleteMapping("/{boardId}/{postId}")
     public void deletePost(@PathVariable String boardId, @PathVariable int postId) {
         postService.deletePost(userUtil.getCurrentUser(), new PostIdDto(boardId, postId));
+    }
+
+    @PostMapping("upload")
+    public UploadFileResponseDto uploadFile(@RequestParam MultipartFile file) {
+        return postService.uploadFile(file);
     }
 }
