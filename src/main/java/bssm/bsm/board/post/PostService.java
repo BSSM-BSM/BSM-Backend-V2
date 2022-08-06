@@ -44,7 +44,7 @@ public class PostService {
     public PostListResponseDto postList(String boardId, GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
-        boolean pageMode = dto.getStartPostId() < 0;
+        final boolean pageMode = dto.getStartPostId() < 0;
 
         List<Post> posts;
         Page<Post> pages = null;

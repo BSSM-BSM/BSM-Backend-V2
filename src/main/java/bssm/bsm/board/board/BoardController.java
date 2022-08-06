@@ -1,7 +1,6 @@
 package bssm.bsm.board.board;
 
 import bssm.bsm.board.board.dto.response.BoardResponseDto;
-import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -17,17 +17,17 @@ public class UserInfo implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton((GrantedAuthority) () -> user.getId());
+        return Collections.singleton((GrantedAuthority) () -> user.getUniqNo());
     }
 
     @Override
     public String getPassword() {
-        return user.getPw();
+        return user.getUniqNo();
     }
 
     @Override
     public String getUsername() {
-        return user.getId();
+        return user.getUniqNo();
     }
 
     @Override

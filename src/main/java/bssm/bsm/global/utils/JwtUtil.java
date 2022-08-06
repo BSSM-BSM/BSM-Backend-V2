@@ -33,7 +33,6 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("code", user.getUsercode());
         claims.put("level", user.getLevel());
-        claims.put("id", user.getId());
         claims.put("nickname", user.getNickname());
         claims.put("uniqNo", user.getUniqNo());
         claims.put("enrolledAt", user.getStudent().getEnrolledAt());
@@ -91,7 +90,6 @@ public class JwtUtil {
         return User.builder()
                 .usercode(claims.get("code", Integer.class))
                 .level(claims.get("level", Integer.class))
-                .id(claims.get("id", String.class))
                 .nickname(claims.get("nickname", String.class))
                 .student(student)
                 .uniqNo(claims.get("uniqNo", String.class))

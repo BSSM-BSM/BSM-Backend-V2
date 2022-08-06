@@ -1,26 +1,25 @@
 package bssm.bsm.user;
 
-import bssm.bsm.global.exceptions.BadRequestException;
-import bssm.bsm.global.exceptions.ConflictException;
 import bssm.bsm.global.exceptions.NotFoundException;
-import bssm.bsm.user.dto.request.UserLoginDto;
-import bssm.bsm.user.dto.request.UserSignUpDto;
-import bssm.bsm.user.dto.request.UserUpdateNicknameDto;
-import bssm.bsm.user.dto.request.UserUpdatePwDto;
+import bssm.bsm.user.dto.BsmOauthResourceResponseDto;
+import bssm.bsm.user.dto.BsmOauthTokenResponseDto;
+import bssm.bsm.user.dto.UserSignUpDto;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.StudentRepository;
 import bssm.bsm.user.repositories.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Date;
-import java.util.HexFormat;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,91 +27,71 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final OkHttpClient httpClient;
+    private final ObjectMapper objectMapper;
+
+    @Value("${OAUTH_BSM_CLIENT_ID}")
+    private String OAUTH_BSM_CLIENT_ID;
+    @Value("${OAUTH_BSM_CLIENT_SECRET}")
+    private String OAUTH_BSM_CLIENT_SECRET;
+    @Value("${OAUTH_BSM_TOKEN_URL}")
+    private String OAUTH_BSM_TOKEN_URL;
+    @Value("${OAUTH_BSM_RESOURCE_URL}")
+    private String OAUTH_BSM_RESOURCE_URL;
 
     @Transactional
-    public User signUp(UserSignUpDto dto) throws Exception {
-        User user = dto.toEntity();
-
-        if (!dto.getPw().equals(dto.getCheckPw())) {
-            throw new BadRequestException("비밀번호 재입력이 맞지 않습니다");
-        }
-
-        userRepository.findById(user.getId())
-                .ifPresent(u -> {throw new ConflictException("이미 존재하는 ID 입니다");});
-        userRepository.findByNickname(user.getNickname())
-                .ifPresent(u -> {throw new ConflictException("이미 존재하는 닉네임 입니다");});
-
-        Student studentInfo = studentRepository.findByAuthCode(dto.getAuthCode())
-                .orElseThrow(() -> {throw new NotFoundException("인증코드를 찾을 수 없습니다");});
-        if (!studentInfo.isCodeAvailable()) {
-            throw new BadRequestException("이미 사용된 인증코드입니다");
-        }
-
-        studentInfo.setCodeAvailable(false);
-        user.setUniqNo(studentInfo.getUniqNo());
-        user.setLevel(studentInfo.getLevel());
-        user.setCreatedAt(new Date());
-
-        // 비밀번호 솔트 값 생성
-        String salt = createSalt();
-        // 비밀번호 암호화
-        String newPw = encryptPw(salt, dto.getPw());
-
-        user.setPwSalt(salt);
-        user.setPw(newPw);
+    public User signUp(UserSignUpDto dto, String oauthToken) {
+        Student student = studentRepository.findByEnrolledAtAndGradeAndClassNoAndStudentNo(dto.getEnrolledAt(), dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
+                () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
+        );
+        User user = User.builder()
+                .usercode(dto.getUsercode())
+                .nickname(dto.getNickname())
+                .uniqNo(student.getUniqNo())
+                .student(student)
+                .level(student.getLevel())
+                .oauthToken(oauthToken)
+                .build();
         userRepository.save(user);
 
         return user;
     }
 
-    public User login(UserLoginDto dto) throws Exception {
-        User user = userRepository.findById(dto.getId())
-                .orElseThrow(() -> {throw new BadRequestException("id 또는 password가 맞지 않습니다");});
-        if (!user.getPw().equals(encryptPw(user.getPwSalt(), dto.getPw()))) {
-            throw new BadRequestException("id 또는 password가 맞지 않습니다");
+    public User bsmOauth(String authCode) throws IOException {
+        // Payload
+        Map<String, String> getTokenPayload = new HashMap<>();
+        getTokenPayload.put("clientId", OAUTH_BSM_CLIENT_ID);
+        getTokenPayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
+        getTokenPayload.put("authCode", authCode);
+
+        // Request
+        Request tokenRequest = new Request.Builder()
+                .url(OAUTH_BSM_TOKEN_URL)
+                .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getTokenPayload)))
+                .build();
+        Response tokenResponse = httpClient.newCall(tokenRequest).execute();
+        BsmOauthTokenResponseDto tokenResponseDto = objectMapper.readValue(tokenResponse.body().string(), BsmOauthTokenResponseDto.class);
+
+        // Payload
+        Map<String, String> getResourcePayload = new HashMap<>();
+        getResourcePayload.put("clientId", OAUTH_BSM_CLIENT_ID);
+        getResourcePayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
+        getResourcePayload.put("token", tokenResponseDto.getToken());
+
+        // Request
+        Request resourceRequest = new Request.Builder()
+                .url(OAUTH_BSM_RESOURCE_URL)
+                .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getResourcePayload)))
+                .build();
+        Response resourceResponse = httpClient.newCall(resourceRequest).execute();
+        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(resourceResponse.body().string(), BsmOauthResourceResponseDto.class);
+
+        Optional<User> user = userRepository.findById(resourceResponseDto.getUser().getUsercode());
+
+        // SignUp
+        if (user.isEmpty()) {
+            return signUp(resourceResponseDto.getUser(), tokenResponseDto.getToken());
         }
-        return user;
-    }
-
-    public void updatePw(User user, UserUpdatePwDto dto) throws Exception {
-        if (!dto.getNewPw().equals(dto.getCheckNewPw())) {
-            throw new BadRequestException("비밀번호 재입력이 맞지 않습니다");
-        }
-        User newUser = userRepository.findById(user.getUsercode()).orElseThrow(
-                () -> {throw new NotFoundException("유저를 찾을 수 없습니다");}
-        );
-
-        // 새 비밀번호 솔트 값 생성
-        String newSalt = createSalt();
-        // 새 비밀번호 암호화
-        String newPw = encryptPw(newSalt, dto.getNewPw());
-
-        newUser.setPw(newPw);
-        newUser.setPwSalt(newSalt);
-        userRepository.save(newUser);
-    }
-
-    public User updateNickname(User user, UserUpdateNicknameDto dto) throws Exception {
-        userRepository.findByNickname(dto.getNewNickname())
-                .ifPresent(u -> {throw new ConflictException("이미 존재하는 닉네임 입니다");});
-        User newUser = userRepository.findById(user.getUsercode()).orElseThrow(
-                () -> {throw new NotFoundException("유저를 찾을 수 없습니다");}
-        );
-
-        newUser.setNickname(dto.getNewNickname());
-        return userRepository.save(newUser);
-    }
-
-    private String createSalt() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[32];
-        secureRandom.nextBytes(randomBytes);
-        return HexFormat.of().formatHex(randomBytes);
-    }
-
-    private String encryptPw(String salt, String pw) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA3-256");
-        messageDigest.update((salt + pw).getBytes(StandardCharsets.UTF_8));
-        return HexFormat.of().formatHex(messageDigest.digest());
+        return user.get();
     }
 }

@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user/login", "/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/user/oauth/bsm").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable();

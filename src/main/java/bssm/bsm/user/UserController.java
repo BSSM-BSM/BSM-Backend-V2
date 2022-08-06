@@ -3,12 +3,7 @@ package bssm.bsm.user;
 import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.global.utils.UserUtil;
-import bssm.bsm.user.dto.request.UserLoginDto;
-import bssm.bsm.user.dto.request.UserSignUpDto;
-import bssm.bsm.user.dto.request.UserUpdateNicknameDto;
-import bssm.bsm.user.dto.request.UserUpdatePwDto;
 import bssm.bsm.user.dto.response.UserLoginResponseDto;
-import bssm.bsm.user.dto.response.UserUpdateNicknameResponseDto;
 import bssm.bsm.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,30 +42,9 @@ public class UserController {
         res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
     }
 
-    @PostMapping()
-    public void signUp(@RequestBody UserSignUpDto dto) throws Exception {
-        userService.signUp(dto);
-    }
-
-    @PutMapping("pw")
-    public void updatePw(@RequestBody UserUpdatePwDto dto) throws Exception {
-        userService.updatePw(userUtil.getCurrentUser(), dto);
-    }
-
-    @PutMapping("nickname")
-    public UserUpdateNicknameResponseDto updateNickname(@RequestBody UserUpdateNicknameDto dto, HttpServletResponse res) throws Exception {
-        User user = userService.updateNickname(userUtil.getCurrentUser(), dto);
-
-        String token = jwtUtil.createAccessToken(user);
-        Cookie tokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
-        res.addCookie(tokenCookie);
-
-        return new UserUpdateNicknameResponseDto(token);
-    }
-
-    @PostMapping("login")
-    public UserLoginResponseDto login(@RequestBody UserLoginDto dto, HttpServletResponse res) throws Exception {
-        User user = userService.login(dto);
+    @GetMapping("/oauth/bsm")
+    public UserLoginResponseDto bsmOauth(@RequestParam(value = "code") String authCode, HttpServletResponse res) throws Exception {
+        User user = userService.bsmOauth(authCode);
 
         String token = jwtUtil.createAccessToken(user);
         String refreshToken = jwtUtil.createRefreshToken(user.getUsercode());

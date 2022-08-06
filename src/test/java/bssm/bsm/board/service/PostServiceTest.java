@@ -23,7 +23,7 @@ public class PostServiceTest {
     @Test
     @DisplayName("게시글 작성 테스트")
     void writePost() {
-        WritePostDto dto = new WritePostDto("test", "게시글 제목", "게시글 내용");
+        WritePostDto dto = new WritePostDto("test", "게시글 제목", "게시글 내용", false);
         User user = User.builder()
                 .usercode(10)
                 .build();
