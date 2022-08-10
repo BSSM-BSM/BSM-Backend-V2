@@ -6,9 +6,7 @@ import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.RefreshTokenRepository;
-import bssm.bsm.user.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +26,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
