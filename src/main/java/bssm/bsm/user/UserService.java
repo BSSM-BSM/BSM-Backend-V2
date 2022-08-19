@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -70,7 +71,10 @@ public class UserService {
                 .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getTokenPayload)))
                 .build();
         Response tokenResponse = httpClient.newCall(tokenRequest).execute();
-        BsmOauthTokenResponseDto tokenResponseDto = objectMapper.readValue(tokenResponse.body().string(), BsmOauthTokenResponseDto.class);
+        if (tokenResponse.code() == 404) {
+            throw new NotFoundException("인증 코드를 찾을 수 없습니다");
+        }
+        BsmOauthTokenResponseDto tokenResponseDto = objectMapper.readValue(Objects.requireNonNull(tokenResponse.body()).string(), BsmOauthTokenResponseDto.class);
 
         // Payload
         Map<String, String> getResourcePayload = new HashMap<>();
@@ -84,7 +88,7 @@ public class UserService {
                 .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getResourcePayload)))
                 .build();
         Response resourceResponse = httpClient.newCall(resourceRequest).execute();
-        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(resourceResponse.body().string(), BsmOauthResourceResponseDto.class);
+        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(Objects.requireNonNull(resourceResponse.body()).string(), BsmOauthResourceResponseDto.class);
 
         Optional<User> user = userRepository.findById(resourceResponseDto.getUser().getUsercode());
 

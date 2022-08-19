@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository <Student, String> {
 
+    Optional<Student> findByGradeAndClassNoAndStudentNo(int grade, int classNo, int studentNo);
+
     Optional<Student> findByEnrolledAtAndGradeAndClassNoAndStudentNo(int enrolledAt, int grade, int classNo, int studentNo);
 }

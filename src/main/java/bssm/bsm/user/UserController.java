@@ -42,7 +42,7 @@ public class UserController {
         res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
     }
 
-    @GetMapping("/oauth/bsm")
+    @PostMapping("/oauth/bsm")
     public UserLoginResponseDto bsmOauth(@RequestParam(value = "code") String authCode, HttpServletResponse res) throws Exception {
         User user = userService.bsmOauth(authCode);
 

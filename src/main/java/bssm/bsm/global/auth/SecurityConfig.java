@@ -48,7 +48,7 @@ public class SecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/user/oauth/bsm").permitAll()
+                .antMatchers(HttpMethod.POST, "/user/oauth/bsm").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable();

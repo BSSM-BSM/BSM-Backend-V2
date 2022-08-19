@@ -14,10 +14,8 @@ public class BsmOauthResourceResponseDto {
 
     private UserSignUpDto user;
 
-    @SuppressWarnings("unchecked")
     @JsonProperty("user")
     private void unpackNested(Map<String, Object> user) {
-        user.forEach((a, i) -> System.out.println(a + " | " + i));
         this.user = UserSignUpDto.builder()
                 .usercode((int) user.get("code"))
                 .nickname((String) user.get("nickname"))
