@@ -1,7 +1,10 @@
 package bssm.bsm.school.meister;
 
-import bssm.bsm.school.meister.dto.request.FindStudentInfoDto;
+import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.school.meister.dto.request.GetMeisterPointDto;
+import bssm.bsm.school.meister.dto.response.MeisterScoreAndPointResponseDto;
+import bssm.bsm.user.entities.Student;
+import bssm.bsm.user.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,14 +19,10 @@ import java.io.IOException;
 public class MeisterController {
 
     private final MeisterService meisterService;
+    private final StudentRepository studentRepository;
 
-    @PostMapping("score")
-    public String getScore(@RequestBody FindStudentInfoDto dto) throws IOException {
-        return meisterService.getScore(dto);
-    }
-
-    @PostMapping("point")
-    public String getPoint(@RequestBody GetMeisterPointDto dto) throws IOException {
-        return meisterService.getPoint(dto);
+    @PostMapping("scoreAndPoint")
+    public MeisterScoreAndPointResponseDto getScoreAndPoint(@RequestBody GetMeisterPointDto dto) throws IOException {
+        return meisterService.getScoreAndPoint(dto);
     }
 }

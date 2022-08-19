@@ -2,8 +2,8 @@ package bssm.bsm.school.meister;
 
 import bssm.bsm.global.exceptions.BadRequestException;
 import bssm.bsm.global.exceptions.NotFoundException;
-import bssm.bsm.school.meister.dto.request.FindStudentInfoDto;
 import bssm.bsm.school.meister.dto.request.GetMeisterPointDto;
+import bssm.bsm.school.meister.dto.response.MeisterScoreAndPointResponseDto;
 import bssm.bsm.user.entities.Student;
 import bssm.bsm.user.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,8 @@ import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +25,39 @@ public class MeisterService {
     private final String LOGIN_URL = "https://bssm.meistergo.co.kr/inc/common_json.php";
     private final String LOGOUT_URL = "https://bssm.meistergo.co.kr/logout.php";
 
-    public String getScore(FindStudentInfoDto dto) throws IOException {
+    public MeisterScoreAndPointResponseDto getScoreAndPoint(GetMeisterPointDto dto) throws IOException {
         Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
                 () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
         );
 
+        login(student, dto.getPw().isEmpty()? student.getUniqNo(): dto.getPw());
+
+        String scoreHtmlContent = getScore(student);
+        String pointHtmlContent = getPoint();
+
+        int positivePoint = 0;
+        int negativePoint = 0;
+
+        Matcher positiveMatch = Pattern.compile("(\\(상점 : [0-9]*)").matcher(pointHtmlContent);
+        Matcher negativeMatch = Pattern.compile("(\\(벌점 : [0-9]*)").matcher(pointHtmlContent);
+
+        while (positiveMatch.find()) {
+            positivePoint += Integer.parseInt(positiveMatch.group().split(" ")[2]);
+        }
+        while (negativeMatch.find()) {
+            negativePoint += Integer.parseInt(negativeMatch.group().split(" ")[2]);
+        }
+
+        logout();
+        return MeisterScoreAndPointResponseDto.builder()
+                .scoreHtmlContent(scoreHtmlContent)
+                .pointHtmlContent(pointHtmlContent)
+                .positivePoint(positivePoint)
+                .negativePoint(negativePoint)
+                .build();
+    }
+
+    private String getScore(Student student) throws IOException {
         Request request = new Request.Builder()
                 .url(GET_SCORE_URL)
                 .post(new MultipartBody.Builder()
@@ -42,13 +72,7 @@ public class MeisterService {
         return response.body().string();
     }
 
-    public String getPoint(GetMeisterPointDto dto) throws IOException {
-        Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
-                () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
-        );
-
-        login(student, dto.getPw().isEmpty()? student.getUniqNo(): dto.getPw());
-
+    private String getPoint() throws IOException {
         Request request = new Request.Builder()
                 .url(GET_POINT_URL)
                 .post(new MultipartBody.Builder()
@@ -61,8 +85,6 @@ public class MeisterService {
                 .build();
 
         Response response = httpClient.newCall(request).execute();
-
-        logout();
         return response.body().string();
     }
 
