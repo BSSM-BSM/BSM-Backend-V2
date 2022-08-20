@@ -85,6 +85,7 @@ public class JwtUtil {
                 .classNo(claims.get("classNo", Integer.class))
                 .studentNo(claims.get("studentNo", Integer.class))
                 .name(claims.get("name", String.class))
+                .uniqNo(claims.get("uniqNo", String.class))
                 .build();
 
         return User.builder()

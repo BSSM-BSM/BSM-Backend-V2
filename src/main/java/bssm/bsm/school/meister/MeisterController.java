@@ -1,15 +1,13 @@
 package bssm.bsm.school.meister;
 
-import bssm.bsm.global.exceptions.NotFoundException;
-import bssm.bsm.school.meister.dto.request.GetMeisterPointDto;
-import bssm.bsm.school.meister.dto.response.MeisterScoreAndPointResponseDto;
-import bssm.bsm.user.entities.Student;
+import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.school.meister.dto.request.MeisterDetailRequestDto;
+import bssm.bsm.school.meister.dto.response.MeisterDetailResponseDto;
+import bssm.bsm.school.meister.dto.response.MeisterResponseDto;
 import bssm.bsm.user.repositories.StudentRepository;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -19,10 +17,15 @@ import java.io.IOException;
 public class MeisterController {
 
     private final MeisterService meisterService;
-    private final StudentRepository studentRepository;
+    private final UserUtil userUtil;
 
-    @PostMapping("scoreAndPoint")
-    public MeisterScoreAndPointResponseDto getScoreAndPoint(@RequestBody GetMeisterPointDto dto) throws IOException {
-        return meisterService.getScoreAndPoint(dto);
+    @PostMapping("detail")
+    public MeisterDetailResponseDto getDetail(@RequestBody MeisterDetailRequestDto dto) throws IOException {
+        return meisterService.getDetail(dto);
+    }
+
+    @GetMapping
+    public MeisterResponseDto get() {
+        return meisterService.get(userUtil.getCurrentUser());
     }
 }
