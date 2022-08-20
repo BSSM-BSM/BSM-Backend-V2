@@ -17,6 +17,8 @@ import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,13 +57,14 @@ public class MeisterService {
     }
 
     public MeisterResponseDto get(User user) {
-        MeisterInfo meisterInfo = meisterInfoRepository.findById(user.getUniqNo()).orElseGet(
+        MeisterInfo meisterInfo = meisterInfoRepository.findByUniqNoAndModifiedAtGreaterThan(user.getUniqNo(), LocalDate.now().atStartOfDay()).orElseGet(
                 () -> getAndUpdateMeisterInfo(user.getStudent())
         );
 
         if (meisterInfo.isLoginError()) {
             return MeisterResponseDto.builder()
                     .uniqNo(meisterInfo.getUniqNo())
+                    .lastUpdate(meisterInfo.getModifiedAt())
                     .loginError(true)
                     .build();
         }
@@ -70,6 +73,27 @@ public class MeisterService {
                 .score(meisterInfo.getScore())
                 .positivePoint(meisterInfo.getPositivePoint())
                 .negativePoint(meisterInfo.getNegativePoint())
+                .lastUpdate(meisterInfo.getModifiedAt())
+                .loginError(false)
+                .build();
+    }
+
+    public MeisterResponseDto updateAndGet(User user) {
+        MeisterInfo meisterInfo = getAndUpdateMeisterInfo(user.getStudent());
+
+        if (meisterInfo.isLoginError()) {
+            return MeisterResponseDto.builder()
+                    .uniqNo(meisterInfo.getUniqNo())
+                    .lastUpdate(meisterInfo.getModifiedAt())
+                    .loginError(true)
+                    .build();
+        }
+
+        return MeisterResponseDto.builder()
+                .score(meisterInfo.getScore())
+                .positivePoint(meisterInfo.getPositivePoint())
+                .negativePoint(meisterInfo.getNegativePoint())
+                .lastUpdate(meisterInfo.getModifiedAt())
                 .loginError(false)
                 .build();
     }

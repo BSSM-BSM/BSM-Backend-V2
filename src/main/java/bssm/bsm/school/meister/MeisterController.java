@@ -28,4 +28,9 @@ public class MeisterController {
     public MeisterResponseDto get() {
         return meisterService.get(userUtil.getCurrentUser());
     }
+
+    @GetMapping("update")
+    public MeisterResponseDto updateAndGet() {
+        return meisterService.updateAndGet(userUtil.getCurrentUser());
+    }
 }
