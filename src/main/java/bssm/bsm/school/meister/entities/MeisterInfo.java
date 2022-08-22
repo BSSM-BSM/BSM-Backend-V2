@@ -1,6 +1,5 @@
 package bssm.bsm.school.meister.entities;
 
-import bssm.bsm.global.entity.BaseTimeEntity;
 import bssm.bsm.user.entities.Student;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
