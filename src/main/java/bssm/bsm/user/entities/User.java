@@ -9,12 +9,12 @@ import java.util.Date;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
-@Table
+@Table(name = "user_tbl")
 public class User extends BaseTimeEntity {
 
     @Id
