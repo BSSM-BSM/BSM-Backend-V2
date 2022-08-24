@@ -25,8 +25,8 @@ public class MeisterInfo {
     @Column(length = 10)
     private String uniqNo;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uniqNo", insertable = false, updatable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "uniqNo", nullable = false, insertable = false, updatable = false)
     private Student student;
 
     @Column(nullable = false)
@@ -36,11 +36,17 @@ public class MeisterInfo {
     @Column(nullable = false)
     private int score;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String scoreRawData;
+
     @Column(nullable = false)
     private int positivePoint;
 
     @Column(nullable = false)
     private int negativePoint;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String pointRawData;
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;

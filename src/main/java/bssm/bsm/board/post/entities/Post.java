@@ -40,7 +40,7 @@ public class Post {
     private int usercode;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "usercode", insertable = false, updatable = false)
+    @JoinColumn(name = "usercode", nullable = false, insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private User user;
 

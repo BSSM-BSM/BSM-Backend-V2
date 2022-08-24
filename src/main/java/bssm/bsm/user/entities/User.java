@@ -28,7 +28,7 @@ public class User extends BaseTimeEntity {
     private String uniqNo;
 
     @OneToOne
-    @JoinColumn(name = "uniqNo", insertable = false, updatable = false)
+    @JoinColumn(name = "uniqNo", nullable = false, insertable = false, updatable = false)
     private Student student;
 
     @Column(nullable = false)

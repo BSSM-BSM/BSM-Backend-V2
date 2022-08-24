@@ -6,6 +6,7 @@ import bssm.bsm.global.exceptions.InternalServerException;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.school.meister.dto.request.MeisterDetailRequestDto;
 import bssm.bsm.school.meister.dto.response.MeisterDetailResponseDto;
+import bssm.bsm.school.meister.dto.response.MeisterRankingDto;
 import bssm.bsm.school.meister.dto.response.MeisterResponseDto;
 import bssm.bsm.school.meister.entities.MeisterInfo;
 import bssm.bsm.school.meister.repositories.MeisterInfoRepository;
@@ -14,14 +15,16 @@ import bssm.bsm.user.entities.User;
 import bssm.bsm.user.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,8 +51,10 @@ public class MeisterService {
                 MeisterInfo.builder()
                         .uniqNo(student.getUniqNo())
                         .score(detailInfo.getScore())
+                        .scoreRawData(detailInfo.getScoreHtmlContent())
                         .positivePoint(detailInfo.getPositivePoint())
                         .negativePoint(detailInfo.getNegativePoint())
+                        .pointRawData(detailInfo.getPointHtmlContent())
                         .build()
         );
 
@@ -122,13 +127,63 @@ public class MeisterService {
                 entity
                         .uniqNo(student.getUniqNo())
                         .score(responseDto.getScore())
+                        .scoreRawData(responseDto.getScoreHtmlContent())
                         .positivePoint(responseDto.getPositivePoint())
                         .negativePoint(responseDto.getNegativePoint())
+                        .pointRawData(responseDto.getPointHtmlContent())
                         .build()
         );
     }
 
-    public MeisterDetailResponseDto getAllInfo(Student student) throws IOException {
+    public List<MeisterRankingDto> getRanking() {
+        return meisterInfoRepository.findByOrderByScoreDesc().stream()
+                .map(meisterInfo -> {
+                    Student student = meisterInfo.getStudent();
+                    return MeisterRankingDto.builder()
+                            .score(meisterInfo.getScore())
+                            .positivePoint(meisterInfo.getPositivePoint())
+                            .negativePoint(meisterInfo.getNegativePoint())
+                            .lastUpdate(meisterInfo.getModifiedAt())
+                            .student(Student.builder()
+                                    .grade(student.getGrade())
+                                    .classNo(student.getClassNo())
+                                    .studentNo(student.getStudentNo())
+                                    .name(student.getName())
+                                    .build()
+                            )
+                            .loginError(meisterInfo.isLoginError())
+                            .build();
+                    }
+                ).collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    private void updateAllStudentsInfo() {
+        // 재학중인 학생 리스트 불러오기
+        List<Student> studentList = studentRepository.findByGradeNot(0);
+        List<MeisterInfo> meisterInfoList = meisterInfoRepository.findAll();
+
+        studentList.forEach(student -> {
+            // 이미 정보가 저장되어있는 학생인지 확인
+            Optional<MeisterInfo> info = meisterInfoList.stream()
+                    .filter(meisterInfo -> meisterInfo.getStudent().equals(student))
+                    .findFirst();
+
+            // 정보를 자동으로 불러올 수 없다면 다음 학생 불러옴
+            if (info.isPresent() && info.get().isLoginError()) return;
+
+            // 정보 업데이트
+            getAndUpdateMeisterInfo(student);
+            try {
+                // 마이스터 인증제 서버에 부담이 가지않도록 1초 지연
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private MeisterDetailResponseDto getAllInfo(Student student) throws IOException {
         String scoreHtmlContent = getScore(student);
         String pointHtmlContent = getPoint();
 

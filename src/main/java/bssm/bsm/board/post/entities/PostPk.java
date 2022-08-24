@@ -19,6 +19,6 @@ public class PostPk implements Serializable {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(nullable = false)
     private Board board;
 }
