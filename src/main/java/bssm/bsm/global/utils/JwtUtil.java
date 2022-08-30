@@ -1,9 +1,12 @@
 package bssm.bsm.global.utils;
 
-import bssm.bsm.user.entities.RefreshToken;
-import bssm.bsm.user.entities.Student;
-import bssm.bsm.user.entities.User;
-import bssm.bsm.user.repositories.RefreshTokenRepository;
+import bssm.bsm.domain.user.entities.RefreshToken;
+import bssm.bsm.domain.user.entities.Student;
+import bssm.bsm.domain.user.entities.Teacher;
+import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.repositories.RefreshTokenRepository;
+import bssm.bsm.domain.user.type.UserRole;
+import bssm.bsm.global.exceptions.NotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HexFormat;
+
+import static bssm.bsm.domain.user.type.UserRole.TEACHER;
 
 @Component
 @RequiredArgsConstructor
@@ -31,10 +36,10 @@ public class JwtUtil {
 
     public String createAccessToken(User user) {
         Claims claims = Jwts.claims();
-        claims.put("code", user.getUsercode());
+        claims.put("code", user.getCode());
         claims.put("level", user.getLevel());
         claims.put("nickname", user.getNickname());
-        claims.put("uniqNo", user.getUniqNo());
+        claims.put("studentId", user.getStudentId());
         claims.put("enrolledAt", user.getStudent().getEnrolledAt());
         claims.put("grade", user.getStudent().getGrade());
         claims.put("classNo", user.getStudent().getClassNo());
@@ -43,7 +48,7 @@ public class JwtUtil {
         return createToken(claims, JWT_TOKEN_MAX_TIME);
     }
 
-    public String createRefreshToken(int usercode) {
+    public String createRefreshToken(Long userCode) {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
@@ -51,7 +56,7 @@ public class JwtUtil {
 
         RefreshToken newRefreshToken = RefreshToken.builder()
                 .token(newRandomToken)
-                .usercode(usercode)
+                .userCode(userCode)
                 .isAvailable(true)
                 .createdAt(new Date())
                 .build();
@@ -79,22 +84,36 @@ public class JwtUtil {
 
     public User getUser(String token) {
         Claims claims = extractAllClaims(token);
-        Student student = Student.builder()
-                .enrolledAt(claims.get("enrolledAt", Integer.class))
-                .grade(claims.get("grade", Integer.class))
-                .classNo(claims.get("classNo", Integer.class))
-                .studentNo(claims.get("studentNo", Integer.class))
-                .name(claims.get("name", String.class))
-                .uniqNo(claims.get("uniqNo", String.class))
-                .build();
 
-        return User.builder()
-                .usercode(claims.get("code", Integer.class))
-                .level(claims.get("level", Integer.class))
-                .nickname(claims.get("nickname", String.class))
-                .student(student)
-                .uniqNo(claims.get("uniqNo", String.class))
-                .build();
+        User.UserBuilder userBuilder = User.builder()
+                .code(claims.get("code", Long.class))
+                .role(UserRole.valueOf(claims.get("role", String.class)))
+                .nickname(claims.get("nickname", String.class));
+
+        switch (UserRole.valueOf(claims.get("role", String.class))) {
+            case STUDENT -> {
+                Student student = Student.builder()
+                        .enrolledAt(claims.get("enrolledAt", Integer.class))
+                        .grade(claims.get("grade", Integer.class))
+                        .classNo(claims.get("classNo", Integer.class))
+                        .studentNo(claims.get("studentNo", Integer.class))
+                        .name(claims.get("name", String.class))
+                        .build();
+                return userBuilder
+                        .student(student)
+                        .studentId(claims.get("studentId", String.class))
+                        .build();
+            }
+            case TEACHER -> {
+                return userBuilder
+                        .teacher(
+                                Teacher.builder()
+                                        .name(claims.get("name", String.class))
+                                        .build()
+                        ).build();
+            }
+            default -> throw new NotFoundException("유저의 역할을 찾을 수 없습니다");
+        }
     }
 
     private Claims extractAllClaims(String token) {

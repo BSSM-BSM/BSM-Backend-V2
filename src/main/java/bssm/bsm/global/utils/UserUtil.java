@@ -1,7 +1,7 @@
 package bssm.bsm.global.utils;
 
 import bssm.bsm.global.auth.UserInfo;
-import bssm.bsm.user.entities.User;
+import bssm.bsm.domain.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package bssm.bsm.global.auth;
 
-import bssm.bsm.user.entities.User;
+import bssm.bsm.domain.user.entities.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,17 +17,17 @@ public class UserInfo implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton((GrantedAuthority) () -> user.getUniqNo());
+        return Collections.singleton((GrantedAuthority) () -> String.valueOf(user.getCode()));
     }
 
     @Override
     public String getPassword() {
-        return user.getUniqNo();
+        return user.getOauthToken();
     }
 
     @Override
     public String getUsername() {
-        return user.getUniqNo();
+        return String.valueOf(user.getCode());
     }
 
     @Override
