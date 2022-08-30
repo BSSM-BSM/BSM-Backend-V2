@@ -22,13 +22,13 @@ public class UserController {
     private final UserService userService;
     private final UserUtil userUtil;
 
-    @Value("${TOKEN_COOKIE_NAME}")
+    @Value("${env.cookie.name.token}")
     private String TOKEN_COOKIE_NAME;
-    @Value("${REFRESH_TOKEN_COOKIE_NAME}")
+    @Value("${env.cookie.name.refreshToken}")
     private String REFRESH_TOKEN_COOKIE_NAME;
-    @Value("${JWT_TOKEN_MAX_TIME}")
+    @Value("${env.jwt.time.token}")
     private long JWT_TOKEN_MAX_TIME;
-    @Value("${JWT_REFRESH_TOKEN_MAX_TIME}")
+    @Value("${env.jwt.time.refreshToken}")
     private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     @GetMapping()

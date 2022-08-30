@@ -8,12 +8,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshToken {
 
     @Id
@@ -33,4 +29,13 @@ public class RefreshToken {
 
     @Column(nullable = false)
     private Date createdAt;
+
+    @Builder
+    public RefreshToken(String token, boolean isAvailable, Long userCode, User user, Date createdAt) {
+        this.token = token;
+        this.isAvailable = isAvailable;
+        this.userCode = userCode;
+        this.user = user;
+        this.createdAt = createdAt;
+    }
 }

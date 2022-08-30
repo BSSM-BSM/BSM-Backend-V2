@@ -27,24 +27,32 @@ import static bssm.bsm.domain.user.type.UserRole.TEACHER;
 public class JwtUtil {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    @Value("${JWT_SECRET_KEY}")
+    @Value("${env.jwt.secretKey}")
     private String JWT_SECRET_KEY;
-    @Value("${JWT_TOKEN_MAX_TIME}")
+    @Value("${env.jwt.time.token}")
     private long JWT_TOKEN_MAX_TIME;
-    @Value("${JWT_REFRESH_TOKEN_MAX_TIME}")
+    @Value("${env.jwt.time.refreshToken}")
     private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     public String createAccessToken(User user) {
         Claims claims = Jwts.claims();
         claims.put("code", user.getCode());
-        claims.put("level", user.getLevel());
+        claims.put("role", user.getRole());
         claims.put("nickname", user.getNickname());
-        claims.put("studentId", user.getStudentId());
-        claims.put("enrolledAt", user.getStudent().getEnrolledAt());
-        claims.put("grade", user.getStudent().getGrade());
-        claims.put("classNo", user.getStudent().getClassNo());
-        claims.put("studentNo", user.getStudent().getStudentNo());
-        claims.put("name", user.getStudent().getName());
+
+        switch (user.getRole()) {
+            case STUDENT -> {
+                claims.put("studentId", user.getStudentId());
+                claims.put("enrolledAt", user.getStudent().getEnrolledAt());
+                claims.put("grade", user.getStudent().getGrade());
+                claims.put("classNo", user.getStudent().getClassNo());
+                claims.put("studentNo", user.getStudent().getStudentNo());
+                claims.put("name", user.getStudent().getName());
+            }
+            case TEACHER -> {
+                claims.put("name", user.getTeacher().getName());
+            }
+        }
         return createToken(claims, JWT_TOKEN_MAX_TIME);
     }
 
@@ -98,6 +106,7 @@ public class JwtUtil {
                         .classNo(claims.get("classNo", Integer.class))
                         .studentNo(claims.get("studentNo", Integer.class))
                         .name(claims.get("name", String.class))
+                        .studentId(claims.get("studentId", String.class))
                         .build();
                 return userBuilder
                         .student(student)

@@ -36,13 +36,13 @@ public class UserService {
     private final OkHttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    @Value("${OAUTH_BSM_CLIENT_ID}")
+    @Value("${env.oauth.bsm.client.id}")
     private String OAUTH_BSM_CLIENT_ID;
-    @Value("${OAUTH_BSM_CLIENT_SECRET}")
+    @Value("${env.oauth.bsm.client.secret}")
     private String OAUTH_BSM_CLIENT_SECRET;
-    @Value("${OAUTH_BSM_TOKEN_URL}")
+    @Value("${env.oauth.bsm.url.token}")
     private String OAUTH_BSM_TOKEN_URL;
-    @Value("${OAUTH_BSM_RESOURCE_URL}")
+    @Value("${env.oauth.bsm.url.resource}")
     private String OAUTH_BSM_RESOURCE_URL;
 
     @Transactional

@@ -41,9 +41,9 @@ public class PostService {
     private final BoardUtil boardUtil;
     private final PostCategoryUtil categoryUtil;
     private final PostRepository postRepository;
-    @Value("${PUBLIC_RESOURCE_PATH}")
+    @Value("${env.file.path.base}")
     private String PUBLIC_RESOURCE_PATH;
-    @Value("${BOARD_UPLOAD_RESOURCE_PATH}")
+    @Value("${env.file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
     public PostListResponseDto postList(String boardId, GetPostListDto dto) {

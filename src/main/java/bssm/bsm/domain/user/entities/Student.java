@@ -1,20 +1,12 @@
 package bssm.bsm.domain.user.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student {
 
     @Id
@@ -38,4 +30,15 @@ public class Student {
 
     @Column(length = 32)
     private String email;
+
+    @Builder
+    public Student(String studentId, int enrolledAt, int grade, int classNo, int studentNo, String name, String email) {
+        this.studentId = studentId;
+        this.enrolledAt = enrolledAt;
+        this.grade = grade;
+        this.classNo = classNo;
+        this.studentNo = studentNo;
+        this.name = name;
+        this.email = email;
+    }
 }

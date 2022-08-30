@@ -9,13 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class CookieUtil {
 
-    @Value("${COOKIE_DOMAIN}")
+    @Value("${env.cookie.domain}")
     private String COOKIE_DOMAIN;
+    @Value("${env.cookie.secure}")
+    private boolean COOKIE_SECURE;
 
     public Cookie createCookie(String name, String value, long time) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
+        cookie.setSecure(COOKIE_SECURE);
         cookie.setMaxAge((int) time);
         cookie.setPath("/");
         cookie.setDomain(COOKIE_DOMAIN);

@@ -30,11 +30,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
 
-    @Value("${TOKEN_COOKIE_NAME}")
+    @Value("${env.cookie.name.token}")
     private String TOKEN_COOKIE_NAME;
-    @Value("${REFRESH_TOKEN_COOKIE_NAME}")
+    @Value("${env.cookie.name.refreshToken}")
     private String REFRESH_TOKEN_COOKIE_NAME;
-    @Value("${JWT_TOKEN_MAX_TIME}")
+    @Value("${env.jwt.time.token}")
     private long JWT_TOKEN_MAX_TIME;
 
     @Override

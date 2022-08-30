@@ -38,4 +38,9 @@ public class MeisterController {
     public List<MeisterRankingDto> getRanking() {
         return meisterService.getRanking();
     }
+
+    @GetMapping("test")
+    public void test() {
+        meisterService.updateAllStudentsInfo();
+    }
 }

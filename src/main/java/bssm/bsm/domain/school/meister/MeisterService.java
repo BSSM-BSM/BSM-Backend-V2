@@ -158,7 +158,7 @@ public class MeisterService {
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
-    private void updateAllStudentsInfo() {
+    public void updateAllStudentsInfo() {
         // 재학중인 학생 리스트 불러오기
         List<Student> studentList = studentRepository.findByGradeNot(0);
         List<MeisterInfo> meisterInfoList = meisterInfoRepository.findAll();
