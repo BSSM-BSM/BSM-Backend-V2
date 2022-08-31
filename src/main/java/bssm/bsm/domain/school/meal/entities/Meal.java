@@ -1,27 +1,18 @@
 package bssm.bsm.domain.school.meal.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meal {
 
     @Id
-    @JsonIgnore
     private LocalDate date;
 
     @Column(columnDefinition = "TEXT")
@@ -32,4 +23,20 @@ public class Meal {
 
     @Column(columnDefinition = "TEXT")
     private String dinner;
+
+    public Meal(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setMorning(String morning) {
+        this.morning = morning;
+    }
+
+    public void setLunch(String lunch) {
+        this.lunch = lunch;
+    }
+
+    public void setDinner(String dinner) {
+        this.dinner = dinner;
+    }
 }

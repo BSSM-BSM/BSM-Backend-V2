@@ -113,9 +113,7 @@ public class UserService {
                 .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getResourcePayload)))
                 .build();
         Response resourceResponse = httpClient.newCall(resourceRequest).execute();
-        String str = Objects.requireNonNull(resourceResponse.body()).string();
-        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(str, BsmOauthResourceResponseDto.class);
-        System.out.println(str);
+        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(Objects.requireNonNull(resourceResponse.body()).string(), BsmOauthResourceResponseDto.class);
 
         Optional<User> user = userRepository.findById(resourceResponseDto.getUserCode());
 

@@ -157,8 +157,8 @@ public class MeisterService {
                 ).collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void updateAllStudentsInfo() {
+    @Scheduled(cron = "0 0 0 25 * ?")
+    private void updateAllStudentsInfo() {
         // 재학중인 학생 리스트 불러오기
         List<Student> studentList = studentRepository.findByGradeNot(0);
         List<MeisterInfo> meisterInfoList = meisterInfoRepository.findAll();
