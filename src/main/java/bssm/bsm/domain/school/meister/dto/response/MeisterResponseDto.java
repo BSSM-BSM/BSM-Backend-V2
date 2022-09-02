@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MeisterResponseDto {
 
-    private Integer score;
+    private Float score;
     private Integer positivePoint;
     private Integer negativePoint;
     private LocalDateTime lastUpdate;

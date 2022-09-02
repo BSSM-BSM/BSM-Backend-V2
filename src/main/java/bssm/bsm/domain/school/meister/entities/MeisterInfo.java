@@ -34,7 +34,7 @@ public class MeisterInfo {
     private boolean loginError;
 
     @Column(nullable = false)
-    private int score;
+    private float score;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String scoreRawData;

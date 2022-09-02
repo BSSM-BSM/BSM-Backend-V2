@@ -9,7 +9,7 @@ public class MeisterDetailResponseDto {
 
     private String scoreHtmlContent;
     private String pointHtmlContent;
-    private int score;
+    private float score;
     private int positivePoint;
     private int negativePoint;
 }

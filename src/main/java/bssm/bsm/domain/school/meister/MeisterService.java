@@ -187,16 +187,16 @@ public class MeisterService {
         String scoreHtmlContent = getScore(student);
         String pointHtmlContent = getPoint();
 
-        int score = 0;
+        float score = 0;
         int positivePoint = 0;
         int negativePoint = 0;
 
-        Matcher scoreMatch = Pattern.compile("<td>\\d*<\\/td>").matcher(scoreHtmlContent);
+        Matcher scoreMatch = Pattern.compile("<td>[\\d.]*<\\/td>").matcher(scoreHtmlContent);
         Matcher positiveMatch = Pattern.compile("(\\(상점 : [0-9]*)").matcher(pointHtmlContent);
         Matcher negativeMatch = Pattern.compile("(\\(벌점 : [0-9]*)").matcher(pointHtmlContent);
 
         if (scoreMatch.find()) {
-            score = Integer.parseInt(scoreMatch.group().split("<")[1].substring(3));
+            score = Float.parseFloat(scoreMatch.group().split("<")[1].substring(3));
         }
         while (positiveMatch.find()) {
             positivePoint += Integer.parseInt(positiveMatch.group().split(" ")[2]);

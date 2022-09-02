@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MeisterRankingDto {
 
-    private Integer score;
+    private Float score;
     private Integer positivePoint;
     private Integer negativePoint;
     private LocalDateTime lastUpdate;
