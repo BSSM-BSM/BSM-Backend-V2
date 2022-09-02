@@ -1,5 +1,6 @@
 package bssm.bsm.domain.school.meister;
 
+import bssm.bsm.domain.school.meister.dto.request.UpdateMeisterPrivateRequestDto;
 import bssm.bsm.global.utils.UserUtil;
 import bssm.bsm.domain.school.meister.dto.request.MeisterDetailRequestDto;
 import bssm.bsm.domain.school.meister.dto.response.MeisterDetailResponseDto;
@@ -37,5 +38,10 @@ public class MeisterController {
     @GetMapping("ranking")
     public List<MeisterRankingDto> getRanking() {
         return meisterService.getRanking();
+    }
+
+    @PutMapping("privateRanking")
+    public void updatePrivateRanking(@RequestBody UpdateMeisterPrivateRequestDto dto) {
+        meisterService.updatePrivateRanking(userUtil.getCurrentUser(), dto.isPrivateRanking());
     }
 }

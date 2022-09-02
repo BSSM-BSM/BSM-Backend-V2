@@ -1,5 +1,6 @@
 package bssm.bsm.domain.school.meister.dto.response;
 
+import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
 import bssm.bsm.domain.user.entities.Student;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,6 @@ public class MeisterRankingDto {
     private Integer positivePoint;
     private Integer negativePoint;
     private LocalDateTime lastUpdate;
-    private Student student;
-    private Boolean loginError;
+    private MeisterStudentResponseDto student;
+    private MeisterInfoResultType result;
 }

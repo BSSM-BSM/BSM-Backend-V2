@@ -1,7 +1,9 @@
 package bssm.bsm.domain.school.meister;
 
 import bssm.bsm.domain.school.meister.dto.response.MeisterRankingDto;
+import bssm.bsm.domain.school.meister.dto.response.MeisterStudentResponseDto;
 import bssm.bsm.domain.school.meister.entities.MeisterInfo;
+import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
 import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.StudentRepository;
@@ -37,6 +39,15 @@ public class MeisterService {
     private final String GET_POINT_URL = "https://bssm.meistergo.co.kr/ss/ss_a40j.php";
     private final String LOGIN_URL = "https://bssm.meistergo.co.kr/inc/common_json.php";
     private final String LOGOUT_URL = "https://bssm.meistergo.co.kr/logout.php";
+
+    public void updatePrivateRanking(User user, boolean privateRanking) {
+        MeisterInfo meisterInfo = meisterInfoRepository.findById(user.getStudentId()).orElseThrow(
+                () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
+        );
+
+        meisterInfo.setPrivateRanking(privateRanking);
+        meisterInfoRepository.save(meisterInfo);
+    }
 
     public MeisterDetailResponseDto getDetail(MeisterDetailRequestDto dto) throws IOException {
         Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
@@ -139,25 +150,31 @@ public class MeisterService {
         return meisterInfoRepository.findByOrderByScoreDesc().stream()
                 .map(meisterInfo -> {
                     Student student = meisterInfo.getStudent();
-                    return MeisterRankingDto.builder()
-                            .score(meisterInfo.getScore())
-                            .positivePoint(meisterInfo.getPositivePoint())
-                            .negativePoint(meisterInfo.getNegativePoint())
-                            .lastUpdate(meisterInfo.getModifiedAt())
-                            .student(Student.builder()
+                    MeisterRankingDto.MeisterRankingDtoBuilder builder = MeisterRankingDto.builder()
+                            .student(MeisterStudentResponseDto.builder()
                                     .grade(student.getGrade())
                                     .classNo(student.getClassNo())
                                     .studentNo(student.getStudentNo())
                                     .name(student.getName())
                                     .build()
                             )
-                            .loginError(meisterInfo.isLoginError())
+                            .result(convertResult(meisterInfo.isLoginError(), meisterInfo.isPrivateRanking()));
+
+                    if (meisterInfo.isPrivateRanking()) {
+                        return builder.build();
+                    }
+
+                    return builder
+                            .score(meisterInfo.getScore())
+                            .positivePoint(meisterInfo.getPositivePoint())
+                            .negativePoint(meisterInfo.getNegativePoint())
+                            .lastUpdate(meisterInfo.getModifiedAt())
                             .build();
                     }
                 ).collect(Collectors.toList());
     }
 
-    @Scheduled(cron = "0 0 0 25 * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     private void updateAllStudentsInfo() {
         // 재학중인 학생 리스트 불러오기
         List<Student> studentList = studentRepository.findByGradeNot(0);
@@ -282,5 +299,11 @@ public class MeisterService {
                         .get()
                         .build()
         ).execute();
+    }
+
+    private MeisterInfoResultType convertResult(boolean loginError, boolean isPrivate) {
+        if (isPrivate) return MeisterInfoResultType.PRIVATE;
+        if (loginError) return MeisterInfoResultType.LOGIN_ERROR;
+        return MeisterInfoResultType.SUCCESS;
     }
 }
