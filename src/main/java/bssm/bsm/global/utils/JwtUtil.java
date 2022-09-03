@@ -80,7 +80,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(date)
-                .setExpiration(new Date(date.getTime() + time))
+                .setExpiration(new Date(date.getTime() + (time * 1000)))
                 .signWith(Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }

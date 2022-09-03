@@ -47,6 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Cookie refreshTokenCookie = cookieUtil.getCookie(req, REFRESH_TOKEN_COOKIE_NAME);
             // 엑세스 토큰 인증에 실패했으면서 리프레시 토큰도 없으면 인증 실패
             if (refreshTokenCookie == null) {
+                res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
                 filterChain.doFilter(req, res);
                 return;
             }
@@ -67,10 +68,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 res.addCookie(newTokenCookie);
 
                 authentication(newToken, req);
-            } catch (NotFoundException e1) {
-              throw e1;
             } catch (Exception e1) {
                 e1.printStackTrace();
+                res.addCookie(cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0));
+                res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
                 throw new UnAuthorizedException("다시 로그인 해주세요");
             }
         }
