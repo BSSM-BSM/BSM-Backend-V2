@@ -2,7 +2,9 @@ package bssm.bsm.domain.school.meister;
 
 import bssm.bsm.domain.school.meister.dto.response.MeisterRankingDto;
 import bssm.bsm.domain.school.meister.dto.response.MeisterStudentResponseDto;
+import bssm.bsm.domain.school.meister.entities.MeisterData;
 import bssm.bsm.domain.school.meister.entities.MeisterInfo;
+import bssm.bsm.domain.school.meister.repositories.MeisterDataRepository;
 import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
 import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.User;
@@ -19,9 +21,11 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -34,6 +38,7 @@ public class MeisterService {
 
     private final StudentRepository studentRepository;
     private final MeisterInfoRepository meisterInfoRepository;
+    private final MeisterDataRepository meisterDataRepository;
     private final OkHttpClient httpClient;
     private final String GET_SCORE_URL = "https://bssm.meistergo.co.kr/_suCert/bssm/B002/jnv_201j.php";
     private final String GET_POINT_URL = "https://bssm.meistergo.co.kr/ss/ss_a40j.php";
@@ -58,75 +63,91 @@ public class MeisterService {
 
         MeisterDetailResponseDto detailInfo = getAllInfo(student);
 
-        meisterInfoRepository.save(
-                MeisterInfo.builder()
-                        .studentId(student.getStudentId())
-                        .score(detailInfo.getScore())
-                        .scoreRawData(detailInfo.getScoreHtmlContent())
-                        .positivePoint(detailInfo.getPositivePoint())
-                        .negativePoint(detailInfo.getNegativePoint())
-                        .pointRawData(detailInfo.getPointHtmlContent())
-                        .build()
-        );
+        MeisterData meisterData = findOrCreateMeisterData(student);
+        meisterData.setScore(detailInfo.getScore());
+        meisterData.setScoreRawData(detailInfo.getScoreHtmlContent());
+        meisterData.setPositivePoint(detailInfo.getPositivePoint());
+        meisterData.setNegativePoint(detailInfo.getNegativePoint());
+        meisterData.setPointRawData(detailInfo.getPointHtmlContent());
+        meisterDataRepository.save(meisterData);
 
         return detailInfo;
     }
 
     public MeisterResponseDto get(User user) {
-        MeisterInfo meisterInfo = meisterInfoRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay()).orElseGet(
-                () -> getAndUpdateMeisterInfo(user.getStudent())
+        MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay()).orElseGet(
+                () -> getAndUpdateMeisterData(findOrCreateMeisterData(user.getStudent()))
         );
+        MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
         if (meisterInfo.isLoginError()) {
             return MeisterResponseDto.builder()
                     .uniqNo(meisterInfo.getStudentId())
-                    .lastUpdate(meisterInfo.getModifiedAt())
+                    .lastUpdate(LocalDateTime.now())
                     .loginError(true)
                     .build();
         }
 
         return MeisterResponseDto.builder()
-                .score(meisterInfo.getScore())
-                .positivePoint(meisterInfo.getPositivePoint())
-                .negativePoint(meisterInfo.getNegativePoint())
-                .lastUpdate(meisterInfo.getModifiedAt())
+                .score(meisterData.getScore())
+                .positivePoint(meisterData.getPositivePoint())
+                .negativePoint(meisterData.getNegativePoint())
+                .lastUpdate(meisterData.getModifiedAt())
                 .loginError(false)
                 .build();
     }
 
     public MeisterResponseDto updateAndGet(User user) {
-        MeisterInfo meisterInfo = getAndUpdateMeisterInfo(user.getStudent());
+        MeisterData meisterData = getAndUpdateMeisterData(findOrCreateMeisterData(user.getStudent()));
+        MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
         if (meisterInfo.isLoginError()) {
             return MeisterResponseDto.builder()
                     .uniqNo(meisterInfo.getStudentId())
-                    .lastUpdate(meisterInfo.getModifiedAt())
+                    .lastUpdate(LocalDateTime.now())
                     .loginError(true)
                     .build();
         }
 
         return MeisterResponseDto.builder()
-                .score(meisterInfo.getScore())
-                .positivePoint(meisterInfo.getPositivePoint())
-                .negativePoint(meisterInfo.getNegativePoint())
-                .lastUpdate(meisterInfo.getModifiedAt())
+                .score(meisterData.getScore())
+                .positivePoint(meisterData.getPositivePoint())
+                .negativePoint(meisterData.getNegativePoint())
+                .lastUpdate(meisterData.getModifiedAt())
                 .loginError(false)
                 .build();
     }
 
-    private MeisterInfo getAndUpdateMeisterInfo(Student student) {
+    @Transactional
+    private MeisterData findOrCreateMeisterData(Student student) {
+        return meisterDataRepository.findById(student.getStudentId()).orElseGet(
+                () -> {
+                    MeisterInfo meisterInfo = meisterInfoRepository.save(
+                            MeisterInfo.builder()
+                                    .studentId(student.getStudentId())
+                                    .student(student)
+                                    .loginError(true)
+                                    .build()
+                    );
+                    System.out.println("meisterInfo.getStudentId() = " + meisterInfo.getStudentId());
+                    return MeisterData.builder()
+                            .meisterId(meisterInfo.getStudentId())
+                            .build();
+                }
+        );
+    }
+
+    private MeisterData getAndUpdateMeisterData(MeisterData meisterData) {
+        MeisterInfo meisterInfo = meisterData.getMeisterInfo();
+
         MeisterDetailResponseDto responseDto;
-        MeisterInfo.MeisterInfoBuilder entity = MeisterInfo.builder();
         try {
-            login(student, student.getStudentId());
-            responseDto = getAllInfo(student);
+            login(meisterData.getStudent(), meisterData.getStudentId());
+            responseDto = getAllInfo(meisterData.getStudent());
         } catch (BadRequestException e) {
-            responseDto = MeisterDetailResponseDto.builder()
-                    .score(0)
-                    .positivePoint(0)
-                    .negativePoint(0)
-                    .build();
-            entity = entity.loginError(true);
+            meisterInfo.setLoginError(true);
+            meisterInfoRepository.save(meisterInfo);
+            return meisterData;
         } catch (HttpError e) {
             e.printStackTrace();
             throw e;
@@ -134,22 +155,23 @@ public class MeisterService {
             throw new InternalServerException();
         }
 
-        return meisterInfoRepository.save(
-                entity
-                        .studentId(student.getStudentId())
-                        .score(responseDto.getScore())
-                        .scoreRawData(responseDto.getScoreHtmlContent())
-                        .positivePoint(responseDto.getPositivePoint())
-                        .negativePoint(responseDto.getNegativePoint())
-                        .pointRawData(responseDto.getPointHtmlContent())
-                        .build()
-        );
+        if (meisterInfo.isLoginError()) {
+            meisterInfo.setLoginError(false);
+            meisterInfoRepository.save(meisterInfo);
+        }
+        meisterData.setScore(responseDto.getScore());
+        meisterData.setScoreRawData(responseDto.getScoreHtmlContent());
+        meisterData.setPositivePoint(responseDto.getPositivePoint());
+        meisterData.setNegativePoint(responseDto.getNegativePoint());
+        meisterData.setPointRawData(responseDto.getPointHtmlContent());
+
+        return meisterDataRepository.save(meisterData);
     }
 
     public List<MeisterRankingDto> getRanking() {
-        return meisterInfoRepository.findByOrderByScoreDesc().stream()
-                .map(meisterInfo -> {
-                    Student student = meisterInfo.getStudent();
+        return meisterDataRepository.findByOrderByScoreDesc().stream()
+                .map(meisterData -> {
+                    Student student = meisterData.getStudent();
                     MeisterRankingDto.MeisterRankingDtoBuilder builder = MeisterRankingDto.builder()
                             .student(MeisterStudentResponseDto.builder()
                                     .grade(student.getGrade())
@@ -158,17 +180,17 @@ public class MeisterService {
                                     .name(student.getName())
                                     .build()
                             )
-                            .result(convertResult(meisterInfo.isLoginError(), meisterInfo.isPrivateRanking()));
+                            .result(convertResult(meisterData.getMeisterInfo()));
 
-                    if (meisterInfo.isPrivateRanking()) {
+                    if (meisterData.getMeisterInfo().isPrivateRanking()) {
                         return builder.build();
                     }
 
                     return builder
-                            .score(meisterInfo.getScore())
-                            .positivePoint(meisterInfo.getPositivePoint())
-                            .negativePoint(meisterInfo.getNegativePoint())
-                            .lastUpdate(meisterInfo.getModifiedAt())
+                            .score(meisterData.getScore())
+                            .positivePoint(meisterData.getPositivePoint())
+                            .negativePoint(meisterData.getNegativePoint())
+                            .lastUpdate(meisterData.getModifiedAt())
                             .build();
                     }
                 ).collect(Collectors.toList());
@@ -178,19 +200,23 @@ public class MeisterService {
     private void updateAllStudentsInfo() {
         // 재학중인 학생 리스트 불러오기
         List<Student> studentList = studentRepository.findByGradeNot(0);
-        List<MeisterInfo> meisterInfoList = meisterInfoRepository.findAll();
+        List<MeisterData> meisterDataList = meisterDataRepository.findAll();
 
         studentList.forEach(student -> {
             // 이미 정보가 저장되어있는 학생인지 확인
-            Optional<MeisterInfo> info = meisterInfoList.stream()
-                    .filter(meisterInfo -> meisterInfo.getStudent().equals(student))
+            Optional<MeisterData> data = meisterDataList.stream()
+                    .filter(meisterData -> meisterData.getStudent().equals(student))
                     .findFirst();
 
             // 정보를 자동으로 불러올 수 없다면 다음 학생 불러옴
-            if (info.isPresent() && info.get().isLoginError()) return;
+            if (data.isPresent() && data.get().getMeisterInfo().isLoginError()) return;
 
             // 정보 업데이트
-            getAndUpdateMeisterInfo(student);
+            getAndUpdateMeisterData(
+                    data.orElseGet(
+                        () -> findOrCreateMeisterData(student)
+                    )
+            );
             try {
                 // 마이스터 인증제 서버에 부담이 가지않도록 1초 지연
                 Thread.sleep(1000);
@@ -301,9 +327,9 @@ public class MeisterService {
         ).execute();
     }
 
-    private MeisterInfoResultType convertResult(boolean loginError, boolean isPrivate) {
-        if (isPrivate) return MeisterInfoResultType.PRIVATE;
-        if (loginError) return MeisterInfoResultType.LOGIN_ERROR;
+    private MeisterInfoResultType convertResult(MeisterInfo meisterInfo) {
+        if (meisterInfo.isPrivateRanking()) return MeisterInfoResultType.PRIVATE;
+        if (meisterInfo.isLoginError()) return MeisterInfoResultType.LOGIN_ERROR;
         return MeisterInfoResultType.SUCCESS;
     }
 }
