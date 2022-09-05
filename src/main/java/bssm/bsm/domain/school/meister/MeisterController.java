@@ -37,7 +37,7 @@ public class MeisterController {
 
     @GetMapping("ranking")
     public List<MeisterRankingDto> getRanking() {
-        return meisterService.getRanking();
+        return meisterService.getRanking(userUtil.getCurrentUser());
     }
 
     @PutMapping("privateRanking")

@@ -9,10 +9,7 @@ import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
 import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.StudentRepository;
-import bssm.bsm.global.exceptions.BadRequestException;
-import bssm.bsm.global.exceptions.HttpError;
-import bssm.bsm.global.exceptions.InternalServerException;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.exceptions.*;
 import bssm.bsm.domain.school.meister.dto.request.MeisterDetailRequestDto;
 import bssm.bsm.domain.school.meister.dto.response.MeisterDetailResponseDto;
 import bssm.bsm.domain.school.meister.dto.response.MeisterResponseDto;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,6 +49,13 @@ public class MeisterService {
                 () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
         );
 
+        LocalDateTime availableTime = meisterInfo.getLastPrivateDate().plusDays(1);
+        if (LocalDateTime.now().isBefore(availableTime)) {
+            long diffSecond = Duration.between(LocalDateTime.now(), availableTime).getSeconds();
+            throw new ForbiddenException(String.valueOf(diffSecond));
+        }
+
+        meisterInfo.setLastPrivateDate(LocalDateTime.now());
         meisterInfo.setPrivateRanking(privateRanking);
         meisterInfoRepository.save(meisterInfo);
     }
@@ -131,6 +136,7 @@ public class MeisterService {
                     MeisterInfo meisterInfo = meisterInfoRepository.save(
                             MeisterInfo.builder()
                                     .studentId(student.getStudentId())
+                                    .lastPrivateDate(LocalDateTime.now())
                                     .build()
                     );
                     return MeisterData.builder()
@@ -173,7 +179,12 @@ public class MeisterService {
         return meisterDataRepository.save(meisterData);
     }
 
-    public List<MeisterRankingDto> getRanking() {
+    public List<MeisterRankingDto> getRanking(User user) {
+        Optional<MeisterInfo> info = meisterInfoRepository.findById(user.getStudentId());
+        if (info.isPresent() && info.get().isPrivateRanking()) {
+            throw new ForbiddenException("자신의 랭킹 공유를 허용해야 볼 수 있습니다");
+        }
+
         return meisterDataRepository.findByOrderByScoreDesc().stream()
                 .map(meisterData -> {
                     Student student = meisterData.getMeisterInfo().getStudent();

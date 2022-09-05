@@ -3,8 +3,6 @@ package bssm.bsm.domain.school.meister.entities;
 import bssm.bsm.domain.user.entities.Student;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,12 +28,16 @@ public class MeisterInfo {
     @ColumnDefault("false")
     private boolean privateRanking;
 
+    @Column(nullable = false)
+    private LocalDateTime lastPrivateDate;
+
     @Builder
-    public MeisterInfo(String studentId, Student student, boolean loginError, boolean privateRanking) {
+    public MeisterInfo(String studentId, Student student, boolean loginError, boolean privateRanking, LocalDateTime lastPrivateDate) {
         this.studentId = studentId;
         this.student = student;
         this.loginError = loginError;
         this.privateRanking = privateRanking;
+        this.lastPrivateDate = lastPrivateDate;
     }
 
     public void setStudent(Student student) {
@@ -44,6 +46,10 @@ public class MeisterInfo {
 
     public void setPrivateRanking(boolean privateRanking) {
         this.privateRanking = privateRanking;
+    }
+
+    public void setLastPrivateDate(LocalDateTime lastPrivateDate) {
+        this.lastPrivateDate = lastPrivateDate;
     }
 
     public void setLoginError(boolean loginError) {
