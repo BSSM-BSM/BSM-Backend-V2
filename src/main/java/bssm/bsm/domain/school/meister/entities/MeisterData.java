@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,30 +19,26 @@ import java.time.LocalDateTime;
 public class MeisterData {
 
     @Id
-    @Column(length = 10, nullable = false)
+    @Column(length = 10)
     private String studentId;
 
     @OneToOne
-    @JoinColumn(name = "studentId", nullable = false, insertable = false, updatable = false)
-    private Student student;
-
-    @Column(length = 10, nullable = false)
-    private String meisterId;
-
-    @OneToOne
-    @JoinColumn(name = "meisterId", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "meisterId", nullable = false)
     private MeisterInfo meisterInfo;
 
     @Column(nullable = false)
+    @ColumnDefault("0")
     private float score;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String scoreRawData;
 
     @Column(nullable = false)
+    @ColumnDefault("0")
     private int positivePoint;
 
     @Column(nullable = false)
+    @ColumnDefault("0")
     private int negativePoint;
 
     @Column(columnDefinition = "MEDIUMTEXT")
@@ -51,10 +48,8 @@ public class MeisterData {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public MeisterData(String studentId, Student student, String meisterId, MeisterInfo meisterInfo, float score, String scoreRawData, int positivePoint, int negativePoint, String pointRawData) {
+    public MeisterData(String studentId, MeisterInfo meisterInfo, float score, String scoreRawData, int positivePoint, int negativePoint, String pointRawData) {
         this.studentId = studentId;
-        this.student = student;
-        this.meisterId = meisterId;
         this.meisterInfo = meisterInfo;
         this.score = score;
         this.scoreRawData = scoreRawData;
@@ -81,5 +76,9 @@ public class MeisterData {
 
     public void setPointRawData(String pointRawData) {
         this.pointRawData = pointRawData;
+    }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }

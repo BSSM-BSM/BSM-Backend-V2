@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MeisterDataRepository extends JpaRepository<MeisterData, String> {
+
     Optional<MeisterData> findByStudentIdAndModifiedAtGreaterThan(String studentId, LocalDateTime today);
 
-    @EntityGraph(attributePaths = {"student", "meisterInfo"})
+    @EntityGraph(attributePaths = {"meisterInfo", "meisterInfo.student"})
     List<MeisterData> findByOrderByScoreDesc();
 }

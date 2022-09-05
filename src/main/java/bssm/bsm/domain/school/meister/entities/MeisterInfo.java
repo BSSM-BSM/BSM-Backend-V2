@@ -38,6 +38,10 @@ public class MeisterInfo {
         this.privateRanking = privateRanking;
     }
 
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     public void setPrivateRanking(boolean privateRanking) {
         this.privateRanking = privateRanking;
     }

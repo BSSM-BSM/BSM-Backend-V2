@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -62,15 +63,21 @@ public class MeisterService {
         login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
 
         MeisterDetailResponseDto detailInfo = getAllInfo(student);
-
         MeisterData meisterData = findOrCreateMeisterData(student);
+        MeisterInfo meisterInfo = meisterData.getMeisterInfo();
+        if (meisterInfo.isLoginError()) {
+            meisterInfo.setLoginError(false);
+            meisterInfoRepository.save(meisterInfo);
+        }
+
+        meisterData.setModifiedAt(LocalDateTime.now());
         meisterData.setScore(detailInfo.getScore());
         meisterData.setScoreRawData(detailInfo.getScoreHtmlContent());
         meisterData.setPositivePoint(detailInfo.getPositivePoint());
         meisterData.setNegativePoint(detailInfo.getNegativePoint());
         meisterData.setPointRawData(detailInfo.getPointHtmlContent());
-        meisterDataRepository.save(meisterData);
 
+        meisterDataRepository.save(meisterData);
         return detailInfo;
     }
 
@@ -118,20 +125,17 @@ public class MeisterService {
                 .build();
     }
 
-    @Transactional
     private MeisterData findOrCreateMeisterData(Student student) {
         return meisterDataRepository.findById(student.getStudentId()).orElseGet(
                 () -> {
                     MeisterInfo meisterInfo = meisterInfoRepository.save(
                             MeisterInfo.builder()
                                     .studentId(student.getStudentId())
-                                    .student(student)
-                                    .loginError(true)
                                     .build()
                     );
-                    System.out.println("meisterInfo.getStudentId() = " + meisterInfo.getStudentId());
                     return MeisterData.builder()
-                            .meisterId(meisterInfo.getStudentId())
+                            .studentId(student.getStudentId())
+                            .meisterInfo(meisterInfo)
                             .build();
                 }
         );
@@ -142,12 +146,13 @@ public class MeisterService {
 
         MeisterDetailResponseDto responseDto;
         try {
-            login(meisterData.getStudent(), meisterData.getStudentId());
-            responseDto = getAllInfo(meisterData.getStudent());
+            meisterData.setModifiedAt(LocalDateTime.now());
+            login(meisterInfo.getStudent(), meisterInfo.getStudentId());
+            responseDto = getAllInfo(meisterInfo.getStudent());
         } catch (BadRequestException e) {
             meisterInfo.setLoginError(true);
             meisterInfoRepository.save(meisterInfo);
-            return meisterData;
+            return meisterDataRepository.save(meisterData);
         } catch (HttpError e) {
             e.printStackTrace();
             throw e;
@@ -171,7 +176,7 @@ public class MeisterService {
     public List<MeisterRankingDto> getRanking() {
         return meisterDataRepository.findByOrderByScoreDesc().stream()
                 .map(meisterData -> {
-                    Student student = meisterData.getStudent();
+                    Student student = meisterData.getMeisterInfo().getStudent();
                     MeisterRankingDto.MeisterRankingDtoBuilder builder = MeisterRankingDto.builder()
                             .student(MeisterStudentResponseDto.builder()
                                     .grade(student.getGrade())
@@ -193,7 +198,8 @@ public class MeisterService {
                             .lastUpdate(meisterData.getModifiedAt())
                             .build();
                     }
-                ).collect(Collectors.toList());
+                ).sorted(MeisterRankingDto::compareTo)
+                .collect(Collectors.toList());
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
@@ -205,18 +211,19 @@ public class MeisterService {
         studentList.forEach(student -> {
             // 이미 정보가 저장되어있는 학생인지 확인
             Optional<MeisterData> data = meisterDataList.stream()
-                    .filter(meisterData -> meisterData.getStudent().equals(student))
+                    .filter(meisterData -> meisterData.getStudentId().equals(student.getStudentId()))
                     .findFirst();
 
             // 정보를 자동으로 불러올 수 없다면 다음 학생 불러옴
             if (data.isPresent() && data.get().getMeisterInfo().isLoginError()) return;
 
-            // 정보 업데이트
-            getAndUpdateMeisterData(
-                    data.orElseGet(
-                        () -> findOrCreateMeisterData(student)
-                    )
+            MeisterData meisterData = data.orElseGet(
+                    () -> findOrCreateMeisterData(student)
             );
+            meisterData.getMeisterInfo().setStudent(student);
+
+            // 정보 업데이트
+            getAndUpdateMeisterData(meisterData);
             try {
                 // 마이스터 인증제 서버에 부담이 가지않도록 1초 지연
                 Thread.sleep(1000);
