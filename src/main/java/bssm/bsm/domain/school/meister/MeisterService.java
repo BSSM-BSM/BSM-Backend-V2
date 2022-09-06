@@ -60,16 +60,25 @@ public class MeisterService {
         meisterInfoRepository.save(meisterInfo);
     }
 
-    public MeisterDetailResponseDto getDetail(MeisterDetailRequestDto dto) throws IOException {
+    public MeisterDetailResponseDto getDetail(User user, MeisterDetailRequestDto dto) throws IOException {
         Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
                 () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
         );
+        if (!student.getStudentId().equals(user.getStudentId())) {
+            permissionCheck(meisterInfoRepository.findById(user.getStudentId()).orElseThrow(
+                    () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
+            ));
+        }
 
-        login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
-
-        MeisterDetailResponseDto detailInfo = getAllInfo(student);
         MeisterData meisterData = findOrCreateMeisterData(student);
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
+        if (meisterInfo.isPrivateRanking() && !student.getStudentId().equals(user.getStudentId())) {
+            throw new ForbiddenException("정보 공유를 거부한 유저입니다");
+        }
+
+        login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
+        MeisterDetailResponseDto detailInfo = getAllInfo(student);
+
         if (meisterInfo.isLoginError()) {
             meisterInfo.setLoginError(false);
             meisterInfoRepository.save(meisterInfo);
@@ -180,10 +189,11 @@ public class MeisterService {
     }
 
     public List<MeisterRankingDto> getRanking(User user) {
-        Optional<MeisterInfo> info = meisterInfoRepository.findById(user.getStudentId());
-        if (info.isPresent() && info.get().isPrivateRanking()) {
-            throw new ForbiddenException("자신의 랭킹 공유를 허용해야 볼 수 있습니다");
-        }
+        permissionCheck(
+                meisterInfoRepository.findById(user.getStudentId()).orElseThrow(
+                        () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
+                )
+        );
 
         return meisterDataRepository.findByOrderByScoreDesc().stream()
                 .map(meisterData -> {
@@ -211,6 +221,15 @@ public class MeisterService {
                     }
                 ).sorted(MeisterRankingDto::compareTo)
                 .collect(Collectors.toList());
+    }
+
+    private void permissionCheck(MeisterInfo info) {
+        if (info.isLoginError()) {
+            throw new NotFoundException("자신의 마이스터 정보를 불러올 수 있도록 설정해야 볼 수 있습니다\n마이스터 인증제 사이트에서 계정의 비밀번호를 초기 비밀번호로 설정해주세요");
+        }
+        if (info.isPrivateRanking()) {
+            throw new ForbiddenException("자신의 랭킹 공유를 허용해야 볼 수 있습니다");
+        }
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

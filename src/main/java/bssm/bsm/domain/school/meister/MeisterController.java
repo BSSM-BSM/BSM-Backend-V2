@@ -22,7 +22,7 @@ public class MeisterController {
 
     @PostMapping("detail")
     public MeisterDetailResponseDto getDetail(@RequestBody MeisterDetailRequestDto dto) throws IOException {
-        return meisterService.getDetail(dto);
+        return meisterService.getDetail(userUtil.getCurrentUser(), dto);
     }
 
     @GetMapping
