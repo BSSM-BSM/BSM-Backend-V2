@@ -11,6 +11,7 @@ import bssm.bsm.domain.board.post.entities.Post;
 import bssm.bsm.domain.board.post.entities.PostPk;
 import bssm.bsm.domain.board.post.repositories.PostRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
+import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.global.exceptions.ForbiddenException;
 import bssm.bsm.global.exceptions.NotFoundException;
@@ -186,14 +187,14 @@ public class CommentService {
         return Objects.equals(comment.getUserCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
     }
 
-    private User getUserData(User user, boolean anonymous) {
+    private UserResponseDto getUserData(User user, boolean anonymous) {
         if (anonymous) {
-            return User.builder()
+            return UserResponseDto.builder()
                     .code((long) -1)
                     .nickname("ㅇㅇ")
                     .build();
         }
-        return User.builder()
+        return UserResponseDto.builder()
                 .code(user.getCode())
                 .nickname(user.getNickname())
                 .build();

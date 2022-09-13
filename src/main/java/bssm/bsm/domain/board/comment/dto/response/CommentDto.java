@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.comment.dto.response;
 
-import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 public class CommentDto {
 
     private int id;
-    private User user;
+    private UserResponseDto user;
     private boolean isDelete;
     private String content;
     private Date createdAt;

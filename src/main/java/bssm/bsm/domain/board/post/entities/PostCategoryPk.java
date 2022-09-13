@@ -14,7 +14,7 @@ import java.util.Objects;
 @Embeddable
 public class PostCategoryPk implements Serializable {
 
-    @Column(length = 10)
+    @Column(length = 16)
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)

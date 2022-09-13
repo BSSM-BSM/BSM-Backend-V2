@@ -24,13 +24,13 @@ public interface LikeRepository extends JpaRepository<PostLike, PostLikePk> {
     //     COUNT(id)+1,
     //     :#{#boardId},
     //     :#{#postId},
-    //     :#{#l.user_code},
+    //     :#{#l.userCode},
     //     :#{#l.like}
     // FROM post_like
     // WHERE
     //     board_id = :#{#boardId} AND
     //     post_id = :#{#postId}
-    @Query(value = "INSERT INTO post_like (id, board_id, post_id, user_code, is_like) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#l.usercode}, :#{#l.like} FROM post_like WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
+    @Query(value = "INSERT INTO post_like (id, board_id, post_id, user_code, is_like) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#l.userCode}, :#{#l.like} FROM post_like WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
     @Modifying
-    int insertLike(@Param("l") PostLike postLike, @Param("boardId") String boardId, @Param("postId") int postId);
+    void insertLike(@Param("l") PostLike postLike, @Param("boardId") String boardId, @Param("postId") int postId);
 }

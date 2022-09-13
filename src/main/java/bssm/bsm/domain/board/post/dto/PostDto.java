@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.post.dto;
 
-import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 public class PostDto {
 
     private int id;
-    private User user;
+    private UserResponseDto user;
     private String category;
     private String title;
     private Date createdAt;

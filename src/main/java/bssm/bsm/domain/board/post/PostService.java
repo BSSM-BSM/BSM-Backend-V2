@@ -12,6 +12,7 @@ import bssm.bsm.domain.board.utils.PostCategoryUtil;
 import bssm.bsm.domain.board.post.dto.request.GetPostListDto;
 import bssm.bsm.domain.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.global.exceptions.BadRequestException;
@@ -94,6 +95,7 @@ public class PostService {
         Post post = getPost(postIdDto);
 
         return ViewPostResponseDto.builder()
+                .id(postIdDto.getPostId())
                 .user(getUserData(post.getUser(), post.isAnonymous()))
                 .category(post.getCategoryId())
                 .title(post.getTitle())
@@ -219,14 +221,14 @@ public class PostService {
         return postRepository.findByPostPkLessThanAndCategoryAndDeleteOrderByPostPkIdDesc(postId, postCategory, false, pageable);
     }
 
-    private User getUserData(User user, boolean anonymous) {
+    private UserResponseDto getUserData(User user, boolean anonymous) {
         if (anonymous) {
-            return User.builder()
+            return UserResponseDto.builder()
                     .code((long) -1)
                     .nickname("ㅇㅇ")
                     .build();
         }
-        return User.builder()
+        return UserResponseDto.builder()
                 .code(user.getCode())
                 .nickname(user.getNickname())
                 .build();
