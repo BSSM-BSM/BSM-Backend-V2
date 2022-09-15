@@ -165,7 +165,14 @@ public class MeisterService {
             login(meisterInfo.getStudent(), meisterInfo.getStudentId());
             responseDto = getAllInfo(meisterInfo.getStudent());
         } catch (BadRequestException e) {
-            meisterInfo.setLoginError(true);
+            try {
+                meisterInfo.setLoginError(true);
+                responseDto = getScoreInfo(meisterInfo.getStudent());
+                meisterData.setScore(responseDto.getScore());
+                meisterData.setScoreRawData(responseDto.getScoreHtmlContent());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
             meisterInfoRepository.save(meisterInfo);
             return meisterDataRepository.save(meisterData);
         } catch (HttpError e) {
@@ -244,9 +251,6 @@ public class MeisterService {
                     .filter(meisterData -> meisterData.getStudentId().equals(student.getStudentId()))
                     .findFirst();
 
-            // 정보를 자동으로 불러올 수 없다면 다음 학생 불러옴
-            if (data.isPresent() && data.get().getMeisterInfo().isLoginError()) return;
-
             MeisterData meisterData = data.orElseGet(
                     () -> findOrCreateMeisterData(student)
             );
@@ -292,6 +296,22 @@ public class MeisterService {
                 .score(score)
                 .positivePoint(positivePoint)
                 .negativePoint(negativePoint)
+                .build();
+    }
+
+    private MeisterDetailResponseDto getScoreInfo(Student student) throws IOException {
+        String scoreHtmlContent = getScore(student);
+        float score = 0;
+
+        Matcher scoreMatch = Pattern.compile("<td>[\\d.]*<\\/td>").matcher(scoreHtmlContent);
+        if (scoreMatch.find()) {
+            score = Float.parseFloat(scoreMatch.group().split("<")[1].substring(3));
+        }
+        return MeisterDetailResponseDto.builder()
+                .scoreHtmlContent(scoreHtmlContent)
+                .score(score)
+                .positivePoint(0)
+                .negativePoint(0)
                 .build();
     }
 
