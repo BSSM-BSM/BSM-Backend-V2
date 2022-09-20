@@ -1,18 +1,12 @@
 package bssm.bsm.domain.board.post.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCategory {
 
     @EmbeddedId
@@ -24,4 +18,14 @@ public class PostCategory {
 
     @Column(nullable = false, length = 10)
     private String name;
+
+    @Builder
+    public PostCategory(PostCategoryPk postCategoryPk, String name) {
+        this.postCategoryPk = postCategoryPk;
+        this.name = name;
+    }
+
+    public void setPostCategoryPk(PostCategoryPk postCategoryPk) {
+        this.postCategoryPk = postCategoryPk;
+    }
 }

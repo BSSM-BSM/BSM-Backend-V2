@@ -44,24 +44,22 @@ public class LikeService {
             like = 0;
         }
 
-        Optional<PostLike> postLikeCheck = likeRepository.findByPostLikePkPost(post);
+        Optional<PostLike> postLikeCheck = likeRepository.findByPkPost(post);
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
         if (postLikeCheck.isEmpty()) {
             if (like == 0) throw new BadRequestException();
-            likeRepository.insertLike(
-                    PostLike.builder()
-                            .postLikePk(
-                                    PostLikePk.builder()
-                                            .post(post)
-                                            .build()
-                            )
-                            .userCode(user.getCode())
-                            .like(like)
-                            .build(),
-                    board.getId(),
-                    postId.getId()
-            );
+            PostLike newLike = PostLike.builder()
+                    .pk(
+                            PostLikePk.builder()
+                                    .id(likeRepository.countByPostPk(board.getId(), postId.getId()))
+                                    .post(post)
+                                    .build()
+                    )
+                    .userCode(user.getCode())
+                    .like(like)
+                    .build();
+            likeRepository.save(newLike);
             post.setTotalLikes(post.getTotalLikes() + like);
             postRepository.save(post);
             return LikeResponseDto.builder()

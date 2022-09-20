@@ -64,7 +64,7 @@ public class PostService {
         List<PostDto> postDtoList = new ArrayList<>();
         posts.forEach(post ->
                 postDtoList.add(PostDto.builder()
-                            .id(post.getPostPk().getId())
+                            .id(post.getPk().getId())
                             .user(getUserData(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
                             .title(post.getTitle())
@@ -93,6 +93,8 @@ public class PostService {
 
     public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
         Post post = getPost(postIdDto);
+        post.setHit(post.getHit() + 1);
+        postRepository.save(post);
 
         return ViewPostResponseDto.builder()
                 .id(postIdDto.getPostId())
@@ -110,11 +112,17 @@ public class PostService {
     }
 
     @Transactional
-    public int writePost(User user, String boardId, WritePostDto dto) {
+    public long writePost(User user, String boardId, WritePostDto dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
 
         Post newPost = Post.builder()
+                .pk(
+                        PostPk.builder()
+                                .id(postRepository.countByBoardId(boardId) + 1)
+                                .board(board)
+                                .build()
+                )
                 .userCode(user.getCode())
                 .categoryId(postCategory == null? null: postCategory.getPostCategoryPk().getId())
                 .title(dto.getTitle())
@@ -122,11 +130,10 @@ public class PostService {
                 .createdAt(new Date())
                 .anonymous(dto.isAnonymous())
                 .build();
-
-        return postRepository.insertPost(newPost, boardId);
+        postRepository.save(newPost);
+        return newPost.getPk().getId();
     }
 
-    @Transactional
     public void modifyPost(User user, PostIdDto postIdDto, ModifyPostDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         Post post = getPost(postIdDto);
@@ -142,7 +149,6 @@ public class PostService {
         postRepository.save(post);
     }
 
-    @Transactional
     public void deletePost(User user, PostIdDto postIdDto) {
         Post post = getPost(postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
@@ -181,7 +187,7 @@ public class PostService {
 
     private Post getPost(PostIdDto dto) {
         Board board = boardUtil.getBoard(dto.getBoard());
-        return postRepository.findByPostPkAndDelete(new PostPk(dto.getPostId(), board), false).orElseThrow(
+        return postRepository.findByPkAndDelete(new PostPk(dto.getPostId(), board), false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
     }
@@ -194,15 +200,15 @@ public class PostService {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
         if (postCategoryId.getId().equals("all")) {
-            return postRepository.findByPostPkBoardAndDeleteOrderByPostPkIdDesc(postCategoryId.getBoard(), false, pageable);
+            return postRepository.findByPkBoardAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPostPkBoardAndCategoryIdAndDeleteOrderByPostPkIdDesc(postCategoryId.getBoard(), null, false, pageable);
+            return postRepository.findByPkBoardAndCategoryIdAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByCategoryAndDeleteOrderByPostPkIdDesc(postCategory, false, pageable);
+        return postRepository.findByCategoryAndDeleteOrderByPkIdDesc(postCategory, false, pageable);
     }
 
     private List<Post> getPostListByCursor(PostCategoryPk postCategoryId, GetPostListDto dto) {
@@ -210,15 +216,15 @@ public class PostService {
         Pageable pageable = Pageable.ofSize(dto.getLimit());
         // 전체 게시글
         if (postCategoryId.getId().equals("all")) {
-            return postRepository.findByPostPkLessThanAndDeleteOrderByPostPkIdDesc(postId, false, pageable);
+            return postRepository.findByPkLessThanAndDeleteOrderByPkIdDesc(postId, false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPostPkLessThanAndCategoryIdAndDeleteOrderByPostPkIdDesc(postId, null, false, pageable);
+            return postRepository.findByPkLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(postId, null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByPostPkLessThanAndCategoryAndDeleteOrderByPostPkIdDesc(postId, postCategory, false, pageable);
+        return postRepository.findByPkLessThanAndCategoryAndDeleteOrderByPkIdDesc(postId, postCategory, false, pageable);
     }
 
     private UserResponseDto getUserData(User user, boolean anonymous) {

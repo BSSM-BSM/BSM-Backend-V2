@@ -8,16 +8,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostLike {
 
     @EmbeddedId
-    private PostLikePk postLikePk;
+    private PostLikePk pk;
 
     @Column(columnDefinition = "INT UNSIGNED")
     private Long userCode;
@@ -29,4 +25,16 @@ public class PostLike {
 
     @Column(name = "is_like", nullable = false, columnDefinition = "tinyint")
     private int like;
+
+    @Builder
+    public PostLike(PostLikePk pk, Long userCode, User user, int like) {
+        this.pk = pk;
+        this.userCode = userCode;
+        this.user = user;
+        this.like = like;
+    }
+
+    public void setLike(int like) {
+        this.like = like;
+    }
 }

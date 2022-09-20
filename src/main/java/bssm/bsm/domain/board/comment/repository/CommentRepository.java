@@ -12,35 +12,8 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
 
-    List<Comment> findByCommentPkPost(Post post);
+    List<Comment> findByPkPost(Post post);
 
-    // INSERT INTO comment (
-    //     id,
-    //     board_id,
-    //     post_id,
-    //     userCode,
-    //     have_child,
-    //     depth,
-    //     parent_id,
-    //     content,
-    //     is_anonymous,
-    //     created_at)
-    // SELECT
-    //     COUNT(id)+1,
-    //     :#{#boardId},
-    //     :#{#postId},
-    //     :#{#c.userCode},
-    //     :#{#c.haveChild},
-    //     :#{#c.depth},
-    //     :#{#c.parentId},
-    //     :#{#c.content},
-    //     :#{#c.anonymous},
-    //     now()
-    // FROM comment
-    // WHERE
-    //     board_id = :#{#boardId} AND
-    //     post_id = :#{#postId}
-    @Query(value = "INSERT INTO comment (id, board_id, post_id, user_code, have_child, depth, parent_id, content, is_anonymous, created_at) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#c.userCode}, :#{#c.haveChild}, :#{#c.depth}, :#{#c.parentId}, :#{#c.content}, :#{#c.anonymous}, now() FROM comment WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
-    @Modifying
-    void insertComment(@Param("c") Comment comment, @Param("boardId") String boardId, @Param("postId") int postId);
+    @Query(value = "SELECT COUNT(c) FROM Comment c WHERE c.pk.post.pk.board.id = :boardId AND c.pk.post.pk.id = :postId")
+    long countByPostPk(@Param("boardId") String boardId, @Param("postId") long postId);
 }

@@ -11,16 +11,12 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
     @EmbeddedId
-    private PostPk postPk;
+    private PostPk pk;
 
     @Column(length = 10)
     private String categoryId;
@@ -67,4 +63,53 @@ public class Post {
 
     @CreatedDate
     private Date createdAt;
+
+    @Builder
+    public Post(PostPk pk, String categoryId, PostCategory category, boolean delete, Long userCode, User user, String title, String content, int hit, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
+        this.pk = pk;
+        this.categoryId = categoryId;
+        this.category = category;
+        this.delete = delete;
+        this.userCode = userCode;
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.hit = hit;
+        this.totalComments = totalComments;
+        this.totalLikes = totalLikes;
+        this.anonymous = anonymous;
+        this.createdAt = createdAt;
+    }
+
+    public void setCategory(PostCategory category) {
+        this.category = category;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setHit(int hit) {
+        this.hit = hit;
+    }
+
+    public void setTotalComments(int totalComments) {
+        this.totalComments = totalComments;
+    }
+
+    public void setTotalLikes(int totalLikes) {
+        this.totalLikes = totalLikes;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        this.anonymous = anonymous;
+    }
 }

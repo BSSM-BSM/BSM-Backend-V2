@@ -37,8 +37,8 @@ public class PostController {
     }
 
     @PostMapping("/{boardId}")
-    public void writePost(@PathVariable String boardId, @RequestBody WritePostDto dto) {
-        postService.writePost(userUtil.getCurrentUser(), boardId, dto);
+    public long writePost(@PathVariable String boardId, @RequestBody WritePostDto dto) {
+        return postService.writePost(userUtil.getCurrentUser(), boardId, dto);
     }
 
     @PutMapping("/{boardId}/{postId}")

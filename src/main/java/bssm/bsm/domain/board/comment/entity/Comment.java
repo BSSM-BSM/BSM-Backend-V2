@@ -6,21 +6,19 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
 
     @EmbeddedId
-    private CommentPk commentPk;
+    private CommentPk pk;
 
     @Column(name = "isDelete", nullable = false)
     @ColumnDefault("0")
@@ -41,10 +39,8 @@ public class Comment {
     private int depth;
 
     @Column(columnDefinition = "INT UNSIGNED")
-    private Integer parentId;
+    private Long parentId;
 
-    // 대댓글의 깊이가 너무 깊으면 부모 댓글을 연쇄적으로 가져와 부하가 발생하기 때문에
-    // 다른 방법으로 가져와야 됨
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
             @JoinColumn(name = "parentId", insertable = false, updatable = false),
@@ -61,4 +57,27 @@ public class Comment {
 
     @CreatedDate
     private Date createdAt;
+
+    @Builder
+    public Comment(CommentPk pk, boolean delete, Long userCode, User user, boolean haveChild, int depth, Long parentId, Comment parent, String content, boolean anonymous, Date createdAt) {
+        this.pk = pk;
+        this.delete = delete;
+        this.userCode = userCode;
+        this.user = user;
+        this.haveChild = haveChild;
+        this.depth = depth;
+        this.parentId = parentId;
+        this.parent = parent;
+        this.content = content;
+        this.anonymous = anonymous;
+        this.createdAt = createdAt;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
+    }
+
+    public void setHaveChild(boolean haveChild) {
+        this.haveChild = haveChild;
+    }
 }

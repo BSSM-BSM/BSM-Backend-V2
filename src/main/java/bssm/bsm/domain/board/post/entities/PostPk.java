@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class PostPk implements Serializable {
 
     @Column(columnDefinition = "INT UNSIGNED")
-    private int id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)

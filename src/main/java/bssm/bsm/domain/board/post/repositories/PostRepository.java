@@ -7,7 +7,6 @@ import bssm.bsm.domain.board.post.entities.PostPk;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,41 +15,20 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, PostPk> {
 
-    Optional<Post> findByPostPkAndDelete(PostPk postPk, boolean delete);
+    Optional<Post> findByPkAndDelete(PostPk pk, boolean delete);
 
     // 전체 게시글
-    Page<Post> findByPostPkBoardAndDeleteOrderByPostPkIdDesc(Board board, boolean delete, Pageable pageable);
-    List<Post> findByPostPkLessThanAndDeleteOrderByPostPkIdDesc(PostPk postPk, boolean delete, Pageable pageable);
+    Page<Post> findByPkBoardAndDeleteOrderByPkIdDesc(Board board, boolean delete, Pageable pageable);
+    List<Post> findByPkLessThanAndDeleteOrderByPkIdDesc(PostPk pk, boolean delete, Pageable pageable);
 
     // 카테고리 있는 게시글
-    Page<Post> findByCategoryAndDeleteOrderByPostPkIdDesc(PostCategory postCategory, boolean delete, Pageable pageable);
-    List<Post> findByPostPkLessThanAndCategoryAndDeleteOrderByPostPkIdDesc(PostPk postPk, PostCategory postCategory, boolean delete, Pageable pageable);
+    Page<Post> findByCategoryAndDeleteOrderByPkIdDesc(PostCategory postCategory, boolean delete, Pageable pageable);
+    List<Post> findByPkLessThanAndCategoryAndDeleteOrderByPkIdDesc(PostPk pk, PostCategory postCategory, boolean delete, Pageable pageable);
 
     // 카테고리 없는 게시글
-    Page<Post> findByPostPkBoardAndCategoryIdAndDeleteOrderByPostPkIdDesc(Board board, String categoryId, boolean delete, Pageable pageable);
-    List<Post> findByPostPkLessThanAndCategoryIdAndDeleteOrderByPostPkIdDesc(PostPk postPk, String categoryId, boolean delete, Pageable pageable);
+    Page<Post> findByPkBoardAndCategoryIdAndDeleteOrderByPkIdDesc(Board board, String categoryId, boolean delete, Pageable pageable);
+    List<Post> findByPkLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(PostPk pk, String categoryId, boolean delete, Pageable pageable);
 
-    // INSERT INTO post (
-    //     id,
-    //     board_id,
-    //     category_id,
-    //     user_code,
-    //     title,
-    //     content,
-    //     is_anonymous,
-    //     created_at)
-    // SELECT
-    //     COUNT(id)+1,
-    //     :#{#boardId},
-    //     :#{#post.categoryId},
-    //     :#{#post.userCode},
-    //     :#{#post.title},
-    //     :#{#post.content},
-    //     :#{#post.anonymous},
-    //     now()
-    // FROM post
-    // WHERE board_id = :#{#boardId}
-    @Query (value = "INSERT INTO post (id, board_id, category_id, user_code, title, content, is_anonymous, created_at) SELECT COUNT(id)+1, :#{#boardId}, :#{#post.categoryId}, :#{#post.userCode}, :#{#post.title}, :#{#post.content}, :#{#post.anonymous}, now() FROM post WHERE board_id = :#{#boardId}", nativeQuery = true)
-    @Modifying
-    int insertPost(@Param("post") Post post, @Param("boardId") String boardId);
+    @Query(value = "SELECT COUNT(p) FROM Post p WHERE p.pk.board.id = :boardId")
+    long countByBoardId(@Param("boardId") String boardId);
 }

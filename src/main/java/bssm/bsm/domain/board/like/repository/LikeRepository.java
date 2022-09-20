@@ -12,25 +12,8 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<PostLike, PostLikePk> {
 
-    Optional<PostLike> findByPostLikePkPost(Post post);
+    Optional<PostLike> findByPkPost(Post post);
 
-    // INSERT INTO post_like (
-    //     id,
-    //     board_id,
-    //     post_id,
-    //     user_code,
-    //     is_like)
-    // SELECT
-    //     COUNT(id)+1,
-    //     :#{#boardId},
-    //     :#{#postId},
-    //     :#{#l.userCode},
-    //     :#{#l.like}
-    // FROM post_like
-    // WHERE
-    //     board_id = :#{#boardId} AND
-    //     post_id = :#{#postId}
-    @Query(value = "INSERT INTO post_like (id, board_id, post_id, user_code, is_like) SELECT COUNT(id)+1, :#{#boardId}, :#{#postId}, :#{#l.userCode}, :#{#l.like} FROM post_like WHERE board_id = :#{#boardId} AND post_id = :#{#postId}", nativeQuery = true)
-    @Modifying
-    void insertLike(@Param("l") PostLike postLike, @Param("boardId") String boardId, @Param("postId") int postId);
+    @Query(value = "SELECT COUNT(l) FROM PostLike l WHERE l.pk.post.pk.board.id = :boardId AND l.pk.post.pk.id = :postId")
+    long countByPostPk(@Param("boardId") String boardId, @Param("postId") long postId);
 }

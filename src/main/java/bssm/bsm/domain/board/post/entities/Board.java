@@ -1,9 +1,6 @@
 package bssm.bsm.domain.board.post.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,11 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board {
 
     @Id
@@ -42,4 +36,16 @@ public class Board {
 
     @Column(nullable = false)
     private boolean publicComment;
+
+    @Builder
+    public Board(String id, String name, String subBoardId, String subBoardName, int writePostLevel, boolean publicPost, int writeCommentLevel, boolean publicComment) {
+        this.id = id;
+        this.name = name;
+        this.subBoardId = subBoardId;
+        this.subBoardName = subBoardName;
+        this.writePostLevel = writePostLevel;
+        this.publicPost = publicPost;
+        this.writeCommentLevel = writeCommentLevel;
+        this.publicComment = publicComment;
+    }
 }

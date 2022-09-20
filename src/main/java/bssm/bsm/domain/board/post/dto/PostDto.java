@@ -10,7 +10,7 @@ import java.util.Date;
 @SuperBuilder
 public class PostDto {
 
-    private int id;
+    private long id;
     private UserResponseDto user;
     private String category;
     private String title;

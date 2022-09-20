@@ -12,10 +12,10 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentDto {
 
-    private int id;
+    private long id;
     private UserResponseDto user;
     private boolean isDelete;
     private String content;

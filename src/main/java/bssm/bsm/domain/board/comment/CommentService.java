@@ -40,7 +40,7 @@ public class CommentService {
                 .id(postIdDto.getPostId())
                 .board(board)
                 .build();
-        Post post = postRepository.findByPostPkAndDelete(postPk, false).orElseThrow(
+        Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
         Comment parentComment = null;
@@ -65,14 +65,20 @@ public class CommentService {
             }
         }
 
-        Comment comment = Comment.builder()
+        Comment newComment = Comment.builder()
+                .pk(
+                        CommentPk.builder()
+                                .id(commentRepository.countByPostPk(board.getId(), postIdDto.getPostId()) + 1)
+                                .post(post)
+                                .build()
+                )
                 .userCode(user.getCode())
                 .depth(dto.getDepth())
-                .parentId(parentComment == null? null: parentComment.getCommentPk().getId())
+                .parentId(parentComment == null? null: parentComment.getPk().getId())
                 .content(dto.getContent())
                 .anonymous(dto.isAnonymous())
                 .build();
-        commentRepository.insertComment(comment, board.getId(), postIdDto.getPostId());
+        commentRepository.save(newComment);
         post.setTotalComments(post.getTotalComments() + 1);
         postRepository.save(post);
     }
@@ -83,7 +89,7 @@ public class CommentService {
                 .id(postIdDto.getPostId())
                 .board(board)
                 .build();
-        Post post = postRepository.findByPostPkAndDelete(postPk, false).orElseThrow(
+        Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
 
@@ -109,11 +115,11 @@ public class CommentService {
                 .id(postIdDto.getPostId())
                 .board(board)
                 .build();
-        Post post = postRepository.findByPostPkAndDelete(postPk, false).orElseThrow(
+        Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
 
-        return commentTree(user, 0, commentRepository.findByCommentPkPost(post));
+        return commentTree(user, 0, commentRepository.findByPkPost(post));
     }
 
     private List<CommentDto> commentTree(User user, int depth, List<Comment> commentList) {
@@ -142,7 +148,7 @@ public class CommentService {
 
                 commentList.forEach(child -> {
                     if (child.getDepth() == depth + 1) { // 자식의 댓글의 깊이가 바로 밑이라면
-                        if (child.getParentId() == comment.getCommentPk().getId()) { // 자식 댓글의 부모가 현재 댓글이라면
+                        if (child.getParentId() == comment.getPk().getId()) { // 자식 댓글의 부모가 현재 댓글이라면
                             childList.add(child);
                             // 해당 자식 댓글은 최적화를 위해 나중에 삭제할 댓글 리스트에 추가
                             deleteList.add(child);
@@ -166,14 +172,14 @@ public class CommentService {
     private CommentDto convertCommentDtoAndDeleteCheck(User user, Comment comment) {
         if (comment.isDelete()) {
             return CommentDto.builder()
-                    .id(comment.getCommentPk().getId())
+                    .id(comment.getPk().getId())
                     .isDelete(true)
                     .depth(comment.getDepth())
                     .permission(false)
                     .build();
         }
         return CommentDto.builder()
-                .id(comment.getCommentPk().getId())
+                .id(comment.getPk().getId())
                 .isDelete(false)
                 .user(getUserData(comment.getUser(), comment.isAnonymous()))
                 .createdAt(comment.getCreatedAt())
