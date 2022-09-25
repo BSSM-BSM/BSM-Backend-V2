@@ -1,5 +1,8 @@
 package bssm.bsm.domain.board.post;
 
+import bssm.bsm.domain.board.like.entity.PostLike;
+import bssm.bsm.domain.board.like.entity.PostLikePk;
+import bssm.bsm.domain.board.like.repository.LikeRepository;
 import bssm.bsm.domain.board.post.dto.PostDto;
 import bssm.bsm.domain.board.post.dto.request.WritePostDto;
 import bssm.bsm.domain.board.post.dto.response.PostListResponseDto;
@@ -42,6 +45,7 @@ public class PostService {
     private final BoardUtil boardUtil;
     private final PostCategoryUtil categoryUtil;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
     @Value("${env.file.path.base}")
     private String PUBLIC_RESOURCE_PATH;
     @Value("${env.file.path.upload.board}")
@@ -93,6 +97,11 @@ public class PostService {
 
     public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
         Post post = getPost(postIdDto);
+        PostLike postLike = likeRepository.findByPkPostPkAndUserCode(post.getPk(), user.getCode()).orElseGet(
+                () -> PostLike.builder()
+                        .like(0)
+                        .build()
+        );
         post.setHit(post.getHit() + 1);
         postRepository.save(post);
 
@@ -106,7 +115,7 @@ public class PostService {
                 .hit(post.getHit())
                 .totalComments(post.getTotalComments())
                 .totalLikes(post.getTotalLikes())
-                .like(false)
+                .like(postLike.getLike())
                 .permission(checkPermission(user, post))
                 .build();
     }
