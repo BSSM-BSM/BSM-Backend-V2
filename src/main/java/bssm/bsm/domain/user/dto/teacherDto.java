@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class teacherSignUpDto {
+public class teacherDto {
 
     private Long userCode;
     private String nickname;

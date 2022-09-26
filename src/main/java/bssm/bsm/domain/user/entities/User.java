@@ -56,4 +56,8 @@ public class User extends BaseTimeEntity {
         this.level = level;
         this.oauthToken = oauthToken;
     }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

@@ -41,4 +41,20 @@ public class Student {
         this.name = name;
         this.email = email;
     }
+
+    public void setEnrolledAt(int enrolledAt) {
+        this.enrolledAt = enrolledAt;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
+    public void setClassNo(int classNo) {
+        this.classNo = classNo;
+    }
+
+    public void setStudentNo(int studentNo) {
+        this.studentNo = studentNo;
+    }
 }

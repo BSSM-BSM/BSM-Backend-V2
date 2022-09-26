@@ -1,7 +1,6 @@
 package bssm.bsm.domain.user.dto;
 
 import bssm.bsm.domain.user.type.UserRole;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +15,8 @@ public class BsmOauthResourceResponseDto {
 
     private Long userCode;
     private UserRole role;
-    private studentSignUpDto student;
-    private teacherSignUpDto teacher;
+    private studentDto student;
+    private teacherDto teacher;
 
     @JsonProperty("user")
     private void unpackNested(Map<String, Object> user) {
@@ -25,7 +24,7 @@ public class BsmOauthResourceResponseDto {
         this.role = UserRole.valueOf(user.get("role").toString());
         switch (this.role) {
             case STUDENT -> {
-                this.student = studentSignUpDto.builder()
+                this.student = studentDto.builder()
                         .userCode(this.userCode)
                         .nickname((String) user.get("nickname"))
                         .enrolledAt((int) user.get("enrolledAt"))
@@ -35,7 +34,7 @@ public class BsmOauthResourceResponseDto {
                         .build();
             }
             case TEACHER -> {
-                this.teacher = teacherSignUpDto.builder()
+                this.teacher = teacherDto.builder()
                         .userCode(this.userCode)
                         .nickname((String) user.get("nickname"))
                         .email((String) user.get("email"))

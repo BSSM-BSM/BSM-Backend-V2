@@ -1,6 +1,6 @@
 package bssm.bsm.domain.user;
 
-import bssm.bsm.domain.user.dto.teacherSignUpDto;
+import bssm.bsm.domain.user.dto.teacherDto;
 import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.Teacher;
 import bssm.bsm.domain.user.repositories.StudentRepository;
@@ -10,7 +10,7 @@ import bssm.bsm.domain.user.type.UserRole;
 import bssm.bsm.global.exceptions.NotFoundException;
 import bssm.bsm.domain.user.dto.BsmOauthResourceResponseDto;
 import bssm.bsm.domain.user.dto.BsmOauthTokenResponseDto;
-import bssm.bsm.domain.user.dto.studentSignUpDto;
+import bssm.bsm.domain.user.dto.studentDto;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,8 +44,7 @@ public class UserService {
     @Value("${env.oauth.bsm.url.resource}")
     private String OAUTH_BSM_RESOURCE_URL;
 
-    @Transactional
-    private User studentSignUp(studentSignUpDto dto, String oauthToken) {
+    private User studentSignUp(studentDto dto, String oauthToken) {
         Student student = studentRepository.findByEnrolledAtAndGradeAndClassNoAndStudentNo(dto.getEnrolledAt(), dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
                 () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
         );
@@ -62,8 +60,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    @Transactional
-    private User teacherSignUp(teacherSignUpDto dto, String oauthToken) {
+    private User teacherSignUp(teacherDto dto, String oauthToken) {
         Teacher teacher = teacherRepository.save(
                 Teacher.builder()
                         .email(dto.getEmail())
@@ -83,37 +80,24 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private User studentUpdate(studentDto dto, User user) {
+        Student student = user.getStudent();
+        student.setGrade(dto.getGrade());
+        student.setClassNo(dto.getClassNo());
+        student.setStudentNo(dto.getStudentNo());
+        student.setEnrolledAt(dto.getEnrolledAt());
+        user.setNickname(dto.getNickname());
+        return userRepository.save(user);
+    }
+
+    private User teacherUpdate(teacherDto dto, User user) {
+        user.setNickname(dto.getNickname());
+        return userRepository.save(user);
+    }
+
     public User bsmOauth(String authCode) throws IOException {
-        // Payload
-        Map<String, String> getTokenPayload = new HashMap<>();
-        getTokenPayload.put("clientId", OAUTH_BSM_CLIENT_ID);
-        getTokenPayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
-        getTokenPayload.put("authCode", authCode);
-
-        // Request
-        Request tokenRequest = new Request.Builder()
-                .url(OAUTH_BSM_TOKEN_URL)
-                .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getTokenPayload)))
-                .build();
-        Response tokenResponse = httpClient.newCall(tokenRequest).execute();
-        if (tokenResponse.code() == 404) {
-            throw new NotFoundException("인증 코드를 찾을 수 없습니다");
-        }
-        BsmOauthTokenResponseDto tokenResponseDto = objectMapper.readValue(Objects.requireNonNull(tokenResponse.body()).string(), BsmOauthTokenResponseDto.class);
-
-        // Payload
-        Map<String, String> getResourcePayload = new HashMap<>();
-        getResourcePayload.put("clientId", OAUTH_BSM_CLIENT_ID);
-        getResourcePayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
-        getResourcePayload.put("token", tokenResponseDto.getToken());
-
-        // Request
-        Request resourceRequest = new Request.Builder()
-                .url(OAUTH_BSM_RESOURCE_URL)
-                .post(RequestBody.create(MediaType.parse("application/json"), objectMapper.writeValueAsString(getResourcePayload)))
-                .build();
-        Response resourceResponse = httpClient.newCall(resourceRequest).execute();
-        BsmOauthResourceResponseDto resourceResponseDto = objectMapper.readValue(Objects.requireNonNull(resourceResponse.body()).string(), BsmOauthResourceResponseDto.class);
+        BsmOauthTokenResponseDto tokenResponseDto = bsmOauthGetToken(authCode);
+        BsmOauthResourceResponseDto resourceResponseDto = bsmOauthGetResource(tokenResponseDto);
 
         Optional<User> user = userRepository.findById(resourceResponseDto.getUserCode());
 
@@ -124,6 +108,45 @@ public class UserService {
                 case TEACHER -> teacherSignUp(resourceResponseDto.getTeacher(), tokenResponseDto.getToken());
             };
         }
-        return user.get();
+        // Update
+        return switch (resourceResponseDto.getRole()) {
+            case STUDENT -> studentUpdate(resourceResponseDto.getStudent(), user.get());
+            case TEACHER -> teacherUpdate(resourceResponseDto.getTeacher(), user.get());
+        };
+    }
+
+    private BsmOauthTokenResponseDto bsmOauthGetToken(String authCode) throws IOException {
+        // Payload
+        Map<String, String> getTokenPayload = new HashMap<>();
+        getTokenPayload.put("clientId", OAUTH_BSM_CLIENT_ID);
+        getTokenPayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
+        getTokenPayload.put("authCode", authCode);
+
+        // Request
+        Request tokenRequest = new Request.Builder()
+                .url(OAUTH_BSM_TOKEN_URL)
+                .post(RequestBody.create(objectMapper.writeValueAsString(getTokenPayload), MediaType.parse("application/json")))
+                .build();
+        Response tokenResponse = httpClient.newCall(tokenRequest).execute();
+        if (tokenResponse.code() == 404) {
+            throw new NotFoundException("인증 코드를 찾을 수 없습니다");
+        }
+        return objectMapper.readValue(Objects.requireNonNull(tokenResponse.body()).string(), BsmOauthTokenResponseDto.class);
+    }
+
+    private BsmOauthResourceResponseDto bsmOauthGetResource(BsmOauthTokenResponseDto dto) throws IOException {
+        // Payload
+        Map<String, String> getResourcePayload = new HashMap<>();
+        getResourcePayload.put("clientId", OAUTH_BSM_CLIENT_ID);
+        getResourcePayload.put("clientSecret", OAUTH_BSM_CLIENT_SECRET);
+        getResourcePayload.put("token", dto.getToken());
+
+        // Request
+        Request resourceRequest = new Request.Builder()
+                .url(OAUTH_BSM_RESOURCE_URL)
+                .post(RequestBody.create(objectMapper.writeValueAsString(getResourcePayload), MediaType.parse("application/json")))
+                .build();
+        Response resourceResponse = httpClient.newCall(resourceRequest).execute();
+        return objectMapper.readValue(Objects.requireNonNull(resourceResponse.body()).string(), BsmOauthResourceResponseDto.class);
     }
 }
