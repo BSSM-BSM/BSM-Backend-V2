@@ -5,6 +5,7 @@ import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.Teacher;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.RefreshTokenRepository;
+import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.domain.user.type.UserRole;
 import bssm.bsm.global.exceptions.NotFoundException;
 import io.jsonwebtoken.Claims;
@@ -38,6 +39,7 @@ public class JwtUtil {
         Claims claims = Jwts.claims();
         claims.put("code", user.getCode());
         claims.put("role", user.getRole());
+        claims.put("level", user.getLevel().getValue());
         claims.put("nickname", user.getNickname());
 
         switch (user.getRole()) {
@@ -96,7 +98,8 @@ public class JwtUtil {
         User.UserBuilder userBuilder = User.builder()
                 .code(claims.get("code", Long.class))
                 .role(UserRole.valueOf(claims.get("role", String.class)))
-                .nickname(claims.get("nickname", String.class));
+                .nickname(claims.get("nickname", String.class))
+                .level(UserLevel.values()[claims.get("level", Integer.class)]);
 
         switch (UserRole.valueOf(claims.get("role", String.class))) {
             case STUDENT -> {

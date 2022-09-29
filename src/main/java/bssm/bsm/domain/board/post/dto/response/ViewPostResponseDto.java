@@ -11,4 +11,5 @@ public class ViewPostResponseDto extends PostDto {
     private String content;
     private boolean permission;
     private int like;
+    private boolean anonymous;
 }

@@ -36,6 +36,7 @@ public class CommentService {
     @Transactional
     public void writeComment(User user, PostIdDto postIdDto, WriteCommentDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
+        if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
                 .board(board)

@@ -117,12 +117,15 @@ public class PostService {
                 .totalLikes(post.getTotalLikes())
                 .like(postLike.getLike())
                 .permission(checkPermission(user, post))
+                .anonymous(post.isAnonymous())
                 .build();
     }
 
     @Transactional
     public long writePost(User user, String boardId, WritePostDto dto) {
         Board board = boardUtil.getBoard(boardId);
+        if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
+
         PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
 
         Post newPost = Post.builder()

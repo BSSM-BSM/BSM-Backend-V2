@@ -2,6 +2,7 @@ package bssm.bsm.domain.board.utils;
 
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.repositories.BoardRepository;
+import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.global.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class BoardUtil {
         return getBoard(id).isPublicPost();
     }
 
-    public int getWritePostLevel(String id) {
+    public UserLevel getWritePostLevel(String id) {
         return getBoard(id).getWritePostLevel();
     }
 
@@ -44,7 +45,7 @@ public class BoardUtil {
         return getBoard(id).isPublicComment();
     }
 
-    public int getWriteCommentLevel(String id) {
+    public UserLevel getWriteCommentLevel(String id) {
         return getBoard(id).getWriteCommentLevel();
     }
 

@@ -6,6 +6,7 @@ import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.entities.PostCategory;
 import bssm.bsm.domain.board.post.repositories.PostCategoryRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
+import bssm.bsm.domain.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class BoardService {
     private final BoardUtil boardUtil;
     private final PostCategoryRepository postCategoryRepository;
 
-    public BoardResponseDto boardInfo(String boardId) {
+    public BoardResponseDto boardInfo(String boardId, User user) {
         Board board = boardUtil.getBoard(boardId);
         List<PostCategory> postCategoryList = postCategoryRepository.findByPostCategoryPkBoard(board);
         List<PostCategoryDto> postCategoryDtoList = new ArrayList<>();
@@ -39,6 +40,8 @@ public class BoardService {
                 .subBoardId(board.getSubBoardId())
                 .subBoardName(board.getSubBoardName())
                 .categoryList(postCategoryDtoList)
+                .postPermission(board.getWritePostLevel().getValue() <= user.getLevel().getValue())
+                .commentPermission(board.getWriteCommentLevel().getValue() <= user.getLevel().getValue())
                 .build();
     }
 }

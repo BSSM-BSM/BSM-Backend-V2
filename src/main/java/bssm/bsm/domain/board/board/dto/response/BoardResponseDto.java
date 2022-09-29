@@ -15,4 +15,6 @@ public class BoardResponseDto {
     String subBoardId;
     String subBoardName;
     List<PostCategoryDto> categoryList;
+    boolean postPermission;
+    boolean commentPermission;
 }

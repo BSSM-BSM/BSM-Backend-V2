@@ -1,11 +1,9 @@
 package bssm.bsm.domain.board.post.entities;
 
+import bssm.bsm.domain.user.type.UserLevel;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -25,20 +23,22 @@ public class Board {
     @Column(length = 10)
     private String subBoardName;
 
-    @Column(nullable = false, columnDefinition = "tinyint")
-    private int writePostLevel;
+    @Column(nullable = false, length = 12)
+    @Enumerated(EnumType.STRING)
+    private UserLevel writePostLevel;
 
     @Column(nullable = false)
     private boolean publicPost;
 
-    @Column(nullable = false, columnDefinition = "tinyint")
-    private int writeCommentLevel;
+    @Column(nullable = false, length = 12)
+    @Enumerated(EnumType.STRING)
+    private UserLevel writeCommentLevel;
 
     @Column(nullable = false)
     private boolean publicComment;
 
     @Builder
-    public Board(String id, String name, String subBoardId, String subBoardName, int writePostLevel, boolean publicPost, int writeCommentLevel, boolean publicComment) {
+    public Board(String id, String name, String subBoardId, String subBoardName, UserLevel writePostLevel, boolean publicPost, UserLevel writeCommentLevel, boolean publicComment) {
         this.id = id;
         this.name = name;
         this.subBoardId = subBoardId;
