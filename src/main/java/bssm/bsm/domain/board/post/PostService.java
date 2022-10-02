@@ -1,7 +1,6 @@
 package bssm.bsm.domain.board.post;
 
 import bssm.bsm.domain.board.like.entity.PostLike;
-import bssm.bsm.domain.board.like.entity.PostLikePk;
 import bssm.bsm.domain.board.like.repository.LikeRepository;
 import bssm.bsm.domain.board.post.dto.PostDto;
 import bssm.bsm.domain.board.post.dto.request.WritePostDto;
@@ -13,7 +12,6 @@ import bssm.bsm.domain.board.post.repositories.PostRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
 import bssm.bsm.domain.board.utils.PostCategoryUtil;
 import bssm.bsm.domain.board.post.dto.request.GetPostListDto;
-import bssm.bsm.domain.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.domain.board.post.dto.request.PostIdDto;
 import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import bssm.bsm.domain.user.entities.User;
@@ -29,8 +27,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class PostService {
 
@@ -51,7 +52,7 @@ public class PostService {
     @Value("${env.file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
-    public PostListResponseDto postList(String boardId, GetPostListDto dto) {
+    public PostListResponseDto postList(String boardId, @Valid GetPostListDto dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
         final boolean pageMode = dto.getStartPostId() < 0;
@@ -122,7 +123,7 @@ public class PostService {
     }
 
     @Transactional
-    public long writePost(User user, String boardId, WritePostDto dto) {
+    public long writePost(User user, String boardId, @Valid WritePostDto dto) {
         Board board = boardUtil.getBoard(boardId);
         if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
 
@@ -146,7 +147,7 @@ public class PostService {
         return newPost.getPk().getId();
     }
 
-    public void modifyPost(User user, PostIdDto postIdDto, ModifyPostDto dto) {
+    public void modifyPost(User user, PostIdDto postIdDto, @Valid WritePostDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         Post post = getPost(postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");

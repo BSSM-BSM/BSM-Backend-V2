@@ -1,7 +1,6 @@
 package bssm.bsm.domain.board.post;
 
 import bssm.bsm.domain.board.post.dto.request.GetPostListDto;
-import bssm.bsm.domain.board.post.dto.request.ModifyPostDto;
 import bssm.bsm.domain.board.post.dto.request.PostIdDto;
 import bssm.bsm.domain.board.post.dto.request.WritePostDto;
 import bssm.bsm.domain.board.post.dto.response.UploadFileResponseDto;
@@ -45,7 +44,7 @@ public class PostController {
     public void modifyPost(
             @PathVariable String boardId,
             @PathVariable int postId,
-            @RequestBody ModifyPostDto dto
+            @RequestBody WritePostDto dto
     ) {
         postService.modifyPost(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), dto);
     }

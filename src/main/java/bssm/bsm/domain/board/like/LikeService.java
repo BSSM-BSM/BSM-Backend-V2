@@ -17,10 +17,13 @@ import bssm.bsm.global.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class LikeService {
 
@@ -29,20 +32,13 @@ public class LikeService {
     private final BoardUtil boardUtil;
 
     @Transactional
-    public LikeResponseDto like(User user, PostIdDto postIdDto, LikeRequestDto dto) {
+    public LikeResponseDto like(User user, PostIdDto postIdDto, @Valid LikeRequestDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         PostPk postId = new PostPk(postIdDto.getPostId(), board);
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );
         int like = dto.getLike();
-        if (like > 0) {
-            like = 1;
-        } else if (like < 0) {
-            like = -1;
-        } else {
-            like = 0;
-        }
 
         Optional<PostLike> postLikeCheck = likeRepository.findByPkPost(post);
 

@@ -19,13 +19,16 @@ import bssm.bsm.domain.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class CommentService {
 
@@ -34,7 +37,7 @@ public class CommentService {
     private final BoardUtil boardUtil;
 
     @Transactional
-    public void writeComment(User user, PostIdDto postIdDto, WriteCommentDto dto) {
+    public void writeComment(User user, PostIdDto postIdDto, @Valid WriteCommentDto dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
         PostPk postPk = PostPk.builder()
