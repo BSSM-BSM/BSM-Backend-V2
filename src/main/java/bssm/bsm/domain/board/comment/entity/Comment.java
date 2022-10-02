@@ -29,7 +29,6 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userCode", insertable = false, updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private User user;
 
     @Column(nullable = false)
