@@ -5,6 +5,7 @@ import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponseDto;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,6 +38,15 @@ public class Emoticon extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "pk.emoticon", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private final List<EmoticonItem> items = new ArrayList<>();
+
+    @Builder
+    public Emoticon(long id, String name, String description, Long userCode, User user) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.userCode = userCode;
+        this.user = user;
+    }
 
     public EmoticonResponseDto toDto() {
         return EmoticonResponseDto.builder()

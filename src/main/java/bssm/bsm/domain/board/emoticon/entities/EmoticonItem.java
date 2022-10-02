@@ -2,6 +2,7 @@ package bssm.bsm.domain.board.emoticon.entities;
 
 import bssm.bsm.domain.board.emoticon.dto.response.EmoticonItemResponseDto;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,5 +25,11 @@ public class EmoticonItem {
                 .idx(pk.getIdx())
                 .type(type)
                 .build();
+    }
+
+    @Builder
+    public EmoticonItem(EmoticonItemPk pk, String type) {
+        this.pk = pk;
+        this.type = type;
     }
 }
