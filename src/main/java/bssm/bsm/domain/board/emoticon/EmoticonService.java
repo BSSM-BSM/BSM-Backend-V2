@@ -1,5 +1,6 @@
 package bssm.bsm.domain.board.emoticon;
 
+import bssm.bsm.domain.board.emoticon.dto.request.EmoticonDeleteRequestDto;
 import bssm.bsm.domain.board.emoticon.dto.request.EmoticonUploadRequestDto;
 import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponseDto;
 import bssm.bsm.domain.board.emoticon.entities.Emoticon;
@@ -56,10 +57,35 @@ public class EmoticonService {
     }
 
     public List<EmoticonResponseDto> getEmoticonList() {
-        List<Emoticon> emoticonList = emoticonRepository.findAll();
+        List<Emoticon> emoticonList = emoticonRepository.findAllByActiveAndDeleted(true, false);
         return emoticonList
                 .stream().map(Emoticon::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<EmoticonResponseDto> getInactiveEmoticonList() {
+        List<Emoticon> emoticonList = emoticonRepository.findAllByActiveAndDeleted(false, false);
+        return emoticonList
+                .stream().map(Emoticon::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public void activeEmoticon(long id) {
+        Emoticon emoticon = emoticonRepository.findById(id).orElseThrow(
+                () -> {throw new NotFoundException("이모티콘을 찾을 수 없습니다.");}
+        );
+        emoticon.setActive(true);
+        emoticonRepository.save(emoticon);
+    }
+
+    @Transactional
+    public void deleteEmoticon(long id, EmoticonDeleteRequestDto dto) {
+        Emoticon emoticon = emoticonRepository.findById(id).orElseThrow(
+                () -> {throw new NotFoundException("이모티콘을 찾을 수 없습니다.");}
+        );
+        emoticon.setDeleted(true);
+        emoticon.setDeleteReason(dto.getMsg());
+        emoticonRepository.save(emoticon);
     }
 
     @Transactional
@@ -116,6 +142,7 @@ public class EmoticonService {
         if (emoticonRepository.existsByName(dto.getName())) throw new ConflictException("해당 이름의 이모티콘이 이미 존재합니다");
         return emoticonRepository.save(
                 Emoticon.builder()
+                        .active(false)
                         .name(dto.getName())
                         .description(dto.getDescription())
                         .userCode(user.getCode())
@@ -141,4 +168,5 @@ public class EmoticonService {
 
         return emoticonItemRepository.saveAll(emoticonItems);
     }
+
 }

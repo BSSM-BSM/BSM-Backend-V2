@@ -29,6 +29,15 @@ public class Emoticon extends BaseTimeEntity {
     @Column(length = 100)
     private String description;
 
+    @Column
+    private boolean active;
+
+    @Column
+    private boolean deleted;
+
+    @Column
+    private String deleteReason;
+
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private Long userCode;
 
@@ -40,12 +49,27 @@ public class Emoticon extends BaseTimeEntity {
     private final List<EmoticonItem> items = new ArrayList<>();
 
     @Builder
-    public Emoticon(long id, String name, String description, Long userCode, User user) {
+    public Emoticon(long id, String name, String description, boolean active, boolean deleted, String deleteReason, Long userCode, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.active = active;
+        this.deleted = deleted;
+        this.deleteReason = deleteReason;
         this.userCode = userCode;
         this.user = user;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public void setDeleteReason(String deleteReason) {
+        this.deleteReason = deleteReason;
     }
 
     public EmoticonResponseDto toDto() {

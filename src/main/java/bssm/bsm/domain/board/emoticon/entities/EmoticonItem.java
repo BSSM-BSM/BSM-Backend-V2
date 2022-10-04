@@ -21,7 +21,7 @@ public class EmoticonItem {
 
     public EmoticonItemResponseDto toDto() {
         return EmoticonItemResponseDto.builder()
-                .id(pk.getIdx())
+                .id(pk.getEmoticon().getId())
                 .idx(pk.getIdx())
                 .type(type)
                 .build();

@@ -18,6 +18,11 @@ public class EmoticonController {
     private final EmoticonService emoticonService;
     private final UserUtil userUtil;
 
+    @GetMapping("inactive")
+    public List<EmoticonResponseDto> getInactiveEmoticonList() {
+        return emoticonService.getInactiveEmoticonList();
+    }
+
     @GetMapping("{id}")
     public EmoticonResponseDto getEmoticon(@PathVariable long id) {
         return emoticonService.getEmoticon(id);
@@ -37,4 +42,10 @@ public class EmoticonController {
     ) throws IOException {
         emoticonService.upload(userUtil.getCurrentUser(), new EmoticonUploadRequestDto(name, description, thumbnail, emoticonList));
     }
+
+    @PutMapping("{id}")
+    public void activeEmoticon(@PathVariable long id) {
+        emoticonService.activeEmoticon(id);
+    }
+
 }
