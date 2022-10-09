@@ -1,10 +1,10 @@
 package bssm.bsm.domain.school.meal;
 
 import bssm.bsm.domain.school.meal.dto.RawMealItemDto;
-import bssm.bsm.domain.school.meal.dto.response.MealResponseDto;
+import bssm.bsm.domain.school.meal.dto.response.MealResponse;
 import bssm.bsm.domain.school.meal.entities.Meal;
 import bssm.bsm.domain.school.meal.repositories.MealRepository;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +30,11 @@ public class MealService {
     @Value("${env.api.meal.url}")
     private String GET_MEAL_URL;
 
-    public MealResponseDto getMeal(LocalDate date) {
+    public MealResponse getMeal(LocalDate date) {
          Meal meal = mealRepository.findById(date).orElseThrow(
                 () -> {throw new NotFoundException();}
          );
-         return MealResponseDto.builder()
+         return MealResponse.builder()
                  .morning(meal.getMorning())
                  .lunch(meal.getLunch())
                  .dinner(meal.getDinner())

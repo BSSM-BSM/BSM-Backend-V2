@@ -1,7 +1,7 @@
 package bssm.bsm.domain.school.timetable;
 
-import bssm.bsm.domain.school.timetable.dto.request.TimetableRequestDto;
-import bssm.bsm.domain.school.timetable.entities.Timetable;
+import bssm.bsm.domain.school.timetable.dto.request.TimetableRequest;
+import bssm.bsm.domain.school.timetable.dto.response.TimetableResponse;
 import bssm.bsm.domain.school.timetable.repositories.TimetableRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,14 @@ public class TimetableService {
 
     private final TimetableRepository timetableRepository;
 
-    public List<Timetable> getTimetable(@Valid TimetableRequestDto dto) {
-        return timetableRepository.findByPkGradeAndPkClassNoAndPkDay(dto.getGrade(), dto.getClassNo(), dto.getDay());
+    public List<TimetableResponse> getTimetable(@Valid TimetableRequest dto) {
+        return timetableRepository.findAllByPkGradeAndPkClassNoAndPkDay(dto.getGrade(), dto.getClassNo(), dto.getDay())
+                .stream().map(timetable -> TimetableResponse.builder()
+                        .className(timetable.getClassName())
+                        .startTime(timetable.getStartTime())
+                        .endTime(timetable.getEndTime())
+                        .type(timetable.getType())
+                        .build()
+                ).toList();
     }
 }

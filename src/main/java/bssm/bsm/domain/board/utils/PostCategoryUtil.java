@@ -3,7 +3,7 @@ package bssm.bsm.domain.board.utils;
 import bssm.bsm.domain.board.post.entities.PostCategory;
 import bssm.bsm.domain.board.post.entities.PostCategoryPk;
 import bssm.bsm.domain.board.post.repositories.PostCategoryRepository;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

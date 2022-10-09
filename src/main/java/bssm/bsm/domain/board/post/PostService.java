@@ -2,24 +2,23 @@ package bssm.bsm.domain.board.post;
 
 import bssm.bsm.domain.board.like.entity.PostLike;
 import bssm.bsm.domain.board.like.repository.LikeRepository;
-import bssm.bsm.domain.board.post.dto.PostDto;
-import bssm.bsm.domain.board.post.dto.request.WritePostDto;
-import bssm.bsm.domain.board.post.dto.response.PostListResponseDto;
-import bssm.bsm.domain.board.post.dto.response.UploadFileResponseDto;
-import bssm.bsm.domain.board.post.dto.response.ViewPostResponseDto;
+import bssm.bsm.domain.board.post.dto.response.PostResponse;
+import bssm.bsm.domain.board.post.dto.request.WritePostRequest;
+import bssm.bsm.domain.board.post.dto.response.PostListResponse;
+import bssm.bsm.domain.board.post.dto.response.UploadFileResponse;
+import bssm.bsm.domain.board.post.dto.response.ViewPostResponse;
 import bssm.bsm.domain.board.post.entities.*;
 import bssm.bsm.domain.board.post.repositories.PostRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
 import bssm.bsm.domain.board.utils.PostCategoryUtil;
-import bssm.bsm.domain.board.post.dto.request.GetPostListDto;
-import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.board.post.dto.request.GetPostListRequest;
+import bssm.bsm.domain.board.post.dto.request.PostIdRequest;
 import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.type.UserLevel;
-import bssm.bsm.global.exceptions.BadRequestException;
-import bssm.bsm.global.exceptions.ForbiddenException;
-import bssm.bsm.global.exceptions.InternalServerException;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.ForbiddenException;
+import bssm.bsm.global.error.exceptions.InternalServerException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -52,7 +51,7 @@ public class PostService {
     @Value("${env.file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
-    public PostListResponseDto postList(String boardId, @Valid GetPostListDto dto) {
+    public PostListResponse postList(String boardId, @Valid GetPostListRequest dto) {
         Board board = boardUtil.getBoard(boardId);
         PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
         final boolean pageMode = dto.getStartPostId() < 0;
@@ -66,9 +65,9 @@ public class PostService {
             posts = getPostListByCursor(postCategoryId, dto);
         }
 
-        List<PostDto> postDtoList = new ArrayList<>();
+        List<PostResponse> postDtoList = new ArrayList<>();
         posts.forEach(post ->
-                postDtoList.add(PostDto.builder()
+                postDtoList.add(PostResponse.builder()
                             .id(post.getPk().getId())
                             .user(getUserData(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
@@ -82,21 +81,21 @@ public class PostService {
         );
 
         if (pageMode) {
-            return PostListResponseDto.builder()
+            return PostListResponse.builder()
                     .posts(postDtoList)
                     .totalPages(pages.getTotalPages())
                     .page(dto.getPage())
                     .limit(dto.getLimit())
                     .build();
         } else {
-            return PostListResponseDto.builder()
+            return PostListResponse.builder()
                     .posts(postDtoList)
                     .limit(dto.getLimit())
                     .build();
         }
     }
 
-    public ViewPostResponseDto viewPost(User user, PostIdDto postIdDto) {
+    public ViewPostResponse viewPost(User user, PostIdRequest postIdDto) {
         Post post = getPost(postIdDto);
         PostLike postLike = likeRepository.findByPkPostPkAndUserCode(post.getPk(), user.getCode()).orElseGet(
                 () -> PostLike.builder()
@@ -106,7 +105,7 @@ public class PostService {
         post.setHit(post.getHit() + 1);
         postRepository.save(post);
 
-        return ViewPostResponseDto.builder()
+        return ViewPostResponse.builder()
                 .id(postIdDto.getPostId())
                 .user(getUserData(post.getUser(), post.isAnonymous()))
                 .category(post.getCategoryId())
@@ -123,7 +122,7 @@ public class PostService {
     }
 
     @Transactional
-    public long writePost(User user, String boardId, @Valid WritePostDto dto) {
+    public long writePost(User user, String boardId, WritePostRequest dto) {
         Board board = boardUtil.getBoard(boardId);
         if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
 
@@ -147,7 +146,7 @@ public class PostService {
         return newPost.getPk().getId();
     }
 
-    public void modifyPost(User user, PostIdDto postIdDto, @Valid WritePostDto dto) {
+    public void modifyPost(User user, PostIdRequest postIdDto, @Valid WritePostRequest dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         Post post = getPost(postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
@@ -162,7 +161,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public void deletePost(User user, PostIdDto postIdDto) {
+    public void deletePost(User user, PostIdRequest postIdDto) {
         Post post = getPost(postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
         post.setDelete(true);
@@ -170,9 +169,8 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public UploadFileResponseDto uploadFile(MultipartFile file) {
-        if (file.getOriginalFilename() == null) throw new BadRequestException();
-        String fileExt = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+    public UploadFileResponse uploadFile(MultipartFile file) {
+        String fileExt = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
         String fileId = String.valueOf(new Date().getTime());
 
         File dir = new File(PUBLIC_RESOURCE_PATH + BOARD_UPLOAD_RESOURCE_PATH);
@@ -188,7 +186,7 @@ public class PostService {
 
         try {
             file.transferTo(newFile);
-            return UploadFileResponseDto.builder()
+            return UploadFileResponse.builder()
                     .id(fileId)
                     .fileExt(fileExt)
                     .build();
@@ -198,7 +196,7 @@ public class PostService {
         }
     }
 
-    private Post getPost(PostIdDto dto) {
+    private Post getPost(PostIdRequest dto) {
         Board board = boardUtil.getBoard(dto.getBoard());
         return postRepository.findByPkAndDelete(new PostPk(dto.getPostId(), board), false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
@@ -209,7 +207,7 @@ public class PostService {
         return Objects.equals(post.getUserCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
     }
 
-    private Page<Post> getPostListByOffset(PostCategoryPk postCategoryId, GetPostListDto dto) {
+    private Page<Post> getPostListByOffset(PostCategoryPk postCategoryId, GetPostListRequest dto) {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
         if (postCategoryId.getId().equals("all")) {
@@ -224,7 +222,7 @@ public class PostService {
         return postRepository.findByCategoryAndDeleteOrderByPkIdDesc(postCategory, false, pageable);
     }
 
-    private List<Post> getPostListByCursor(PostCategoryPk postCategoryId, GetPostListDto dto) {
+    private List<Post> getPostListByCursor(PostCategoryPk postCategoryId, GetPostListRequest dto) {
         PostPk postId = new PostPk(dto.getStartPostId(), postCategoryId.getBoard());
         Pageable pageable = Pageable.ofSize(dto.getLimit());
         // 전체 게시글

@@ -1,7 +1,6 @@
 package bssm.bsm.domain.board.emoticon.entities;
 
-import bssm.bsm.domain.board.emoticon.dto.response.EmoticonItemResponseDto;
-import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponseDto;
+import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponse;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -72,8 +71,8 @@ public class Emoticon extends BaseTimeEntity {
         this.deleteReason = deleteReason;
     }
 
-    public EmoticonResponseDto toDto() {
-        return EmoticonResponseDto.builder()
+    public EmoticonResponse toDto() {
+        return EmoticonResponse.builder()
                 .id(id)
                 .name(name)
                 .description(description)

@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.emoticon.entities;
 
-import bssm.bsm.domain.board.emoticon.dto.response.EmoticonItemResponseDto;
+import bssm.bsm.domain.board.emoticon.dto.response.EmoticonItemResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,8 +19,8 @@ public class EmoticonItem {
     @Column(length = 4)
     private String type;
 
-    public EmoticonItemResponseDto toDto() {
-        return EmoticonItemResponseDto.builder()
+    public EmoticonItemResponse toDto() {
+        return EmoticonItemResponse.builder()
                 .id(pk.getEmoticon().getId())
                 .idx(pk.getIdx())
                 .type(type)

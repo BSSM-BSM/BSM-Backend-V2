@@ -1,11 +1,11 @@
 package bssm.bsm.domain.board.comment;
 
-import bssm.bsm.domain.board.comment.dto.request.WriteCommentDto;
-import bssm.bsm.domain.board.comment.dto.response.CommentDto;
+import bssm.bsm.domain.board.comment.dto.request.WriteCommentRequest;
+import bssm.bsm.domain.board.comment.dto.response.CommentResponse;
 import bssm.bsm.domain.board.comment.entity.Comment;
 import bssm.bsm.domain.board.comment.entity.CommentPk;
 import bssm.bsm.domain.board.comment.repository.CommentRepository;
-import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.board.post.dto.request.PostIdRequest;
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.entities.Post;
 import bssm.bsm.domain.board.post.entities.PostPk;
@@ -13,8 +13,8 @@ import bssm.bsm.domain.board.post.repositories.PostRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
 import bssm.bsm.domain.user.dto.response.UserResponseDto;
 import bssm.bsm.domain.user.type.UserLevel;
-import bssm.bsm.global.exceptions.ForbiddenException;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.ForbiddenException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.domain.user.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CommentService {
     private final BoardUtil boardUtil;
 
     @Transactional
-    public void writeComment(User user, PostIdDto postIdDto, @Valid WriteCommentDto dto) {
+    public void writeComment(User user, PostIdRequest postIdDto, @Valid WriteCommentRequest dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
         PostPk postPk = PostPk.builder()
@@ -87,7 +87,7 @@ public class CommentService {
         postRepository.save(post);
     }
 
-    public void deleteComment(User user, PostIdDto postIdDto, int commnetId) {
+    public void deleteComment(User user, PostIdRequest postIdDto, int commnetId) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
@@ -113,7 +113,7 @@ public class CommentService {
         postRepository.save(post);
     }
 
-    public List<CommentDto> viewCommentList(User user, PostIdDto postIdDto) {
+    public List<CommentResponse> viewCommentList(User user, PostIdRequest postIdDto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
@@ -126,8 +126,8 @@ public class CommentService {
         return commentTree(user, 0, commentRepository.findByPkPost(post));
     }
 
-    private List<CommentDto> commentTree(User user, int depth, List<Comment> commentList) {
-        List<CommentDto> commentDtoList = new ArrayList<>();
+    private List<CommentResponse> commentTree(User user, int depth, List<Comment> commentList) {
+        List<CommentResponse> commentDtoList = new ArrayList<>();
         List<Comment> deleteList = new ArrayList<>();
 
         for (Iterator<Comment> iterator = commentList.iterator(); iterator.hasNext();) {
@@ -144,7 +144,7 @@ public class CommentService {
                 continue;
             }
 
-            CommentDto commentDto = convertCommentDtoAndDeleteCheck(user, comment);
+            CommentResponse commentDto = convertCommentDtoAndDeleteCheck(user, comment);
 
             // 자식 댓글이 있다면
             if (comment.isHaveChild()) {
@@ -173,16 +173,16 @@ public class CommentService {
         return commentDtoList;
     }
 
-    private CommentDto convertCommentDtoAndDeleteCheck(User user, Comment comment) {
+    private CommentResponse convertCommentDtoAndDeleteCheck(User user, Comment comment) {
         if (comment.isDelete()) {
-            return CommentDto.builder()
+            return CommentResponse.builder()
                     .id(comment.getPk().getId())
                     .isDelete(true)
                     .depth(comment.getDepth())
                     .permission(false)
                     .build();
         }
-        return CommentDto.builder()
+        return CommentResponse.builder()
                 .id(comment.getPk().getId())
                 .isDelete(false)
                 .user(getUserData(comment.getUser(), comment.isAnonymous()))

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface TimetableRepository extends JpaRepository<Timetable, TimetablePk> {
 
-    List<Timetable> findByPkGradeAndPkClassNoAndPkDay(int grade, int classNo, int day);
+    List<Timetable> findAllByPkGradeAndPkClassNoAndPkDay(int grade, int classNo, int day);
 }

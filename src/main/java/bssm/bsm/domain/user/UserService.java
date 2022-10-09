@@ -7,7 +7,7 @@ import bssm.bsm.domain.user.repositories.StudentRepository;
 import bssm.bsm.domain.user.repositories.TeacherRepository;
 import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.domain.user.type.UserRole;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.domain.user.dto.BsmOauthResourceResponseDto;
 import bssm.bsm.domain.user.dto.BsmOauthTokenResponseDto;
 import bssm.bsm.domain.user.dto.studentDto;

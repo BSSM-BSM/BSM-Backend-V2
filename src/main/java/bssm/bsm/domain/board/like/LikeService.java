@@ -1,19 +1,20 @@
 package bssm.bsm.domain.board.like;
 
-import bssm.bsm.domain.board.like.dto.request.LikeRequestDto;
-import bssm.bsm.domain.board.like.dto.response.LikeResponseDto;
+import bssm.bsm.domain.board.like.dto.request.LikeRequest;
+import bssm.bsm.domain.board.like.dto.response.LikeResponse;
 import bssm.bsm.domain.board.like.entity.PostLike;
 import bssm.bsm.domain.board.like.entity.PostLikePk;
 import bssm.bsm.domain.board.like.repository.LikeRepository;
-import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.board.post.dto.request.PostIdRequest;
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.entities.Post;
 import bssm.bsm.domain.board.post.entities.PostPk;
 import bssm.bsm.domain.board.post.repositories.PostRepository;
 import bssm.bsm.domain.board.utils.BoardUtil;
 import bssm.bsm.domain.user.entities.User;
-import bssm.bsm.global.exceptions.BadRequestException;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.BadRequestException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class LikeService {
     private final BoardUtil boardUtil;
 
     @Transactional
-    public LikeResponseDto like(User user, PostIdDto postIdDto, @Valid LikeRequestDto dto) {
+    public LikeResponse like(User user, PostIdRequest postIdDto, @Valid LikeRequest dto) {
         Board board = boardUtil.getBoard(postIdDto.getBoard());
         PostPk postId = new PostPk(postIdDto.getPostId(), board);
         Post post = postRepository.findById(postId).orElseThrow(
@@ -44,7 +45,12 @@ public class LikeService {
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
         if (postLikeCheck.isEmpty()) {
-            if (like == 0) throw new BadRequestException();
+            if (like == 0) {
+                throw new BadRequestException(ImmutableMap.<String, String>builder().
+                        put("like", "정상적인 요청이 아닙니다").
+                        build()
+                );
+            }
             PostLike newLike = PostLike.builder()
                     .pk(
                             PostLikePk.builder()
@@ -58,7 +64,7 @@ public class LikeService {
             likeRepository.save(newLike);
             post.setTotalLikes(post.getTotalLikes() + like);
             postRepository.save(post);
-            return LikeResponseDto.builder()
+            return LikeResponse.builder()
                     .like(like)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -72,7 +78,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(like);
             likeRepository.save(postLike);
-            return LikeResponseDto.builder()
+            return LikeResponse.builder()
                     .like(like)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -84,7 +90,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeResponseDto.builder()
+            return LikeResponse.builder()
                     .like(0)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -96,7 +102,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeResponseDto.builder()
+            return LikeResponse.builder()
                     .like(0)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -107,7 +113,7 @@ public class LikeService {
         postRepository.save(post);
         postLike.setLike(like);
         likeRepository.save(postLike);
-        return LikeResponseDto.builder()
+        return LikeResponse.builder()
                 .like(like)
                 .totalLikes(post.getTotalLikes())
                 .build();

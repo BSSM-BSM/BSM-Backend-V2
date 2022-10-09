@@ -1,13 +1,11 @@
 package bssm.bsm.domain.board.like;
 
-import bssm.bsm.domain.board.like.dto.request.LikeRequestDto;
-import bssm.bsm.domain.board.like.dto.response.LikeResponseDto;
-import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.board.like.dto.request.LikeRequest;
+import bssm.bsm.domain.board.like.dto.response.LikeResponse;
+import bssm.bsm.domain.board.post.dto.request.PostIdRequest;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("like")
@@ -18,11 +16,11 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/{boardId}/{postId}")
-    public LikeResponseDto viewPost(
+    public LikeResponse viewPost(
             @PathVariable String boardId,
             @PathVariable int postId,
-            @RequestBody LikeRequestDto dto
+            @RequestBody LikeRequest dto
     ) {
-        return likeService.like(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), dto);
+        return likeService.like(userUtil.getCurrentUser(), new PostIdRequest(boardId, postId), dto);
     }
 }

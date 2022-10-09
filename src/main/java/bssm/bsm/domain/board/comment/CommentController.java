@@ -1,8 +1,8 @@
 package bssm.bsm.domain.board.comment;
 
-import bssm.bsm.domain.board.comment.dto.request.WriteCommentDto;
-import bssm.bsm.domain.board.comment.dto.response.CommentDto;
-import bssm.bsm.domain.board.post.dto.request.PostIdDto;
+import bssm.bsm.domain.board.comment.dto.request.WriteCommentRequest;
+import bssm.bsm.domain.board.comment.dto.response.CommentResponse;
+import bssm.bsm.domain.board.post.dto.request.PostIdRequest;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +21,9 @@ public class CommentController {
     public void writeComment(
             @PathVariable String boardId,
             @PathVariable int postId,
-            @RequestBody WriteCommentDto dto
+            @RequestBody WriteCommentRequest dto
     ) {
-        commentService.writeComment(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), dto);
+        commentService.writeComment(userUtil.getCurrentUser(), new PostIdRequest(boardId, postId), dto);
     }
 
     @DeleteMapping("/{boardId}/{postId}/{commentId}")
@@ -32,14 +32,14 @@ public class CommentController {
             @PathVariable int postId,
             @PathVariable int commentId
     ) {
-        commentService.deleteComment(userUtil.getCurrentUser(), new PostIdDto(boardId, postId), commentId);
+        commentService.deleteComment(userUtil.getCurrentUser(), new PostIdRequest(boardId, postId), commentId);
     }
 
     @GetMapping("/{boardId}/{postId}")
-    public List<CommentDto> viewComment(
+    public List<CommentResponse> viewComment(
             @PathVariable String boardId,
             @PathVariable int postId
     ) {
-        return commentService.viewCommentList(userUtil.getCurrentUser(), new PostIdDto(boardId, postId));
+        return commentService.viewCommentList(userUtil.getCurrentUser(), new PostIdRequest(boardId, postId));
     }
 }

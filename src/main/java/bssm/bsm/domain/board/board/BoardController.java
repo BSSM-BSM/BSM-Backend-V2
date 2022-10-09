@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.board;
 
-import bssm.bsm.domain.board.board.dto.response.BoardResponseDto;
+import bssm.bsm.domain.board.board.dto.response.BoardResponse;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class BoardController {
     private final UserUtil userUtil;
 
     @GetMapping("/{boardId}")
-    public BoardResponseDto boardInfo(@PathVariable String boardId) {
+    public BoardResponse boardInfo(@PathVariable String boardId) {
         return boardService.boardInfo(boardId, userUtil.getCurrentUser());
     }
 }

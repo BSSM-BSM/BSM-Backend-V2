@@ -1,7 +1,7 @@
 package bssm.bsm.domain.school.meister;
 
-import bssm.bsm.domain.school.meister.dto.response.MeisterRankingDto;
-import bssm.bsm.domain.school.meister.dto.response.MeisterStudentResponseDto;
+import bssm.bsm.domain.school.meister.dto.response.MeisterRankingResponse;
+import bssm.bsm.domain.school.meister.dto.response.MeisterStudentResponse;
 import bssm.bsm.domain.school.meister.entities.MeisterData;
 import bssm.bsm.domain.school.meister.entities.MeisterInfo;
 import bssm.bsm.domain.school.meister.repositories.MeisterDataRepository;
@@ -9,23 +9,27 @@ import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
 import bssm.bsm.domain.user.entities.Student;
 import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.StudentRepository;
-import bssm.bsm.global.exceptions.*;
-import bssm.bsm.domain.school.meister.dto.request.MeisterDetailRequestDto;
-import bssm.bsm.domain.school.meister.dto.response.MeisterDetailResponseDto;
-import bssm.bsm.domain.school.meister.dto.response.MeisterResponseDto;
+import bssm.bsm.global.error.*;
+import bssm.bsm.domain.school.meister.dto.request.MeisterDetailRequest;
+import bssm.bsm.domain.school.meister.dto.response.MeisterDetailResponse;
+import bssm.bsm.domain.school.meister.dto.response.MeisterResponse;
 import bssm.bsm.domain.school.meister.repositories.MeisterInfoRepository;
+import bssm.bsm.global.error.exceptions.BadRequestException;
+import bssm.bsm.global.error.exceptions.ForbiddenException;
+import bssm.bsm.global.error.exceptions.InternalServerException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +64,7 @@ public class MeisterService {
         meisterInfoRepository.save(meisterInfo);
     }
 
-    public MeisterDetailResponseDto getDetail(User user, MeisterDetailRequestDto dto) throws IOException {
+    public MeisterDetailResponse getDetail(User user, MeisterDetailRequest dto) throws IOException {
         Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
                 () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
         );
@@ -77,7 +81,7 @@ public class MeisterService {
         }
 
         login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
-        MeisterDetailResponseDto detailInfo = getAllInfo(student);
+        MeisterDetailResponse detailInfo = getAllInfo(student);
 
         if (meisterInfo.isLoginError()) {
             meisterInfo.setLoginError(false);
@@ -95,21 +99,21 @@ public class MeisterService {
         return detailInfo;
     }
 
-    public MeisterResponseDto get(User user) {
+    public MeisterResponse get(User user) {
         MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay()).orElseGet(
                 () -> getAndUpdateMeisterData(findOrCreateMeisterData(user.getStudent()))
         );
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
         if (meisterInfo.isLoginError()) {
-            return MeisterResponseDto.builder()
+            return MeisterResponse.builder()
                     .uniqNo(meisterInfo.getStudentId())
                     .lastUpdate(LocalDateTime.now())
                     .loginError(true)
                     .build();
         }
 
-        return MeisterResponseDto.builder()
+        return MeisterResponse.builder()
                 .score(meisterData.getScore())
                 .positivePoint(meisterData.getPositivePoint())
                 .negativePoint(meisterData.getNegativePoint())
@@ -118,19 +122,19 @@ public class MeisterService {
                 .build();
     }
 
-    public MeisterResponseDto updateAndGet(User user) {
+    public MeisterResponse updateAndGet(User user) {
         MeisterData meisterData = getAndUpdateMeisterData(findOrCreateMeisterData(user.getStudent()));
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
         if (meisterInfo.isLoginError()) {
-            return MeisterResponseDto.builder()
+            return MeisterResponse.builder()
                     .uniqNo(meisterInfo.getStudentId())
                     .lastUpdate(LocalDateTime.now())
                     .loginError(true)
                     .build();
         }
 
-        return MeisterResponseDto.builder()
+        return MeisterResponse.builder()
                 .score(meisterData.getScore())
                 .positivePoint(meisterData.getPositivePoint())
                 .negativePoint(meisterData.getNegativePoint())
@@ -159,7 +163,7 @@ public class MeisterService {
     private MeisterData getAndUpdateMeisterData(MeisterData meisterData) {
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
-        MeisterDetailResponseDto responseDto;
+        MeisterDetailResponse responseDto;
         try {
             meisterData.setModifiedAt(LocalDateTime.now());
             login(meisterInfo.getStudent(), meisterInfo.getStudentId());
@@ -195,7 +199,7 @@ public class MeisterService {
         return meisterDataRepository.save(meisterData);
     }
 
-    public List<MeisterRankingDto> getRanking(User user) {
+    public List<MeisterRankingResponse> getRanking(User user) {
         permissionCheck(
                 meisterInfoRepository.findById(user.getStudentId()).orElseThrow(
                         () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
@@ -205,8 +209,8 @@ public class MeisterService {
         return meisterDataRepository.findByOrderByScoreDesc().stream()
                 .map(meisterData -> {
                     Student student = meisterData.getMeisterInfo().getStudent();
-                    MeisterRankingDto.MeisterRankingDtoBuilder builder = MeisterRankingDto.builder()
-                            .student(MeisterStudentResponseDto.builder()
+                    MeisterRankingResponse.MeisterRankingResponseBuilder builder = MeisterRankingResponse.builder()
+                            .student(MeisterStudentResponse.builder()
                                     .grade(student.getGrade())
                                     .classNo(student.getClassNo())
                                     .studentNo(student.getStudentNo())
@@ -226,7 +230,7 @@ public class MeisterService {
                             .lastUpdate(meisterData.getModifiedAt())
                             .build();
                     }
-                ).sorted(MeisterRankingDto::compareTo)
+                ).sorted(MeisterRankingResponse::compareTo)
                 .collect(Collectors.toList());
     }
 
@@ -267,7 +271,7 @@ public class MeisterService {
         });
     }
 
-    private MeisterDetailResponseDto getAllInfo(Student student) throws IOException {
+    private MeisterDetailResponse getAllInfo(Student student) throws IOException {
         String scoreHtmlContent = getScore(student);
         String pointHtmlContent = getPoint();
 
@@ -290,7 +294,7 @@ public class MeisterService {
         }
 
         logout();
-        return MeisterDetailResponseDto.builder()
+        return MeisterDetailResponse.builder()
                 .scoreHtmlContent(scoreHtmlContent)
                 .pointHtmlContent(pointHtmlContent)
                 .score(score)
@@ -299,7 +303,7 @@ public class MeisterService {
                 .build();
     }
 
-    private MeisterDetailResponseDto getScoreInfo(Student student) throws IOException {
+    private MeisterDetailResponse getScoreInfo(Student student) throws IOException {
         String scoreHtmlContent = getScore(student);
         float score = 0;
 
@@ -307,7 +311,7 @@ public class MeisterService {
         if (scoreMatch.find()) {
             score = Float.parseFloat(scoreMatch.group().split("<")[1].substring(3));
         }
-        return MeisterDetailResponseDto.builder()
+        return MeisterDetailResponse.builder()
                 .scoreHtmlContent(scoreHtmlContent)
                 .score(score)
                 .positivePoint(0)
@@ -370,8 +374,11 @@ public class MeisterService {
                 .build();
 
         Response response = httpClient.newCall(request).execute();
-        if (!response.body().string().equals("true")) {
-            throw new BadRequestException("비밀번호가 맞지 않습니다. 다른 비밀번호로 시도해 보세요.");
+        if (!Objects.requireNonNull(response.body()).string().equals("true")) {
+            throw new BadRequestException(ImmutableMap.<String, String>builder().
+                    put("pw", "비밀번호가 맞지 않습니다. 다른 비밀번호로 시도해 보세요").
+                    build()
+            );
         }
     }
 

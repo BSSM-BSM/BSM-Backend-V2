@@ -3,7 +3,7 @@ package bssm.bsm.domain.board.utils;
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.repositories.BoardRepository;
 import bssm.bsm.domain.user.type.UserLevel;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

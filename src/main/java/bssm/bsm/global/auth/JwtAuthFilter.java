@@ -1,7 +1,7 @@
 package bssm.bsm.global.auth;
 
-import bssm.bsm.global.exceptions.NotFoundException;
-import bssm.bsm.global.exceptions.UnAuthorizedException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.domain.user.entities.User;

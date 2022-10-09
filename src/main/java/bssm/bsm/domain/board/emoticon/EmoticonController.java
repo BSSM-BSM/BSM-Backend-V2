@@ -1,7 +1,7 @@
 package bssm.bsm.domain.board.emoticon;
 
-import bssm.bsm.domain.board.emoticon.dto.request.EmoticonUploadRequestDto;
-import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponseDto;
+import bssm.bsm.domain.board.emoticon.dto.request.EmoticonUploadRequest;
+import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponse;
 import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,17 +19,17 @@ public class EmoticonController {
     private final UserUtil userUtil;
 
     @GetMapping("inactive")
-    public List<EmoticonResponseDto> getInactiveEmoticonList() {
+    public List<EmoticonResponse> getInactiveEmoticonList() {
         return emoticonService.getInactiveEmoticonList();
     }
 
     @GetMapping("{id}")
-    public EmoticonResponseDto getEmoticon(@PathVariable long id) {
+    public EmoticonResponse getEmoticon(@PathVariable long id) {
         return emoticonService.getEmoticon(id);
     }
 
     @GetMapping
-    public List<EmoticonResponseDto> getEmoticonList() {
+    public List<EmoticonResponse> getEmoticonList() {
         return emoticonService.getEmoticonList();
     }
 
@@ -40,7 +40,7 @@ public class EmoticonController {
             @RequestPart(value = "thumbnail") MultipartFile thumbnail,
             @RequestPart(value = "emoticonList") List<MultipartFile> emoticonList
     ) throws IOException {
-        emoticonService.upload(userUtil.getCurrentUser(), new EmoticonUploadRequestDto(name, description, thumbnail, emoticonList));
+        emoticonService.upload(userUtil.getCurrentUser(), new EmoticonUploadRequest(name, description, thumbnail, emoticonList));
     }
 
     @PutMapping("{id}")

@@ -7,7 +7,7 @@ import bssm.bsm.domain.user.entities.User;
 import bssm.bsm.domain.user.repositories.RefreshTokenRepository;
 import bssm.bsm.domain.user.type.UserLevel;
 import bssm.bsm.domain.user.type.UserRole;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,8 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HexFormat;
-
-import static bssm.bsm.domain.user.type.UserRole.TEACHER;
 
 @Component
 @RequiredArgsConstructor

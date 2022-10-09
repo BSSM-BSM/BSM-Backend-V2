@@ -1,7 +1,7 @@
 package bssm.bsm.domain.board.board;
 
-import bssm.bsm.domain.board.board.dto.response.BoardResponseDto;
-import bssm.bsm.domain.board.post.dto.PostCategoryDto;
+import bssm.bsm.domain.board.board.dto.response.BoardResponse;
+import bssm.bsm.domain.board.post.dto.response.PostCategoryResponse;
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.entities.PostCategory;
 import bssm.bsm.domain.board.post.repositories.PostCategoryRepository;
@@ -20,21 +20,21 @@ public class BoardService {
     private final BoardUtil boardUtil;
     private final PostCategoryRepository postCategoryRepository;
 
-    public BoardResponseDto boardInfo(String boardId, User user) {
+    public BoardResponse boardInfo(String boardId, User user) {
         Board board = boardUtil.getBoard(boardId);
         List<PostCategory> postCategoryList = postCategoryRepository.findByPostCategoryPkBoard(board);
-        List<PostCategoryDto> postCategoryDtoList = new ArrayList<>();
+        List<PostCategoryResponse> postCategoryDtoList = new ArrayList<>();
 
         postCategoryList.forEach(category ->
                 postCategoryDtoList.add(
-                    PostCategoryDto.builder()
+                    PostCategoryResponse.builder()
                             .id(category.getPostCategoryPk().getId())
                             .name(category.getName())
                             .build()
                 )
         );
 
-        return BoardResponseDto.builder()
+        return BoardResponse.builder()
                 .boardId(boardId)
                 .boardName(board.getName())
                 .subBoardId(board.getSubBoardId())

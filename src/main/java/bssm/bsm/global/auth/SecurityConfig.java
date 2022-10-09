@@ -1,7 +1,7 @@
 package bssm.bsm.global.auth;
 
-import bssm.bsm.global.exceptions.HttpErrorResponse;
-import bssm.bsm.global.exceptions.UnAuthorizedException;
+import bssm.bsm.global.error.HttpErrorResponse;
+import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

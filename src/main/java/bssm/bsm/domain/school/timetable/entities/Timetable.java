@@ -1,10 +1,7 @@
 package bssm.bsm.domain.school.timetable.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -13,14 +10,10 @@ import javax.persistence.Table;
 import java.sql.Time;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
-@Table
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Timetable {
 
-    @JsonIgnore
     @EmbeddedId
     private TimetablePk pk;
 
@@ -35,4 +28,5 @@ public class Timetable {
 
     @Column(nullable = false)
     private Time endTime;
+
 }

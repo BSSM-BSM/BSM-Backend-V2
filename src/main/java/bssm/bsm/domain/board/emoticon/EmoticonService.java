@@ -1,18 +1,19 @@
 package bssm.bsm.domain.board.emoticon;
 
-import bssm.bsm.domain.board.emoticon.dto.request.EmoticonDeleteRequestDto;
-import bssm.bsm.domain.board.emoticon.dto.request.EmoticonUploadRequestDto;
-import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponseDto;
+import bssm.bsm.domain.board.emoticon.dto.request.EmoticonDeleteRequest;
+import bssm.bsm.domain.board.emoticon.dto.request.EmoticonUploadRequest;
+import bssm.bsm.domain.board.emoticon.dto.response.EmoticonResponse;
 import bssm.bsm.domain.board.emoticon.entities.Emoticon;
 import bssm.bsm.domain.board.emoticon.entities.EmoticonItem;
 import bssm.bsm.domain.board.emoticon.entities.EmoticonItemPk;
 import bssm.bsm.domain.board.emoticon.repositories.EmoticonItemRepository;
 import bssm.bsm.domain.board.emoticon.repositories.EmoticonRepository;
 import bssm.bsm.domain.user.entities.User;
-import bssm.bsm.global.exceptions.BadRequestException;
-import bssm.bsm.global.exceptions.ConflictException;
-import bssm.bsm.global.exceptions.InternalServerException;
-import bssm.bsm.global.exceptions.NotFoundException;
+import bssm.bsm.global.error.exceptions.BadRequestException;
+import bssm.bsm.global.error.exceptions.ConflictException;
+import bssm.bsm.global.error.exceptions.InternalServerException;
+import bssm.bsm.global.error.exceptions.NotFoundException;
+import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,20 +51,20 @@ public class EmoticonService {
     @Value("${env.file.path.upload.emoticon}")
     private String EMOTICON_UPLOAD_PATH;
 
-    public EmoticonResponseDto getEmoticon(long id) {
+    public EmoticonResponse getEmoticon(long id) {
         return emoticonRepository.findById(id).orElseThrow(
                 () -> {throw new NotFoundException("이모티콘을 찾을 수 없습니다");}
         ).toDto();
     }
 
-    public List<EmoticonResponseDto> getEmoticonList() {
+    public List<EmoticonResponse> getEmoticonList() {
         List<Emoticon> emoticonList = emoticonRepository.findAllByActiveAndDeleted(true, false);
         return emoticonList
                 .stream().map(Emoticon::toDto)
                 .collect(Collectors.toList());
     }
 
-    public List<EmoticonResponseDto> getInactiveEmoticonList() {
+    public List<EmoticonResponse> getInactiveEmoticonList() {
         List<Emoticon> emoticonList = emoticonRepository.findAllByActiveAndDeleted(false, false);
         return emoticonList
                 .stream().map(Emoticon::toDto)
@@ -79,7 +80,7 @@ public class EmoticonService {
     }
 
     @Transactional
-    public void deleteEmoticon(long id, EmoticonDeleteRequestDto dto) {
+    public void deleteEmoticon(long id, EmoticonDeleteRequest dto) {
         Emoticon emoticon = emoticonRepository.findById(id).orElseThrow(
                 () -> {throw new NotFoundException("이모티콘을 찾을 수 없습니다.");}
         );
@@ -89,7 +90,7 @@ public class EmoticonService {
     }
 
     @Transactional
-    public void upload(User user, @Valid EmoticonUploadRequestDto dto) throws IOException {
+    public void upload(User user, @Valid EmoticonUploadRequest dto) throws IOException {
         emoticonValidateCheck(dto);
         Emoticon emoticonInfo = saveEmoticonInfo(user, dto);
         List<EmoticonItem> emoticonItems = saveEmoticonItems(emoticonInfo, dto);
@@ -131,14 +132,18 @@ public class EmoticonService {
         });
     }
 
-    private void emoticonValidateCheck(EmoticonUploadRequestDto dto) {
+    private void emoticonValidateCheck(EmoticonUploadRequest dto) {
         dto.getEmoticonList().forEach(file -> {
             String fileExt = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
-            if (!allowedExt.contains(fileExt)) throw new BadRequestException("파일의 확장자가 올바르지 않습니다");
+            if (!allowedExt.contains(fileExt))
+                throw new BadRequestException(ImmutableMap.<String, String>builder().
+                        put("file", "파일의 확장자가 올바르지 않습니다").
+                        build()
+                );
         });
     }
 
-    private Emoticon saveEmoticonInfo(User user, EmoticonUploadRequestDto dto) {
+    private Emoticon saveEmoticonInfo(User user, EmoticonUploadRequest dto) {
         if (emoticonRepository.existsByName(dto.getName())) throw new ConflictException("해당 이름의 이모티콘이 이미 존재합니다");
         return emoticonRepository.save(
                 Emoticon.builder()
@@ -150,7 +155,7 @@ public class EmoticonService {
         );
     }
 
-    private List<EmoticonItem> saveEmoticonItems(Emoticon emoticon, EmoticonUploadRequestDto dto) {
+    private List<EmoticonItem> saveEmoticonItems(Emoticon emoticon, EmoticonUploadRequest dto) {
         List<EmoticonItem> emoticonItems = new ArrayList<>();
         for (int i=0; i<dto.getEmoticonList().size(); i++) {
             MultipartFile file = dto.getEmoticonList().get(i);
