@@ -7,6 +7,7 @@ import bssm.bsm.global.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class CommentController {
     public void writeComment(
             @PathVariable String boardId,
             @PathVariable int postId,
-            @RequestBody WriteCommentRequest dto
+            @Valid @RequestBody WriteCommentRequest dto
     ) {
         commentService.writeComment(userUtil.getCurrentUser(), new PostIdRequest(boardId, postId), dto);
     }

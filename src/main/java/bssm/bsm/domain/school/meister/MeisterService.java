@@ -236,7 +236,7 @@ public class MeisterService {
 
     private void permissionCheck(MeisterInfo info) {
         if (info.isLoginError()) {
-            throw new NotFoundException("자신의 마이스터 정보를 불러올 수 있도록 설정해야 볼 수 있습니다\n마이스터 인증제 사이트에서 계정의 비밀번호를 초기 비밀번호로 설정해주세요");
+            throw new ForbiddenException("자신의 마이스터 정보를 불러올 수 있도록 설정해야 볼 수 있습니다\n마이스터 인증제 사이트에서 계정의 비밀번호를 초기 비밀번호로 설정해주세요");
         }
         if (info.isPrivateRanking()) {
             throw new ForbiddenException("자신의 랭킹 공유를 허용해야 볼 수 있습니다");

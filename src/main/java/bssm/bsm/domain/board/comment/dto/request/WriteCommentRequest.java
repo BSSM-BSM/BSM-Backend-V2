@@ -1,14 +1,14 @@
 package bssm.bsm.domain.board.comment.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class WriteCommentRequest {
 
     @Positive
