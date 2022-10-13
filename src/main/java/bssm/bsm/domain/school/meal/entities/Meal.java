@@ -1,5 +1,6 @@
 package bssm.bsm.domain.school.meal.entities;
 
+import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -39,4 +40,20 @@ public class Meal {
     public void setDinner(String dinner) {
         this.dinner = dinner;
     }
+
+    public String getMorningForFacade() {
+        if (this.morning == null) throw new NotFoundException();
+        return morning;
+    }
+
+    public String getLunchForFacade() {
+        if (this.lunch == null) throw new NotFoundException();
+        return lunch;
+    }
+
+    public String getDinnerForFacade() {
+        if (this.dinner == null) throw new NotFoundException();
+        return dinner;
+    }
+
 }
