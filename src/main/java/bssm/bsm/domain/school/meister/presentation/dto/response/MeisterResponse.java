@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.meister.dto.response;
+package bssm.bsm.domain.school.meister.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

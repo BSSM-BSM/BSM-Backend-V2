@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.meister.dto.request;
+package bssm.bsm.domain.school.meister.presentation.dto.request;
 
 import lombok.*;
 

@@ -1,6 +1,6 @@
-package bssm.bsm.domain.school.meister.dto.response;
+package bssm.bsm.domain.school.meister.presentation.dto.response;
 
-import bssm.bsm.domain.school.meister.type.MeisterInfoResultType;
+import bssm.bsm.domain.school.meister.entities.MeisterInfoResultType;
 import lombok.Builder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;

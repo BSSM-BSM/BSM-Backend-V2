@@ -81,4 +81,5 @@ public class MeisterData {
     public void setModifiedAt(LocalDateTime modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
+
 }
