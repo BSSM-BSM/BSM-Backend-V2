@@ -4,17 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
 public class WriteCommentRequest {
 
-    @Positive
+    @PositiveOrZero
     private int depth;
 
-    @Positive
+    @PositiveOrZero
     private int parentId;
 
     @NotBlank
