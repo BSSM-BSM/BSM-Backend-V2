@@ -29,7 +29,7 @@ public class PostController {
             @RequestParam(value = "c", defaultValue = "all") String category,
             @RequestParam(value = "i", defaultValue = "-1") int startPostId
     ) {
-        return postService.postList(boardId, new GetPostListRequest(page, limit, category, startPostId));
+        return postService.postList(userUtil.getCurrentUser(), boardId, new GetPostListRequest(page, limit, category, startPostId));
     }
 
     @GetMapping("/{boardId}/{postId}")

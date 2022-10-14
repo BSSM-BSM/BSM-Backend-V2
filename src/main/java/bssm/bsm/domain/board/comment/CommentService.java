@@ -38,7 +38,7 @@ public class CommentService {
 
     @Transactional
     public void writeComment(User user, PostIdRequest postIdDto, @Valid WriteCommentRequest dto) {
-        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        Board board = boardUtil.getBoardAndCheckRole(postIdDto.getBoard(), user.getRole());
         if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
@@ -88,7 +88,7 @@ public class CommentService {
     }
 
     public void deleteComment(User user, PostIdRequest postIdDto, int commnetId) {
-        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        Board board = boardUtil.getBoardAndCheckRole(postIdDto.getBoard(), user.getRole());
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
                 .board(board)
@@ -114,7 +114,7 @@ public class CommentService {
     }
 
     public List<CommentResponse> viewCommentList(User user, PostIdRequest postIdDto) {
-        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        Board board = boardUtil.getBoardAndCheckRole(postIdDto.getBoard(), user.getRole());
         PostPk postPk = PostPk.builder()
                 .id(postIdDto.getPostId())
                 .board(board)

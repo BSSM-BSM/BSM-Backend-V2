@@ -34,7 +34,7 @@ public class LikeService {
 
     @Transactional
     public LikeResponse like(User user, PostIdRequest postIdDto, @Valid LikeRequest dto) {
-        Board board = boardUtil.getBoard(postIdDto.getBoard());
+        Board board = boardUtil.getBoardAndCheckRole(postIdDto.getBoard(), user.getRole());
         PostPk postId = new PostPk(postIdDto.getPostId(), board);
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}

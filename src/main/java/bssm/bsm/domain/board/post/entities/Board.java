@@ -1,6 +1,7 @@
 package bssm.bsm.domain.board.post.entities;
 
 import bssm.bsm.domain.user.type.UserLevel;
+import bssm.bsm.domain.user.type.UserRole;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,8 +38,12 @@ public class Board {
     @Column(nullable = false)
     private boolean publicComment;
 
+    @Column(length = 12)
+    @Enumerated(EnumType.STRING)
+    private UserRole accessibleRole;
+
     @Builder
-    public Board(String id, String name, String subBoardId, String subBoardName, UserLevel writePostLevel, boolean publicPost, UserLevel writeCommentLevel, boolean publicComment) {
+    public Board(String id, String name, String subBoardId, String subBoardName, UserLevel writePostLevel, boolean publicPost, UserLevel writeCommentLevel, boolean publicComment, UserRole accessibleRole) {
         this.id = id;
         this.name = name;
         this.subBoardId = subBoardId;
@@ -47,5 +52,7 @@ public class Board {
         this.publicPost = publicPost;
         this.writeCommentLevel = writeCommentLevel;
         this.publicComment = publicComment;
+        this.accessibleRole = accessibleRole;
     }
+    
 }

@@ -51,8 +51,8 @@ public class PostService {
     @Value("${env.file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
-    public PostListResponse postList(String boardId, @Valid GetPostListRequest dto) {
-        Board board = boardUtil.getBoard(boardId);
+    public PostListResponse postList(User user, String boardId, @Valid GetPostListRequest dto) {
+        Board board = boardUtil.getBoardAndCheckRole(boardId, user.getRole());
         PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
         final boolean pageMode = dto.getStartPostId() < 0;
 
@@ -96,7 +96,7 @@ public class PostService {
     }
 
     public ViewPostResponse viewPost(User user, PostIdRequest postIdDto) {
-        Post post = getPost(postIdDto);
+        Post post = getPost(user, postIdDto);
         PostLike postLike = likeRepository.findByPkPostPkAndUserCode(post.getPk(), user.getCode()).orElseGet(
                 () -> PostLike.builder()
                         .like(0)
@@ -123,7 +123,7 @@ public class PostService {
 
     @Transactional
     public long writePost(User user, String boardId, WritePostRequest dto) {
-        Board board = boardUtil.getBoard(boardId);
+        Board board = boardUtil.getBoardAndCheckRole(boardId, user.getRole());
         if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
 
         PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
@@ -147,8 +147,8 @@ public class PostService {
     }
 
     public void modifyPost(User user, PostIdRequest postIdDto, @Valid WritePostRequest dto) {
-        Board board = boardUtil.getBoard(postIdDto.getBoard());
-        Post post = getPost(postIdDto);
+        Board board = boardUtil.getBoardAndCheckRole(postIdDto.getBoard(), user.getRole());
+        Post post = getPost(user, postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
 
         PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
@@ -162,7 +162,7 @@ public class PostService {
     }
 
     public void deletePost(User user, PostIdRequest postIdDto) {
-        Post post = getPost(postIdDto);
+        Post post = getPost(user, postIdDto);
         if (!checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
         post.setDelete(true);
 
@@ -196,8 +196,8 @@ public class PostService {
         }
     }
 
-    private Post getPost(PostIdRequest dto) {
-        Board board = boardUtil.getBoard(dto.getBoard());
+    private Post getPost(User user, PostIdRequest dto) {
+        Board board = boardUtil.getBoardAndCheckRole(dto.getBoard(), user.getRole());
         return postRepository.findByPkAndDelete(new PostPk(dto.getPostId(), board), false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
         );

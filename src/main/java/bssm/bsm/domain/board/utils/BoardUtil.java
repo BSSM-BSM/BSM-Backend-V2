@@ -3,6 +3,8 @@ package bssm.bsm.domain.board.utils;
 import bssm.bsm.domain.board.post.entities.Board;
 import bssm.bsm.domain.board.post.repositories.BoardRepository;
 import bssm.bsm.domain.user.type.UserLevel;
+import bssm.bsm.domain.user.type.UserRole;
+import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -21,37 +23,21 @@ public class BoardUtil {
         });
     }
 
-    public String getBoardName(String id) {
-        return getBoard(id).getName();
-    }
-
-    public String getSubBoardName(String id) {
-        return getBoard(id).getSubBoardName();
-    }
-
-    public String getSubBoardId(String id) {
-        return getBoard(id).getSubBoardId();
-    }
-
-    public boolean isPublicPost(String id) {
-        return getBoard(id).isPublicPost();
-    }
-
-    public UserLevel getWritePostLevel(String id) {
-        return getBoard(id).getWritePostLevel();
-    }
-
-    public boolean isPublicComment(String id) {
-        return getBoard(id).isPublicComment();
-    }
-
-    public UserLevel getWriteCommentLevel(String id) {
-        return getBoard(id).getWriteCommentLevel();
-    }
-
     public Board getBoard(String id) throws NotFoundException {
         Board board = boardList.get(id);
         if (board == null) throw new NotFoundException("게시판을 찾을 수 없습니다");
+        return board;
+    }
+
+    public Board getBoardAndCheckRole(String id, UserRole role) throws NotFoundException {
+        Board board = boardList.get(id);
+        if (board == null) throw new NotFoundException("게시판을 찾을 수 없습니다");
+        if (board.getAccessibleRole() != null && board.getAccessibleRole() != role) {
+            switch (board.getAccessibleRole()) {
+                case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
+                case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
+            }
+        }
         return board;
     }
 }

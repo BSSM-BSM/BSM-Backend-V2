@@ -21,7 +21,7 @@ public class BoardService {
     private final PostCategoryRepository postCategoryRepository;
 
     public BoardResponse boardInfo(String boardId, User user) {
-        Board board = boardUtil.getBoard(boardId);
+        Board board = boardUtil.getBoardAndCheckRole(boardId, user.getRole());
         List<PostCategory> postCategoryList = postCategoryRepository.findByPostCategoryPkBoard(board);
         List<PostCategoryResponse> postCategoryDtoList = new ArrayList<>();
 
