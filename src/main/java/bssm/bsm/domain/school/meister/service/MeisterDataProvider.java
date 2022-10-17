@@ -1,15 +1,13 @@
 package bssm.bsm.domain.school.meister.service;
 
-import bssm.bsm.domain.school.meister.entities.MeisterData;
-import bssm.bsm.domain.school.meister.entities.MeisterInfo;
+import bssm.bsm.domain.school.meister.domain.MeisterData;
+import bssm.bsm.domain.school.meister.domain.MeisterInfo;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterDetailResponse;
-import bssm.bsm.domain.school.meister.repositories.MeisterDataRepository;
-import bssm.bsm.domain.school.meister.repositories.MeisterInfoRepository;
-import bssm.bsm.domain.user.entities.Student;
-import bssm.bsm.domain.user.repositories.StudentRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterDataRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterInfoRepository;
+import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.global.error.HttpError;
 import bssm.bsm.global.error.exceptions.BadRequestException;
-import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

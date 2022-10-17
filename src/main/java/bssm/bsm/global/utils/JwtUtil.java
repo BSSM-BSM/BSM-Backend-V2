@@ -1,12 +1,12 @@
 package bssm.bsm.global.utils;
 
-import bssm.bsm.domain.user.entities.RefreshToken;
-import bssm.bsm.domain.user.entities.Student;
-import bssm.bsm.domain.user.entities.Teacher;
-import bssm.bsm.domain.user.entities.User;
-import bssm.bsm.domain.user.repositories.RefreshTokenRepository;
-import bssm.bsm.domain.user.type.UserLevel;
-import bssm.bsm.domain.user.type.UserRole;
+import bssm.bsm.domain.user.domain.RefreshToken;
+import bssm.bsm.domain.user.domain.Student;
+import bssm.bsm.domain.user.domain.Teacher;
+import bssm.bsm.domain.user.domain.User;
+import bssm.bsm.domain.user.domain.RefreshTokenRepository;
+import bssm.bsm.domain.user.domain.UserLevel;
+import bssm.bsm.domain.user.domain.UserRole;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

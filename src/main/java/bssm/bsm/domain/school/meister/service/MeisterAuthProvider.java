@@ -1,6 +1,6 @@
 package bssm.bsm.domain.school.meister.service;
 
-import bssm.bsm.domain.user.entities.Student;
+import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.global.error.exceptions.BadRequestException;
 import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;

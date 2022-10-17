@@ -1,6 +1,6 @@
 package bssm.bsm.domain.webpush.domain.repository;
 
-import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.webpush.domain.WebPush;
 import org.springframework.data.jpa.repository.JpaRepository;
 

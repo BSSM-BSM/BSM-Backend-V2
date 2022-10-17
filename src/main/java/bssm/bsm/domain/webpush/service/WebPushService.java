@@ -1,6 +1,6 @@
 package bssm.bsm.domain.webpush.service;
 
-import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.webpush.domain.WebPush;
 import bssm.bsm.domain.webpush.domain.repository.WebPushRepository;
 import bssm.bsm.domain.webpush.presentation.dto.request.WebPushSubscribeRequest;
@@ -18,7 +18,7 @@ public class WebPushService {
     private final WebPushRepository webpushRepository;
 
     public void subscribe(WebPushSubscribeRequest dto) {
-        User user = userUtil.getCurrentUser();
+        User user = userUtil.getUser();
 
         WebPush webPush = webpushRepository.findByUserCodeAndEndpoint(user.getCode(), dto.getEndpoint())
                 .orElseGet(() -> WebPush.builder()
@@ -34,7 +34,7 @@ public class WebPushService {
     }
 
     public void unsubscribe() {
-        List<WebPush> webPushList = webpushRepository.findAllByUserCode(userUtil.getCurrentUser().getCode());
+        List<WebPush> webPushList = webpushRepository.findAllByUserCode(userUtil.getUser().getCode());
         webpushRepository.deleteAll(webPushList);
     }
 

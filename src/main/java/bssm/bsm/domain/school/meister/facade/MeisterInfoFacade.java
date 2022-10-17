@@ -1,7 +1,7 @@
 package bssm.bsm.domain.school.meister.facade;
 
-import bssm.bsm.domain.school.meister.entities.MeisterInfo;
-import bssm.bsm.domain.school.meister.repositories.MeisterInfoRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterInfo;
+import bssm.bsm.domain.school.meister.domain.MeisterInfoRepository;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
 package bssm.bsm.domain.webpush.domain;
 
-import bssm.bsm.domain.user.entities.User;
+import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.webpush.presentation.dto.request.WebPushSubscribeRequest;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;

@@ -1,8 +1,8 @@
 package bssm.bsm.domain.school.meal.facade;
 
-import bssm.bsm.domain.school.meal.entities.Meal;
-import bssm.bsm.domain.school.meal.entities.MealType;
-import bssm.bsm.domain.school.meal.repositories.MealRepository;
+import bssm.bsm.domain.school.meal.domain.Meal;
+import bssm.bsm.domain.school.meal.domain.MealType;
+import bssm.bsm.domain.school.meal.domain.MealRepository;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

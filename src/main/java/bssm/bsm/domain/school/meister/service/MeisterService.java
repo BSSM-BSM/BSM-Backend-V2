@@ -1,16 +1,16 @@
 package bssm.bsm.domain.school.meister.service;
 
-import bssm.bsm.domain.school.meister.entities.MeisterData;
-import bssm.bsm.domain.school.meister.entities.MeisterInfo;
+import bssm.bsm.domain.school.meister.domain.MeisterData;
+import bssm.bsm.domain.school.meister.domain.MeisterInfo;
 import bssm.bsm.domain.school.meister.facade.MeisterInfoFacade;
-import bssm.bsm.domain.school.meister.repositories.MeisterDataRepository;
-import bssm.bsm.domain.user.entities.Student;
-import bssm.bsm.domain.user.entities.User;
-import bssm.bsm.domain.user.repositories.StudentRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterDataRepository;
+import bssm.bsm.domain.user.domain.Student;
+import bssm.bsm.domain.user.domain.User;
+import bssm.bsm.domain.user.domain.StudentRepository;
 import bssm.bsm.domain.school.meister.presentation.dto.request.MeisterDetailRequest;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterDetailResponse;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterResponse;
-import bssm.bsm.domain.school.meister.repositories.MeisterInfoRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterInfoRepository;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;

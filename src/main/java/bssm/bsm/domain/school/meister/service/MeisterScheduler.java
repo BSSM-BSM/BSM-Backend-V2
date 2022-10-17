@@ -1,9 +1,9 @@
 package bssm.bsm.domain.school.meister.service;
 
-import bssm.bsm.domain.school.meister.entities.MeisterData;
-import bssm.bsm.domain.school.meister.repositories.MeisterDataRepository;
-import bssm.bsm.domain.user.entities.Student;
-import bssm.bsm.domain.user.repositories.StudentRepository;
+import bssm.bsm.domain.school.meister.domain.MeisterData;
+import bssm.bsm.domain.school.meister.domain.MeisterDataRepository;
+import bssm.bsm.domain.user.domain.Student;
+import bssm.bsm.domain.user.domain.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

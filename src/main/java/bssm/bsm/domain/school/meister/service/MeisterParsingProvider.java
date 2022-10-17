@@ -1,7 +1,7 @@
 package bssm.bsm.domain.school.meister.service;
 
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterDetailResponse;
-import bssm.bsm.domain.user.entities.Student;
+import bssm.bsm.domain.user.domain.Student;
 import lombok.RequiredArgsConstructor;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
