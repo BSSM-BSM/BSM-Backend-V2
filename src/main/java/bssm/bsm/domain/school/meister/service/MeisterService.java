@@ -36,15 +36,11 @@ public class MeisterService {
         Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
                 () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
         );
-        if (!student.getStudentId().equals(user.getStudentId())) {
-            meisterInfoFacade.getMeisterInfo(user.getStudentId()).permissionCheck();
-        }
+        meisterInfoFacade.viewPermissionCheck(user);
 
         MeisterData meisterData = meisterDataProvider.findOrElseCreateMeisterData(student);
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
-        if (meisterInfo.isPrivateRanking() && !student.getStudentId().equals(user.getStudentId())) {
-            throw new ForbiddenException("정보 공유를 거부한 유저입니다");
-        }
+        meisterInfo.privateCheck(user);
 
         meisterAuthProvider.login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
         MeisterDetailResponse detailInfo = meisterProvider.getAllInfo(student);

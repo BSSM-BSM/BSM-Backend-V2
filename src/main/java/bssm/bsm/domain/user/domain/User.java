@@ -1,6 +1,9 @@
 package bssm.bsm.domain.user.domain;
 
+import bssm.bsm.domain.user.presentation.dto.response.StudentInfoResponse;
+import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.global.entity.BaseTimeEntity;
+import leehj050211.bsmOauth.dto.response.BsmTeacherResponse;
 import lombok.*;
 
 import javax.persistence.*;
@@ -58,4 +61,24 @@ public class User extends BaseTimeEntity {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public UserInfoResponse toUserInfoResponse() {
+        UserInfoResponse.UserInfoResponseBuilder builder = UserInfoResponse.builder()
+                .code(code)
+                .role(role)
+                .level(level.getValue())
+                .nickname(nickname);
+
+        return (
+            switch (role) {
+                case STUDENT -> builder
+                        .email(student.getEmail())
+                        .student(student.toInfo());
+                case TEACHER -> builder
+                        .email(teacher.getEmail())
+                        .teacher(teacher.toInfo());
+            }
+        ).build();
+    }
+
 }

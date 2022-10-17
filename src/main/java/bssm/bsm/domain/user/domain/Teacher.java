@@ -1,5 +1,7 @@
 package bssm.bsm.domain.user.domain;
 
+import bssm.bsm.domain.user.presentation.dto.response.StudentInfoResponse;
+import bssm.bsm.domain.user.presentation.dto.response.TeacherInfoResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,4 +30,11 @@ public class Teacher {
         this.name = name;
         this.email = email;
     }
+
+    public TeacherInfoResponse toInfo() {
+        return TeacherInfoResponse.builder()
+                .name(name)
+                .build();
+    }
+
 }

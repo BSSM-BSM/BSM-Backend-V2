@@ -12,7 +12,7 @@ import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.domain.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
-import bssm.bsm.domain.user.presentation.dto.response.UserResponseDto;
+import bssm.bsm.domain.user.presentation.dto.response.UserResponse;
 import bssm.bsm.domain.user.domain.UserLevel;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
@@ -204,14 +204,14 @@ public class CommentService {
         return Objects.equals(comment.getUserCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
     }
 
-    private UserResponseDto getUserData(User user, boolean anonymous) {
+    private UserResponse getUserData(User user, boolean anonymous) {
         if (anonymous) {
-            return UserResponseDto.builder()
+            return UserResponse.builder()
                     .code((long) -1)
                     .nickname("ㅇㅇ")
                     .build();
         }
-        return UserResponseDto.builder()
+        return UserResponse.builder()
                 .code(user.getCode())
                 .nickname(user.getNickname())
                 .build();

@@ -1,10 +1,11 @@
 package bssm.bsm.domain.user.presentation;
 
+import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.domain.user.service.UserService;
 import bssm.bsm.global.utils.CookieUtil;
 import bssm.bsm.global.utils.JwtUtil;
 import bssm.bsm.global.utils.UserUtil;
-import bssm.bsm.domain.user.presentation.dto.response.UserLoginResponseDto;
+import bssm.bsm.domain.user.presentation.dto.response.UserLoginResponse;
 import bssm.bsm.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +34,8 @@ public class UserController {
     private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     @GetMapping()
-    public User getUserInfo() {
-        return userUtil.getUser();
+    public UserInfoResponse getUserInfo() {
+        return userUtil.getUser().toUserInfoResponse();
     }
 
     @DeleteMapping("logout")
@@ -44,7 +45,7 @@ public class UserController {
     }
 
     @PostMapping("/oauth/bsm")
-    public UserLoginResponseDto bsmOauth(@RequestParam(value = "code") String authCode, HttpServletResponse res) throws Exception {
+    public UserLoginResponse bsmOauth(@RequestParam(value = "code") String authCode, HttpServletResponse res) throws Exception {
         User user = userService.bsmOauth(authCode);
 
         String token = jwtUtil.createAccessToken(user);
@@ -54,7 +55,7 @@ public class UserController {
         res.addCookie(tokenCookie);
         res.addCookie(refreshTokenCookie);
 
-        return UserLoginResponseDto.builder()
+        return UserLoginResponse.builder()
                 .accessToken(token)
                 .refreshToken(refreshToken)
                 .build();

@@ -6,6 +6,7 @@ import bssm.bsm.domain.user.domain.StudentRepository;
 import bssm.bsm.domain.user.domain.TeacherRepository;
 import bssm.bsm.domain.user.domain.UserLevel;
 import bssm.bsm.domain.user.domain.UserRole;
+import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.domain.user.domain.User;

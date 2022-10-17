@@ -28,9 +28,7 @@ public class MeisterRankingService {
     private final MeisterInfoFacade meisterInfoFacade;
 
     public void updatePrivateRanking(User user, boolean privateRanking) {
-        MeisterInfo meisterInfo = meisterInfoRepository.findById(user.getStudentId()).orElseThrow(
-                () -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");}
-        );
+        MeisterInfo meisterInfo = meisterInfoFacade.getMeisterInfo(user.getStudentId());
 
         LocalDateTime availableTime = meisterInfo.getLastPrivateDate().plusDays(1);
         if (LocalDateTime.now().isBefore(availableTime)) {
@@ -44,7 +42,7 @@ public class MeisterRankingService {
     }
 
     public List<MeisterRankingResponse> getRanking(User user) {
-        meisterInfoFacade.getMeisterInfo(user.getStudentId()).permissionCheck();
+        meisterInfoFacade.viewPermissionCheck(user);
 
         return meisterDataRepository.findByOrderByScoreDesc().stream()
                 .map(meisterData -> {
