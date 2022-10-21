@@ -21,5 +21,5 @@ public class GetPostListRequest {
     @NotBlank
     private String categoryId;
 
-    private int startPostId;
+    private long startPostId;
 }
