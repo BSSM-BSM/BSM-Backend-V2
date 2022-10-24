@@ -26,7 +26,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PostProvider {
 
-    private final PostFacade postFacade;
     private final BoardProvider boardUtil;
     private final CategoryProvider categoryUtil;
     private final PostRepository postRepository;

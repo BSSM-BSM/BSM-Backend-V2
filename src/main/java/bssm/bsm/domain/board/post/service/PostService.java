@@ -102,6 +102,7 @@ public class PostService {
 
     public ViewPostResponse viewPost(Optional<User> user, PostIdRequest postId) {
         Post post = postProvider.getPost(postId);
+        postFacade.checkViewPermission(post.getPk().getBoard(), user);
         PostLike postLike = likeProvider.getMyPostLike(user, post);
         post.setHit(post.getHit() + 1);
         postRepository.save(post);
