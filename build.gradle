@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'bssm'
-version = '0.0.1-SNAPSHOT'
+version = '2.0.0'
 sourceCompatibility = '17'
 
 repositories {
