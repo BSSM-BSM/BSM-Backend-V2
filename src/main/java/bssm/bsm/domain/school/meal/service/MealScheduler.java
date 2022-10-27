@@ -46,7 +46,7 @@ public class MealScheduler {
     @Scheduled(cron = "0 0 0 25 * ?")
     private void getMonthMeal() throws IOException {
         LocalDate today = LocalDate.now();
-        String dateParam = "MLSV_YMD=" + today.getYear() + String.format("%02d", today.getMonthValue());
+        String dateParam = "MLSV_YMD=" + today.getYear() + String.format("%02d", today.getMonthValue() + 1);
         Request mealRequest = new Request.Builder()
                 .url(MEAL_API_URL + dateParam)
                 .get()

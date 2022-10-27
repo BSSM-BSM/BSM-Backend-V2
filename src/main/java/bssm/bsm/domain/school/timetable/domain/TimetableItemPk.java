@@ -4,8 +4,6 @@ import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.io.Serializable;
 
 @Getter
@@ -13,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Embeddable
-public class TimetablePk implements Serializable {
+public class TimetableItemPk implements Serializable {
 
     @Column
     private int grade;

@@ -1,14 +1,11 @@
 package bssm.bsm.domain.school.timetable.presentation.dto.request;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 
 @Getter
-@Builder
 public class TimetableRequest {
 
     @Positive
@@ -17,6 +14,9 @@ public class TimetableRequest {
     @Positive
     private int classNo;
 
-    @Max(6) @Min(0)
-    private int day;
+    public TimetableRequest(int grade, int classNo) {
+        this.grade = grade;
+        this.classNo = classNo;
+    }
+
 }

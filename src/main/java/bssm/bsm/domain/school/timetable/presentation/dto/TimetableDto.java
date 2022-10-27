@@ -1,16 +1,17 @@
-package bssm.bsm.domain.school.timetable.presentation.dto.response;
+package bssm.bsm.domain.school.timetable.presentation.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.sql.Time;
 
 @Getter
 @Builder
-public class TimetableResponse {
+@AllArgsConstructor
+public class TimetableDto {
 
     private String className;
     private Time endTime;
     private Time startTime;
     private String type;
+
 }
