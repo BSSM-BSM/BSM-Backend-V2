@@ -1,9 +1,7 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.StudentInfoResponse;
 import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.global.entity.BaseTimeEntity;
-import leehj050211.bsmOauth.dto.response.BsmTeacherResponse;
 import lombok.*;
 
 import javax.persistence.*;

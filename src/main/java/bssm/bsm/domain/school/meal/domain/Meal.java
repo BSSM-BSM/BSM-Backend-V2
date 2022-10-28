@@ -1,59 +1,33 @@
 package bssm.bsm.domain.school.meal.domain;
 
-import bssm.bsm.global.error.exceptions.NotFoundException;
+import bssm.bsm.domain.school.meal.presentation.dto.response.MealResponseItem;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.time.LocalDate;
+import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Meal {
 
-    @Id
-    private LocalDate date;
+    @EmbeddedId
+    private MealPk pk;
 
-    @Column(columnDefinition = "TEXT")
-    private String morning;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
-    @Column(columnDefinition = "TEXT")
-    private String lunch;
+    @Column(nullable = false)
+    private float cal;
 
-    @Column(columnDefinition = "TEXT")
-    private String dinner;
-
-    public Meal(LocalDate date) {
-        this.date = date;
+    @Builder
+    public Meal(MealPk pk, String content, float cal) {
+        this.pk = pk;
+        this.content = content;
+        this.cal = cal;
     }
 
-    public void setMorning(String morning) {
-        this.morning = morning;
-    }
-
-    public void setLunch(String lunch) {
-        this.lunch = lunch;
-    }
-
-    public void setDinner(String dinner) {
-        this.dinner = dinner;
-    }
-
-    public String getMorningForFacade() {
-        if (this.morning == null) throw new NotFoundException();
-        return morning;
-    }
-
-    public String getLunchForFacade() {
-        if (this.lunch == null) throw new NotFoundException();
-        return lunch;
-    }
-
-    public String getDinnerForFacade() {
-        if (this.dinner == null) throw new NotFoundException();
-        return dinner;
+    public MealResponseItem toResponseItem() {
+        return new MealResponseItem(content, cal);
     }
 
 }
