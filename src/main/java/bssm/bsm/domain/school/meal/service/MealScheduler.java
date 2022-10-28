@@ -14,9 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.*;
 
 @Component
@@ -31,14 +30,9 @@ public class MealScheduler {
     @Value("${env.meal.url}")
     private String MEAL_ACCESS_URL;
 
-    @PostConstruct
-    public void init() throws IOException {
-        getMonthMeal();
-    }
-
     @Scheduled(cron = "* * * 25 * ?")
     private void getMonthMeal() throws IOException {
-        LocalDate nextMonth = LocalDate.now().plusMonths(1);
+        YearMonth nextMonth = YearMonth.now().plusMonths(1);
         List<Meal> mealList = mealProvider.getRawMonthMealList(nextMonth).stream()
                 .map(meal -> meal.toEntity(mealFacade.filterMealStr(meal.getDDISH_NM())))
                 .toList();

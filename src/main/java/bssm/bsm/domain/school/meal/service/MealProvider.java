@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,7 +28,7 @@ public class MealProvider {
     @Value("${env.api.meal.url}")
     private String MEAL_API_URL;
 
-    public List<RawMealItemDto> getRawMonthMealList(LocalDate date) throws IOException {
+    public List<RawMealItemDto> getRawMonthMealList(YearMonth date) throws IOException {
         String dateParam = "MLSV_YMD=" + date.getYear() + String.format("%02d", date.getMonthValue());
         Request mealRequest = new Request.Builder()
                 .url(MEAL_API_URL + dateParam)

@@ -30,4 +30,17 @@ public class Meal {
         return new MealResponseItem(content, cal);
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCal(float cal) {
+        this.cal = cal;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return pk.equals(((Meal)o).pk);
+    }
+
 }

@@ -9,4 +9,6 @@ public interface MealRepository extends JpaRepository<Meal, MealPk> {
 
     List<Meal> findByPkDate(LocalDate date);
 
+    List<Meal> findAllByPkDateBetween(LocalDate start, LocalDate end);
+
 }

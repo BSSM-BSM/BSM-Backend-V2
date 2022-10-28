@@ -23,4 +23,9 @@ public class MealPk implements Serializable {
     @Enumerated(EnumType.STRING)
     private MealType type;
 
+    @Override
+    public boolean equals(Object o) {
+        return date.equals(((MealPk) o).date) && type.equals(((MealPk) o).type);
+    }
+
 }
