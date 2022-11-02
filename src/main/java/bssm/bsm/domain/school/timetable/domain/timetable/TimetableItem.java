@@ -1,6 +1,6 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.timetable;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.TimetableDto;
+import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -28,13 +28,18 @@ public class TimetableItem {
     @Column(nullable = false)
     private Time endTime;
 
-    public TimetableDto toResponse() {
-        return TimetableDto.builder()
+    public TimetableResponse toResponse() {
+        return TimetableResponse.builder()
                 .className(className)
                 .startTime(startTime)
                 .endTime(endTime)
                 .type(type)
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return pk.equals(((TimetableItem)o).pk);
     }
 
 }

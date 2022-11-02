@@ -1,15 +1,16 @@
 package bssm.bsm.domain.school.timetable.presentation;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.TimetableDto;
+import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableListRequest;
+import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
+import bssm.bsm.domain.school.timetable.presentation.dto.request.CreateTimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableRequest;
+import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
 import bssm.bsm.domain.school.timetable.service.TimetableManageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,8 +28,29 @@ public class TimetableManageController {
         return timetableManageService.getManageList(new TimetableRequest(grade, classNo));
     }
 
+    @PostMapping
+    public void createTimetable(@Valid @RequestBody CreateTimetableRequest dto) {
+        timetableManageService.createTimetable(dto);
+    }
+
+    @PutMapping("{id}")
+    public void updateTimetable(
+            @PathVariable long id,
+            @Valid @RequestBody UpdateTimetableRequest dto
+    ) {
+        timetableManageService.updateTimetable(id, dto);
+    }
+
+    @PutMapping("{id}/list")
+    public void updateTimetableList(
+            @PathVariable long id,
+            @Valid @RequestBody UpdateTimetableListRequest dto
+    ) {
+        timetableManageService.updateTimetableList(id, dto);
+    }
+
     @GetMapping("{id}")
-    public List<List<TimetableDto>> getTimetable(@PathVariable long id) {
+    public List<List<TimetableResponse>> getTimetable(@PathVariable long id) {
         return timetableManageService.getTimetableList(id);
     }
 

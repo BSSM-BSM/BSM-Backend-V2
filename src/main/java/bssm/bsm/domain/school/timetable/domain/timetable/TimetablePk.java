@@ -1,6 +1,9 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.timetable;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -11,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Embeddable
-public class TimetableItemPk implements Serializable {
+public class TimetablePk implements Serializable {
 
     @Column
     private int grade;
@@ -19,9 +22,4 @@ public class TimetableItemPk implements Serializable {
     @Column
     private int classNo;
 
-    @Column
-    private int day;
-
-    @Column
-    private int idx;
 }

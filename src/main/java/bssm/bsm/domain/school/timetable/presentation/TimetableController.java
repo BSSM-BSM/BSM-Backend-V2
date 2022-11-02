@@ -1,8 +1,7 @@
 package bssm.bsm.domain.school.timetable.presentation;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.request.DayTimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.TimetableDto;
+import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
 import bssm.bsm.domain.school.timetable.service.TimetableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,21 +18,12 @@ public class TimetableController {
 
     private final TimetableService timetableService;
 
-    @GetMapping("{grade}/{classNo}/{day}")
-    public List<TimetableDto> getDayTimetable(
-            @PathVariable int grade,
-            @PathVariable int classNo,
-            @PathVariable int day
-    ) {
-        return timetableService.getDayTimetable(new DayTimetableRequest(grade, classNo, day));
-    }
-
     @GetMapping("{grade}/{classNo}")
-    public List<List<TimetableDto>> getTimetable(
+    public List<List<TimetableResponse>> getTimetable(
             @PathVariable int grade,
             @PathVariable int classNo
     ) {
-        return timetableService.getTimetable(new TimetableRequest(grade, classNo));
+        return timetableService.getTimetableList(new TimetableRequest(grade, classNo));
     }
 
 }

@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.manage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface TimetableManageRepository extends JpaRepository<TimetableManage, Long> {
 
-    List<TimetableManage> findAllByGradeAndClassNo(int grade, int classNo);
+    List<TimetableManage> findAllByGradeAndClassNoOrderByModifiedAtDesc(int grade, int classNo);
 
 }

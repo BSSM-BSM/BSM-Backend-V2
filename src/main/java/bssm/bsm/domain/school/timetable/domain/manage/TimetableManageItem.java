@@ -1,7 +1,8 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.manage;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.TimetableDto;
+import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,13 +31,27 @@ public class TimetableManageItem {
     @Column(nullable = false)
     private Time endTime;
 
-    public TimetableDto toResponse() {
-        return TimetableDto.builder()
+    @Builder
+    public TimetableManageItem(TimetableManageItemPk pk, String className, String type, Time startTime, Time endTime) {
+        this.pk = pk;
+        this.className = className;
+        this.type = type;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public TimetableResponse toResponse() {
+        return TimetableResponse.builder()
                 .className(className)
                 .startTime(startTime)
                 .endTime(endTime)
                 .type(type)
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return pk.equals(((TimetableManageItem)o).pk);
     }
 
 }

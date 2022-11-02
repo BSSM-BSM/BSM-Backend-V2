@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.manage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

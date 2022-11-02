@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.timetable.domain;
+package bssm.bsm.domain.school.timetable.domain.manage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +26,12 @@ public class TimetableManageItemPk implements Serializable {
 
     @Column
     private int idx;
+
+    @Override
+    public boolean equals(Object o) {
+        return timetableManage.equals(((TimetableManageItemPk) o).timetableManage)
+                && day == ((TimetableManageItemPk) o).day
+                && idx == ((TimetableManageItemPk) o).idx;
+    }
 
 }

@@ -19,4 +19,9 @@ public abstract class BaseTimeEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
 }
