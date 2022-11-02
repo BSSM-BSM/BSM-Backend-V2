@@ -1,6 +1,5 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
-import bssm.bsm.domain.school.meal.domain.MealType;
 import bssm.bsm.domain.school.timetable.domain.TimetableType;
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
 import bssm.bsm.global.entity.BaseTimeEntity;

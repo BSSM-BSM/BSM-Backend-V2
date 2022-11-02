@@ -4,6 +4,10 @@ import bssm.bsm.domain.school.timetable.domain.manage.TimetableManage;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItemRepository;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageRepository;
+import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
+import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
+import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItemRepository;
+import bssm.bsm.domain.school.timetable.domain.timetable.TimetableRepository;
 import bssm.bsm.domain.school.timetable.presentation.dto.request.CreateTimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableListRequest;
@@ -26,6 +30,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TimetableManageService {
 
+    private final TimetableRepository timetableRepository;
+    private final TimetableItemRepository timetableItemRepository;
     private final TimetableManageRepository timetableManageRepository;
     private final TimetableManageItemRepository timetableManageItemRepository;
 
@@ -42,6 +48,29 @@ public class TimetableManageService {
                 .classNo(dto.getClassNo())
                 .build();
         timetableManageRepository.save(manage);
+    }
+
+    @Transactional
+    public void applyTimetable(long id) {
+        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
+        Timetable timetable = timetableRepository.findByPkGradeAndPkClassNo(manage.getGrade(), manage.getClassNo())
+                .orElseThrow(NotFoundException::new);
+
+        List<TimetableItem> deleteList = timetable.getItems();
+        List<TimetableItem> newTimetableList = manage.getItems().stream()
+                .map(item -> item.toTimetableItem(timetable))
+                .toList();
+
+        newTimetableList.forEach(deleteList::remove);
+        timetableItemRepository.deleteAll(deleteList);
+
+        timetableItemRepository.saveAll(newTimetableList);
+    }
+
+    @Transactional
+    public void deleteTimetable(long id) {
+        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
+        timetableManageRepository.delete(manage);
     }
 
     @Transactional

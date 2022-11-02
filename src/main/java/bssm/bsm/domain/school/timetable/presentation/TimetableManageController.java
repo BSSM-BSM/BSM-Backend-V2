@@ -49,6 +49,16 @@ public class TimetableManageController {
         timetableManageService.updateTimetableList(id, dto);
     }
 
+    @PutMapping("{id}/apply")
+    public void applyTimetable(@PathVariable long id) {
+        timetableManageService.applyTimetable(id);
+    }
+
+    @DeleteMapping("{id}")
+    public void deleteTimetable(@PathVariable long id) {
+        timetableManageService.deleteTimetable(id);
+    }
+
     @GetMapping("{id}")
     public List<List<TimetableResponse>> getTimetable(@PathVariable long id) {
         return timetableManageService.getTimetableList(id);

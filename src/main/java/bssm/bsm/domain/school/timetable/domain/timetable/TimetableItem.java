@@ -28,6 +28,15 @@ public class TimetableItem {
     @Column(nullable = false)
     private Time endTime;
 
+    @Builder
+    public TimetableItem(TimetableItemPk pk, String className, String type, Time startTime, Time endTime) {
+        this.pk = pk;
+        this.className = className;
+        this.type = type;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public TimetableResponse toResponse() {
         return TimetableResponse.builder()
                 .className(className)

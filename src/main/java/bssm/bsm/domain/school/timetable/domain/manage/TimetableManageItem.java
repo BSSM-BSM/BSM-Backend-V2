@@ -1,5 +1,8 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
+import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
+import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
+import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItemPk;
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,6 +49,22 @@ public class TimetableManageItem {
                 .startTime(startTime)
                 .endTime(endTime)
                 .type(type)
+                .build();
+    }
+
+    public TimetableItem toTimetableItem(Timetable timetable) {
+        return TimetableItem.builder()
+                .pk(
+                        TimetableItemPk.builder()
+                                .timetable(timetable)
+                                .day(pk.getDay())
+                                .idx(pk.getIdx())
+                                .build()
+                )
+                .className(className)
+                .type(type)
+                .startTime(startTime)
+                .endTime(endTime)
                 .build();
     }
 
