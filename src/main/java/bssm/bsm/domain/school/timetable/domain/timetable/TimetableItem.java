@@ -16,7 +16,7 @@ public class TimetableItem {
     @EmbeddedId
     private TimetableItemPk pk;
 
-    @Column(length = 12)
+    @Column(length = 30)
     private String className;
 
     @Column(length = 8)

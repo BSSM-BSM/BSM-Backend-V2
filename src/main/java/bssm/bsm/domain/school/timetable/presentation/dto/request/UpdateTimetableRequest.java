@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -16,7 +17,7 @@ public class UpdateTimetableRequest {
     @Size(max = 12)
     private String name;
 
-    @Column
+    @NotNull
     private TimetableType type;
 
 }

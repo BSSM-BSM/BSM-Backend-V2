@@ -15,6 +15,7 @@ import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetable
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
 import bssm.bsm.global.error.exceptions.NotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class TimetableManageService {
     private final TimetableItemRepository timetableItemRepository;
     private final TimetableManageRepository timetableManageRepository;
     private final TimetableManageItemRepository timetableManageItemRepository;
+    private final TimetableNotification timetableNotification;
 
     public List<TimetableManageResponse> getManageList(@Valid TimetableRequest dto) {
         return timetableManageRepository.findAllByGradeAndClassNoOrderByModifiedAtDesc(dto.getGrade(), dto.getClassNo())
@@ -51,7 +53,7 @@ public class TimetableManageService {
     }
 
     @Transactional
-    public void applyTimetable(long id) {
+    public void applyTimetable(long id) throws JsonProcessingException {
         TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
         Timetable timetable = timetableRepository.findByPkGradeAndPkClassNo(manage.getGrade(), manage.getClassNo())
                 .orElseThrow(NotFoundException::new);
@@ -63,8 +65,9 @@ public class TimetableManageService {
 
         newTimetableList.forEach(deleteList::remove);
         timetableItemRepository.deleteAll(deleteList);
-
         timetableItemRepository.saveAll(newTimetableList);
+
+        timetableNotification.sendChangeTimetableNotification(manage);
     }
 
     @Transactional

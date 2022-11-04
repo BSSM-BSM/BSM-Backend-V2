@@ -12,6 +12,7 @@ import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.domain.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
+import bssm.bsm.domain.user.facade.UserFacade;
 import bssm.bsm.domain.user.presentation.dto.response.UserResponse;
 import bssm.bsm.domain.user.domain.UserLevel;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
@@ -34,6 +35,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final BoardProvider boardUtil;
     private final CommentFacade commentFacade;
+    private final UserFacade userFacade;
 
     @Transactional
     public void writeComment(User user, PostIdRequest request, @Valid WriteCommentRequest dto) {
@@ -192,7 +194,7 @@ public class CommentService {
         return CommentResponse.builder()
                 .id(comment.getPk().getId())
                 .isDelete(false)
-                .user(getUserData(comment.getUser(), comment.isAnonymous()))
+                .user(userFacade.toBoardUserResponse(comment.getUser(), comment.isAnonymous()))
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .depth(comment.getDepth())
@@ -204,16 +206,4 @@ public class CommentService {
         return Objects.equals(comment.getUserCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
     }
 
-    private UserResponse getUserData(User user, boolean anonymous) {
-        if (anonymous) {
-            return UserResponse.builder()
-                    .code((long) -1)
-                    .nickname("ㅇㅇ")
-                    .build();
-        }
-        return UserResponse.builder()
-                .code(user.getCode())
-                .nickname(user.getNickname())
-                .build();
-    }
 }

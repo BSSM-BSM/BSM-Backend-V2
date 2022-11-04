@@ -7,6 +7,7 @@ import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableReques
 import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableRequest;
 import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
 import bssm.bsm.domain.school.timetable.service.TimetableManageService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,7 @@ public class TimetableManageController {
     }
 
     @PutMapping("{id}/apply")
-    public void applyTimetable(@PathVariable long id) {
+    public void applyTimetable(@PathVariable long id) throws JsonProcessingException {
         timetableManageService.applyTimetable(id);
     }
 

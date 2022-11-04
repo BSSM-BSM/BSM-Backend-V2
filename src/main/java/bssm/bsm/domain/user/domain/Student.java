@@ -32,8 +32,11 @@ public class Student {
     @Column(length = 32)
     private String email;
 
+    @OneToOne(mappedBy = "student")
+    private User user;
+
     @Builder
-    public Student(String studentId, int enrolledAt, int grade, int classNo, int studentNo, String name, String email) {
+    public Student(String studentId, int enrolledAt, int grade, int classNo, int studentNo, String name, String email, User user) {
         this.studentId = studentId;
         this.enrolledAt = enrolledAt;
         this.grade = grade;
@@ -41,6 +44,7 @@ public class Student {
         this.studentNo = studentNo;
         this.name = name;
         this.email = email;
+        this.user = user;
     }
 
     public void setEnrolledAt(int enrolledAt) {
