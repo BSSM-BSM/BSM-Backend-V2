@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
-public class UserInfo implements UserDetails {
+public class AuthDetails implements UserDetails {
 
     private final User user;
 

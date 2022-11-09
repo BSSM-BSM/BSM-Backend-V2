@@ -1,7 +1,7 @@
 package bssm.bsm.domain.user.facade;
 
 import bssm.bsm.domain.user.domain.Student;
-import bssm.bsm.domain.user.domain.StudentRepository;
+import bssm.bsm.domain.user.domain.repository.StudentRepository;
 import bssm.bsm.domain.user.presentation.dto.response.UserResponse;
 import bssm.bsm.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;

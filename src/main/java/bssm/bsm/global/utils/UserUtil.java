@@ -1,6 +1,6 @@
 package bssm.bsm.global.utils;
 
-import bssm.bsm.domain.user.domain.UserRepository;
+import bssm.bsm.domain.user.domain.repository.UserRepository;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;

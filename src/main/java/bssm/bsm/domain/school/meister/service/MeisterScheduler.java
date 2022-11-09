@@ -3,7 +3,7 @@ package bssm.bsm.domain.school.meister.service;
 import bssm.bsm.domain.school.meister.domain.MeisterData;
 import bssm.bsm.domain.school.meister.domain.MeisterDataRepository;
 import bssm.bsm.domain.user.domain.Student;
-import bssm.bsm.domain.user.domain.StudentRepository;
+import bssm.bsm.domain.user.domain.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

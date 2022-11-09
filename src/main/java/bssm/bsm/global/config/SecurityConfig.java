@@ -1,5 +1,7 @@
-package bssm.bsm.global.auth;
+package bssm.bsm.global.config;
 
+import bssm.bsm.global.auth.AuthFilterExceptionHandler;
+import bssm.bsm.global.jwt.JwtAuthFilter;
 import bssm.bsm.global.error.HttpErrorResponse;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;

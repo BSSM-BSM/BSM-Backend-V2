@@ -1,5 +1,6 @@
-package bssm.bsm.domain.user.domain;
+package bssm.bsm.domain.user.domain.repository;
 
+import bssm.bsm.domain.user.domain.Student;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package bssm.bsm.global.bean;
+package bssm.bsm.global.config;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.net.CookieManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

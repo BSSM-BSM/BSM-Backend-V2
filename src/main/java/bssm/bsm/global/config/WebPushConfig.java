@@ -1,4 +1,4 @@
-package bssm.bsm.global.bean;
+package bssm.bsm.global.config;
 
 import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

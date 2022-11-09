@@ -3,7 +3,7 @@ package bssm.bsm.domain.user.presentation;
 import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.domain.user.service.UserService;
 import bssm.bsm.global.utils.CookieUtil;
-import bssm.bsm.global.utils.JwtUtil;
+import bssm.bsm.global.jwt.JwtProvider;
 import bssm.bsm.global.utils.UserUtil;
 import bssm.bsm.domain.user.presentation.dto.response.UserLoginResponse;
 import bssm.bsm.domain.user.domain.User;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final JwtUtil jwtUtil;
+    private final JwtProvider jwtUtil;
     private final CookieUtil cookieUtil;
     private final UserService userService;
     private final UserUtil userUtil;

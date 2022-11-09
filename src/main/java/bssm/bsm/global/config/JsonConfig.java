@@ -1,4 +1,4 @@
-package bssm.bsm.global.bean;
+package bssm.bsm.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
