@@ -3,6 +3,7 @@ package bssm.bsm.global.jwt;
 import bssm.bsm.domain.user.domain.RefreshToken;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.repository.RefreshTokenRepository;
+import bssm.bsm.domain.user.facade.UserFacade;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,6 +22,8 @@ import java.util.HexFormat;
 public class JwtProvider {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserFacade userFacade;
+
     @Value("${env.jwt.secretKey}")
     private String JWT_SECRET_KEY;
     @Value("${env.jwt.time.token}")
@@ -29,6 +32,8 @@ public class JwtProvider {
     private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     public String createAccessToken(User user) {
+        userFacade.saveCacheUser(user);
+
         Claims claims = Jwts.claims();
         claims.put("code", user.getCode());
         return createToken(claims, JWT_TOKEN_MAX_TIME);

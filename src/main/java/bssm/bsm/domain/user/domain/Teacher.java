@@ -1,20 +1,22 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.StudentInfoResponse;
 import bssm.bsm.domain.user.presentation.dto.response.TeacherInfoResponse;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@RedisHash("teacher")
 public class Teacher {
 
-    @Id
+    @Id // jpa
+    @org.springframework.data.annotation.Id // redis
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 

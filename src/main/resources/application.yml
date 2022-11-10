@@ -3,6 +3,8 @@ server:
   servlet:
     contextPath: /api
 spring:
+  main:
+    allow-bean-definition-overriding: true
   config:
     import: classpath:/env.yml
   servlet:
@@ -23,6 +25,10 @@ spring:
     username: ${env.db.user}
     password: ${env.db.pw}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: ${env.redis.host}
+    port: ${env.redis.port}
+    database: ${env.redis.database}
 logging:
   level:
     web: DEBUG

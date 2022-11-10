@@ -1,5 +1,6 @@
 package bssm.bsm.global.jwt;
 
+import bssm.bsm.domain.user.facade.UserFacade;
 import bssm.bsm.global.auth.AuthDetailsService;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
@@ -26,7 +27,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserFacade userFacade;
     private final JwtProvider jwtUtil;
     private final CookieUtil cookieUtil;
     private final AuthDetailsService authDetailsService;
@@ -70,9 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             String refreshToken = jwtUtil.getRefreshToken(refreshTokenCookie.getValue());
             // DB에서 사용할 수 있는지 확인
-            User user = refreshTokenRepository.findByTokenAndIsAvailable(refreshToken, true)
-                    .orElseThrow(() -> new NotFoundException("토큰을 찾을 수 없습니다"))
-                    .getUser();
+            User user = userFacade.getByAvailableRefreshToken(refreshToken);
 
             // 새 엑세스 토큰 발급
             String newToken = jwtUtil.createAccessToken(user);

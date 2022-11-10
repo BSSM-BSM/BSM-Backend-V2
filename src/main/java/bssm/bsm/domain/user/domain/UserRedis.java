@@ -1,17 +1,19 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.*;
+import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTimeEntity {
+@RedisHash(value = "user")
+public class UserRedis extends BaseTimeEntity {
 
     @Id
+    @org.springframework.data.annotation.Id
     @Column(columnDefinition = "INT UNSIGNED")
     private Long code;
 
@@ -44,7 +46,7 @@ public class User extends BaseTimeEntity {
     private String oauthToken;
 
     @Builder
-    public User(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken) {
+    public UserRedis(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken) {
         this.code = code;
         this.nickname = nickname;
         this.role = role;
@@ -56,31 +58,8 @@ public class User extends BaseTimeEntity {
         this.oauthToken = oauthToken;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public UserInfoResponse toUserInfoResponse() {
-        UserInfoResponse.UserInfoResponseBuilder builder = UserInfoResponse.builder()
-                .code(code)
-                .role(role)
-                .level(level.getValue())
-                .nickname(nickname);
-
-        return (
-            switch (role) {
-                case STUDENT -> builder
-                        .email(student.getEmail())
-                        .student(student.toInfo());
-                case TEACHER -> builder
-                        .email(teacher.getEmail())
-                        .teacher(teacher.toInfo());
-            }
-        ).build();
-    }
-
-    public UserRedis toUserRedis() {
-        return UserRedis.builder()
+    public User toUser() {
+        return User.builder()
                 .code(code)
                 .nickname(nickname)
                 .role(role)

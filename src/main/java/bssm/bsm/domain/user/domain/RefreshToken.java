@@ -38,4 +38,9 @@ public class RefreshToken {
         this.user = user;
         this.createdAt = createdAt;
     }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
 }

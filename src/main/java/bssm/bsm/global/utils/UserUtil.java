@@ -1,8 +1,7 @@
 package bssm.bsm.global.utils;
 
-import bssm.bsm.domain.user.domain.repository.UserRepository;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.global.error.exceptions.NotFoundException;
+import bssm.bsm.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,18 +12,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserUtil {
 
-    private final UserRepository userRepository;
+    private final UserFacade userFacade;
 
     public User getUser() {
         String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findById(Long.valueOf(userCode))
-                .orElseThrow(NotFoundException::new);
+        return userFacade.getCachedUserByCode(Long.parseLong(userCode));
     }
 
     public Optional<User> getOptionalUser() {
         String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
         if (userCode.equals("anonymousUser")) return Optional.empty();
-        return userRepository.findById(Long.valueOf(userCode));
+        return Optional.ofNullable(
+                userFacade.getCachedUserByCode(Long.parseLong(userCode))
+        );
     }
 
 }
