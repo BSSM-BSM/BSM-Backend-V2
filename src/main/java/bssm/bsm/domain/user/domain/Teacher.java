@@ -5,18 +5,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.redis.core.RedisHash;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash("teacher")
 public class Teacher {
 
-    @Id // jpa
-    @org.springframework.data.annotation.Id // redis
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 

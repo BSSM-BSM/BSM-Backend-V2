@@ -33,6 +33,7 @@ public class Student {
     private String email;
 
     @OneToOne(mappedBy = "student")
+    @org.springframework.data.annotation.Transient
     private User user;
 
     @Builder
