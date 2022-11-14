@@ -15,13 +15,16 @@ public class RedisConfig {
 
     @Value("${spring.redis.host}")
     private String host;
-
     @Value("${spring.redis.port}")
     private int port;
+    @Value("${spring.redis.database}")
+    private int database;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+        LettuceConnectionFactory conn = new LettuceConnectionFactory(host, port);
+        conn.setDatabase(database);
+        return conn;
     }
 
     @Bean

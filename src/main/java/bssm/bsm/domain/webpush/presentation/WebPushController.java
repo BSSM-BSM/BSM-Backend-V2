@@ -5,6 +5,7 @@ import bssm.bsm.domain.webpush.service.WebPushService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -20,8 +21,8 @@ public class WebPushController {
     }
 
     @DeleteMapping
-    public void unsubscribe() {
-        webPushService.unsubscribe();
+    public void unsubscribe(HttpServletRequest req) {
+        webPushService.unsubscribe(req.getHeader("endpoint"));
     }
 
 }
