@@ -41,10 +41,10 @@ public class MeisterRankingService {
         meisterInfoRepository.save(meisterInfo);
     }
 
-    public List<MeisterRankingResponse> getRanking(User user) {
+    public List<MeisterRankingResponse> getRanking(User user, int grade) {
         meisterInfoFacade.viewPermissionCheck(user);
 
-        return meisterDataRepository.findByOrderByScoreDesc().stream()
+        return meisterDataRepository.findByMeisterInfoStudentGradeOrderByScoreDesc(grade).stream()
                 .map(meisterData -> {
                     Student student = meisterData.getMeisterInfo().getStudent();
                     MeisterRankingResponse.MeisterRankingResponseBuilder builder = MeisterRankingResponse.builder()

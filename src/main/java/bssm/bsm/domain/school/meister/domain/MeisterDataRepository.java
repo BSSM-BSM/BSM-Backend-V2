@@ -12,5 +12,5 @@ public interface MeisterDataRepository extends JpaRepository<MeisterData, String
     Optional<MeisterData> findByStudentIdAndModifiedAtGreaterThan(String studentId, LocalDateTime today);
 
     @EntityGraph(attributePaths = {"meisterInfo", "meisterInfo.student"})
-    List<MeisterData> findByOrderByScoreDesc();
+    List<MeisterData> findByMeisterInfoStudentGradeOrderByScoreDesc(int grade);
 }

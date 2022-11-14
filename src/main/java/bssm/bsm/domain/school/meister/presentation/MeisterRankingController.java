@@ -17,9 +17,9 @@ public class MeisterRankingController {
     private final MeisterRankingService meisterRankingService;
     private final UserUtil userUtil;
 
-    @GetMapping("ranking")
-    public List<MeisterRankingResponse> getRanking() {
-        return meisterRankingService.getRanking(userUtil.getUser());
+    @GetMapping("ranking/{grade}")
+    public List<MeisterRankingResponse> getRanking(@PathVariable int grade) {
+        return meisterRankingService.getRanking(userUtil.getUser(), grade);
     }
 
     @PutMapping("privateRanking")
