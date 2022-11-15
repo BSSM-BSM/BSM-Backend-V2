@@ -10,6 +10,8 @@ import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -65,7 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         Cookie refreshTokenCookie = cookieUtil.getCookie(req, REFRESH_TOKEN_COOKIE_NAME);
         // 엑세스 토큰 인증에 실패했으면서 리프레시 토큰도 없으면 인증 실패
         if (refreshTokenCookie == null) {
-            res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
+            res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0).toString());
             return;
         }
         try {
@@ -76,14 +78,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 새 엑세스 토큰 발급
             String newToken = jwtUtil.createAccessToken(user);
             // 쿠키 생성 및 적용
-            Cookie newTokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
-            res.addCookie(newTokenCookie);
+            ResponseCookie newTokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
+            res.addHeader(HttpHeaders.SET_COOKIE, newTokenCookie.toString());
 
             authentication(newToken, req);
         } catch (Exception e) {
             e.printStackTrace();
-            res.addCookie(cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0));
-            res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
+            res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0).toString());
+            res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0).toString());
             throw new UnAuthorizedException("다시 로그인 해주세요");
         }
     }

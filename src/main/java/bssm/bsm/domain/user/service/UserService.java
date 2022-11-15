@@ -21,8 +21,11 @@ import leehj050211.bsmOauth.exceptions.BsmAuthCodeNotFoundException;
 import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
 import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,10 +153,10 @@ public class UserService {
         String token = jwtUtil.createAccessToken(user);
         String refreshToken = jwtUtil.createRefreshToken(user.getCode());
 
-        Cookie tokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
-        Cookie refreshTokenCookie = cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, JWT_REFRESH_TOKEN_MAX_TIME);
-        res.addCookie(tokenCookie);
-        res.addCookie(refreshTokenCookie);
+        ResponseCookie tokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
+        ResponseCookie refreshTokenCookie = cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, JWT_REFRESH_TOKEN_MAX_TIME);
+        res.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString());
+        res.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         return UserLoginResponse.builder()
                 .accessToken(token)
@@ -172,8 +175,8 @@ public class UserService {
             } catch (Exception ignored) {}
         }
 
-        res.addCookie(cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0));
-        res.addCookie(cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0));
+        res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0).toString());
+        res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0).toString());
     }
 
 }

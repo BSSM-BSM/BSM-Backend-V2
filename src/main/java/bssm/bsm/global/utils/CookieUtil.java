@@ -1,6 +1,7 @@
 package bssm.bsm.global.utils;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -13,15 +14,18 @@ public class CookieUtil {
     private String COOKIE_DOMAIN;
     @Value("${env.cookie.secure}")
     private boolean COOKIE_SECURE;
+    @Value("${env.cookie.same-site}")
+    private String COOKIE_SAME_SITE;
 
-    public Cookie createCookie(String name, String value, long time) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(COOKIE_SECURE);
-        cookie.setMaxAge((int) time);
-        cookie.setPath("/");
-        cookie.setDomain(COOKIE_DOMAIN);
-        return cookie;
+    public ResponseCookie createCookie(String name, String value, long time) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(COOKIE_SECURE)
+                .sameSite(COOKIE_SAME_SITE)
+                .path("/")
+                .domain(COOKIE_DOMAIN)
+                .maxAge(time)
+                .build();
     }
 
     public Cookie getCookie(HttpServletRequest req, String name) {
