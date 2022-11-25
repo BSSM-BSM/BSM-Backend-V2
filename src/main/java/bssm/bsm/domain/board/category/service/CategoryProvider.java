@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryProvider {
 
-    private final BoardProvider boardUtil;
+    private final BoardProvider boardProvider;
     private final HashMap<PostCategoryPk, PostCategory> categoryList = new HashMap<>();
     private final PostCategoryRepository postCategoryRepository;
 
@@ -27,7 +27,7 @@ public class CategoryProvider {
             category.setPostCategoryPk(
                     new PostCategoryPk(
                             category.getPostCategoryPk().getId(),
-                            this.boardUtil.getBoard(category.getPostCategoryPk().getBoard().getId())
+                            this.boardProvider.getBoard(category.getPostCategoryPk().getBoard().getId())
                     )
             );
             categoryList.put(category.getPostCategoryPk(), category);

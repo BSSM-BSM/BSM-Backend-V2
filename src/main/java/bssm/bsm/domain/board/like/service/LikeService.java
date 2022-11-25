@@ -29,12 +29,12 @@ public class LikeService {
 
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
-    private final BoardProvider boardUtil;
+    private final BoardProvider boardProvider;
     private final PostProvider postProvider;
 
     @Transactional
     public LikeResponse like(User user, PostIdRequest postId, @Valid LikeRequest dto) {
-        Board board = boardUtil.getBoard(postId.getBoard());
+        Board board = boardProvider.getBoard(postId.getBoard());
         board.checkRole(user.getRole());
         Post post = postProvider.getPost(postId);
 

@@ -33,13 +33,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final BoardProvider boardUtil;
+    private final BoardProvider boardProvider;
     private final CommentFacade commentFacade;
     private final UserFacade userFacade;
 
     @Transactional
     public void writeComment(User user, PostIdRequest request, @Valid WriteCommentRequest dto) {
-        Board board = boardUtil.getBoard(request.getBoard());
+        Board board = boardProvider.getBoard(request.getBoard());
         board.checkRole(user.getRole());
         commentFacade.checkWritePermission(board, user);
 
@@ -92,7 +92,7 @@ public class CommentService {
     }
 
     public void deleteComment(User user, PostIdRequest request, int commentId) {
-        Board board = boardUtil.getBoard(request.getBoard());
+        Board board = boardProvider.getBoard(request.getBoard());
         board.checkRole(user.getRole());
 
         PostPk postPk = PostPk.builder()
@@ -120,7 +120,7 @@ public class CommentService {
     }
 
     public List<CommentResponse> viewCommentList(Optional<User> user, PostIdRequest request) {
-        Board board = boardUtil.getBoard(request.getBoard());
+        Board board = boardProvider.getBoard(request.getBoard());
         board.checkRole(user.map(User::getRole).orElse(null));
         commentFacade.checkViewPermission(board, user);
 
@@ -132,7 +132,7 @@ public class CommentService {
                 () -> new NotFoundException("게시글을 찾을 수 없습니다")
         );
 
-        return commentTree(user, 0, commentRepository.findByPkPost(post));
+        return commentTree(user, 0, commentRepository.findAllByPkPost(post));
     }
 
     private List<CommentResponse> commentTree(Optional<User> user, int depth, List<Comment> commentList) {
@@ -194,7 +194,7 @@ public class CommentService {
         return CommentResponse.builder()
                 .id(comment.getPk().getId())
                 .isDelete(false)
-                .user(userFacade.toBoardUserResponse(comment.getUser(), comment.isAnonymous()))
+                .user(userFacade.toCommentUserResponse(comment))
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .depth(comment.getDepth())

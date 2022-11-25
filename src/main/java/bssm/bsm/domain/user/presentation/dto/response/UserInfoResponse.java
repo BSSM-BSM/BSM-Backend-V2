@@ -1,6 +1,5 @@
 package bssm.bsm.domain.user.presentation.dto.response;
 
-import bssm.bsm.domain.user.domain.UserLevel;
 import bssm.bsm.domain.user.domain.UserRole;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

@@ -40,7 +40,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PostService {
 
-    private final BoardProvider boardUtil;
+    private final BoardProvider boardProvider;
     private final CategoryProvider categoryUtil;
     private final PostRepository postRepository;
     private final PostProvider postProvider;
@@ -54,7 +54,7 @@ public class PostService {
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
     public PostListResponse postList(Optional<User> user, String boardId, @Valid GetPostListRequest dto) {
-        Board board = boardUtil.getBoard(boardId);
+        Board board = boardProvider.getBoard(boardId);
         board.checkRole(user.map(User::getRole).orElse(null));
         postFacade.checkViewPermission(board, user);
 
@@ -101,7 +101,7 @@ public class PostService {
     }
 
     public ViewPostResponse viewPost(Optional<User> user, PostIdRequest postId) {
-        Board board = boardUtil.getBoard(postId.getBoard());;
+        Board board = boardProvider.getBoard(postId.getBoard());;
         postFacade.checkViewPermission(board, user);
         Post post = postProvider.getPost(postId);
         PostLike postLike = likeProvider.getMyPostLike(user, post);
@@ -126,7 +126,7 @@ public class PostService {
 
     @Transactional
     public long writePost(User user, String boardId, WritePostRequest dto) {
-        Board board = boardUtil.getBoard(boardId);
+        Board board = boardProvider.getBoard(boardId);
         board.checkRole(user.getRole());
         postFacade.checkWritePermission(board, user);
 
@@ -151,7 +151,7 @@ public class PostService {
     }
 
     public void modifyPost(User user, PostIdRequest postId, @Valid WritePostRequest dto) {
-        Board board = boardUtil.getBoard(postId.getBoard());
+        Board board = boardProvider.getBoard(postId.getBoard());
         Post post = postProvider.getPost(postId);
         if (!post.checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
 

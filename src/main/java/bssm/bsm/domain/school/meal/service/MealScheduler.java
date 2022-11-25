@@ -30,7 +30,7 @@ public class MealScheduler {
     @Value("${env.meal.url}")
     private String MEAL_ACCESS_URL;
 
-    @Scheduled(cron = "* * * 25 * ?")
+    @Scheduled(cron = "0 0 0 25 * ?")
     private void getMonthMeal() throws IOException {
         YearMonth nextMonth = YearMonth.now().plusMonths(1);
         List<Meal> mealList = mealProvider.getRawMonthMealList(nextMonth).stream()
