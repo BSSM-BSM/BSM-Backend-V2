@@ -1,6 +1,6 @@
-package bssm.bsm.domain.user.domain.repository;
+package bssm.bsm.domain.auth.domain.repository;
 
-import bssm.bsm.domain.user.domain.RefreshToken;
+import bssm.bsm.domain.auth.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

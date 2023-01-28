@@ -4,7 +4,7 @@ import bssm.bsm.domain.board.like.presentation.dto.request.LikeRequest;
 import bssm.bsm.domain.board.like.presentation.dto.response.LikeResponse;
 import bssm.bsm.domain.board.like.service.LikeService;
 import bssm.bsm.domain.board.post.presentation.dto.request.PostIdRequest;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LikeController {
 
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
     private final LikeService likeService;
 
     @PostMapping("/{boardId}/{postId}")

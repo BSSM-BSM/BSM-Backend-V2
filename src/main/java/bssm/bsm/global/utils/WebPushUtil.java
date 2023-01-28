@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class WebPushUtil {
 
     private final ObjectMapper objectMapper;

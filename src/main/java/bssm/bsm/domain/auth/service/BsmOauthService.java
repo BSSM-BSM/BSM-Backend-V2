@@ -1,17 +1,17 @@
-package bssm.bsm.domain.user.service;
+package bssm.bsm.domain.auth.service;
 
+import bssm.bsm.domain.auth.domain.repository.RefreshTokenRepository;
+import bssm.bsm.domain.auth.presentation.dto.res.AuthTokenRes;
 import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.domain.user.domain.Teacher;
-import bssm.bsm.domain.user.domain.repository.RefreshTokenRepository;
+import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.repository.StudentRepository;
 import bssm.bsm.domain.user.domain.repository.TeacherRepository;
-import bssm.bsm.domain.user.domain.UserLevel;
-import bssm.bsm.domain.user.domain.UserRole;
-import bssm.bsm.domain.user.presentation.dto.response.UserLoginResponse;
+import bssm.bsm.domain.user.domain.repository.UserRepository;
+import bssm.bsm.domain.user.domain.type.UserLevel;
+import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
-import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.domain.repository.UserRepository;
 import bssm.bsm.global.jwt.JwtProvider;
 import bssm.bsm.global.utils.CookieUtil;
 import leehj050211.bsmOauth.BsmOauth;
@@ -21,8 +21,6 @@ import leehj050211.bsmOauth.exceptions.BsmAuthCodeNotFoundException;
 import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
 import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.Header;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -37,25 +35,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class BsmOauthService {
 
-    @Autowired
-    private UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final BsmOauth bsmOauth;
-    private final JwtProvider jwtUtil;
-    private final CookieUtil cookieUtil;
-
-    @Value("${env.cookie.name.token}")
-    private String TOKEN_COOKIE_NAME;
-    @Value("${env.cookie.name.refreshToken}")
-    private String REFRESH_TOKEN_COOKIE_NAME;
-    @Value("${env.jwt.time.token}")
-    private long JWT_TOKEN_MAX_TIME;
-    @Value("${env.jwt.time.refreshToken}")
-    private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     @Transactional
     private User studentSignUp(BsmResourceResponse dto, String oauthToken) {
@@ -65,9 +50,8 @@ public class UserService {
                 studentDto.getGrade(),
                 studentDto.getClassNo(),
                 studentDto.getStudentNo()
-        ).orElseThrow(
-                () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
-        );
+        ).orElseThrow(() -> new NotFoundException("학생을 찾을 수 없습니다"));
+
         User user = User.builder()
                 .code(dto.getUserCode())
                 .nickname(dto.getNickname())
@@ -88,6 +72,7 @@ public class UserService {
                         .name(dto.getTeacher().getName())
                         .build()
         );
+
         User user = User.builder()
                 .code(dto.getUserCode())
                 .nickname(dto.getNickname())
@@ -147,36 +132,6 @@ public class UserService {
             case STUDENT -> studentUpdate(resource, user.get());
             case TEACHER -> teacherUpdate(resource, user.get());
         };
-    }
-
-    public UserLoginResponse loginPostProcess(HttpServletResponse res, User user) {
-        String token = jwtUtil.createAccessToken(user);
-        String refreshToken = jwtUtil.createRefreshToken(user.getCode());
-
-        ResponseCookie tokenCookie = cookieUtil.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
-        ResponseCookie refreshTokenCookie = cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, JWT_REFRESH_TOKEN_MAX_TIME);
-        res.addHeader(HttpHeaders.SET_COOKIE, tokenCookie.toString());
-        res.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-
-        return UserLoginResponse.builder()
-                .accessToken(token)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    @Transactional
-    public void logout(HttpServletRequest req, HttpServletResponse res) {
-        Cookie refreshTokenCookie = cookieUtil.getCookie(req, REFRESH_TOKEN_COOKIE_NAME);
-        if (refreshTokenCookie != null) {
-            try {
-                refreshTokenRepository.findById(
-                        jwtUtil.getRefreshToken(refreshTokenCookie.getValue())
-                ).ifPresent(token -> token.setAvailable(false));
-            } catch (Exception ignored) {}
-        }
-
-        res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0).toString());
-        res.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.createCookie(TOKEN_COOKIE_NAME, "", 0).toString());
     }
 
 }

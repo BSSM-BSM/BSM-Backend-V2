@@ -7,7 +7,7 @@ import bssm.bsm.domain.board.post.presentation.dto.response.UploadFileResponse;
 import bssm.bsm.domain.board.post.presentation.dto.response.PostListResponse;
 import bssm.bsm.domain.board.post.presentation.dto.response.ViewPostResponse;
 import bssm.bsm.domain.board.post.service.PostService;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
     private final PostService postService;
 
     @GetMapping("/{boardId}")

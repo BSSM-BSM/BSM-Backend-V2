@@ -2,7 +2,7 @@ package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.domain.UserLevel;
+import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;

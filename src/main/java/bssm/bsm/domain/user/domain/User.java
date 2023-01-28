@@ -1,6 +1,8 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.UserInfoResponse;
+import bssm.bsm.domain.user.domain.type.UserLevel;
+import bssm.bsm.domain.user.domain.type.UserRole;
+import bssm.bsm.domain.user.presentation.dto.res.UserDetailRes;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -60,8 +62,8 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
-    public UserInfoResponse toUserInfoResponse() {
-        UserInfoResponse.UserInfoResponseBuilder builder = UserInfoResponse.builder()
+    public UserDetailRes toUserInfoResponse() {
+        UserDetailRes.UserDetailResBuilder builder = UserDetailRes.builder()
                 .code(code)
                 .role(role)
                 .level(level.getValue())

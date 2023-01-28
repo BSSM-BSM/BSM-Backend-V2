@@ -3,7 +3,7 @@ package bssm.bsm.domain.school.meister.presentation;
 import bssm.bsm.domain.school.meister.service.MeisterRankingService;
 import bssm.bsm.domain.school.meister.presentation.dto.request.UpdateMeisterPrivateRequest;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterRankingResponse;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class MeisterRankingController {
 
     private final MeisterRankingService meisterRankingService;
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
 
     @GetMapping("ranking/{grade}")
     public List<MeisterRankingResponse> getRanking(@PathVariable int grade) {

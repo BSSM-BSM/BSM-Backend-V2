@@ -1,11 +1,11 @@
-package bssm.bsm.domain.user.presentation.dto.response;
+package bssm.bsm.domain.user.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class TeacherInfoResponse {
+public class TeacherRes {
 
     private String name;
 

@@ -3,7 +3,7 @@ package bssm.bsm.domain.board.emoticon.presentation;
 import bssm.bsm.domain.board.emoticon.presentation.dto.request.EmoticonUploadRequest;
 import bssm.bsm.domain.board.emoticon.presentation.dto.response.EmoticonResponse;
 import bssm.bsm.domain.board.emoticon.service.EmoticonService;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +17,7 @@ import java.util.List;
 public class EmoticonController {
 
     private final EmoticonService emoticonService;
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
 
     @GetMapping("inactive")
     public List<EmoticonResponse> getInactiveEmoticonList() {

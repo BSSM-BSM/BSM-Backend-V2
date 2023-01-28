@@ -1,4 +1,4 @@
-package bssm.bsm.domain.user.domain;
+package bssm.bsm.domain.user.domain.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

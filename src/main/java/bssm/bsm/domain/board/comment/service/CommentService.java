@@ -12,9 +12,8 @@ import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.domain.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
-import bssm.bsm.domain.user.facade.UserFacade;
-import bssm.bsm.domain.user.presentation.dto.response.UserResponse;
-import bssm.bsm.domain.user.domain.UserLevel;
+import bssm.bsm.domain.user.domain.type.UserLevel;
+import bssm.bsm.domain.user.service.UserResProvider;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.domain.user.domain.User;
@@ -35,7 +34,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final BoardProvider boardProvider;
     private final CommentFacade commentFacade;
-    private final UserFacade userFacade;
+    private final UserResProvider userResProvider;
 
     @Transactional
     public void writeComment(User user, PostIdRequest request, @Valid WriteCommentRequest dto) {
@@ -194,7 +193,7 @@ public class CommentService {
         return CommentResponse.builder()
                 .id(comment.getPk().getId())
                 .isDelete(false)
-                .user(userFacade.toCommentUserResponse(comment))
+                .user(userResProvider.toCommentUserResponse(comment))
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .depth(comment.getDepth())

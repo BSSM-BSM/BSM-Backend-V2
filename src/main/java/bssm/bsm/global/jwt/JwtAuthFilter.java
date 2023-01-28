@@ -2,12 +2,9 @@ package bssm.bsm.global.jwt;
 
 import bssm.bsm.domain.user.facade.UserFacade;
 import bssm.bsm.global.auth.AuthDetailsService;
-import bssm.bsm.global.error.exceptions.NotFoundException;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import bssm.bsm.global.utils.CookieUtil;
-import bssm.bsm.global.jwt.JwtProvider;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.domain.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;

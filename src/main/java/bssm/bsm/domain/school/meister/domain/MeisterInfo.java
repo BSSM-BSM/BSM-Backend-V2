@@ -2,7 +2,7 @@ package bssm.bsm.domain.school.meister.domain;
 
 import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.domain.UserRole;
+import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

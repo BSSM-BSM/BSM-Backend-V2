@@ -1,7 +1,7 @@
 package bssm.bsm.domain.school.meister.presentation;
 
 import bssm.bsm.domain.school.meister.service.MeisterService;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import bssm.bsm.domain.school.meister.presentation.dto.request.MeisterDetailRequest;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterDetailResponse;
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterResponse;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class MeisterController {
 
     private final MeisterService meisterService;
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
 
     @PostMapping("detail")
     public MeisterDetailResponse getDetail(@RequestBody MeisterDetailRequest dto) throws IOException {

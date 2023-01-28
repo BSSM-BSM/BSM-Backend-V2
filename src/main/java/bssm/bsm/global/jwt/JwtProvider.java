@@ -1,8 +1,8 @@
 package bssm.bsm.global.jwt;
 
-import bssm.bsm.domain.user.domain.RefreshToken;
+import bssm.bsm.domain.auth.domain.RefreshToken;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.domain.repository.RefreshTokenRepository;
+import bssm.bsm.domain.auth.domain.repository.RefreshTokenRepository;
 import bssm.bsm.domain.user.facade.UserFacade;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,5 +1,7 @@
 package bssm.bsm.domain.user.domain;
 
+import bssm.bsm.domain.user.domain.type.UserLevel;
+import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.*;
 import org.springframework.data.annotation.Id;

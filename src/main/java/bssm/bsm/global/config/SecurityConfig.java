@@ -50,7 +50,7 @@ public class SecurityConfig {
                     .authenticationEntryPoint(authenticationEntryPoint())
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user/oauth/bsm").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/oauth/bsm").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.GET, "/meal/*", "/timetable/*/*", "/banner").permitAll()
                 .antMatchers("/meister/ranking", "/meister/detail").authenticated()

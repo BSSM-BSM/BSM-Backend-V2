@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.post.presentation.dto.response;
 
-import bssm.bsm.domain.user.presentation.dto.response.UserResponse;
+import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +11,7 @@ import java.util.Date;
 public class PostResponse {
 
     private long id;
-    private UserResponse user;
+    private UserRes user;
     private String category;
     private String title;
     private Date createdAt;

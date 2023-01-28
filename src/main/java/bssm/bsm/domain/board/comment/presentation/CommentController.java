@@ -4,7 +4,7 @@ import bssm.bsm.domain.board.comment.service.CommentService;
 import bssm.bsm.domain.board.comment.presentation.dto.request.WriteCommentRequest;
 import bssm.bsm.domain.board.comment.presentation.dto.response.CommentResponse;
 import bssm.bsm.domain.board.post.presentation.dto.request.PostIdRequest;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
     private final CommentService commentService;
 
     @PostMapping("/{boardId}/{postId}")

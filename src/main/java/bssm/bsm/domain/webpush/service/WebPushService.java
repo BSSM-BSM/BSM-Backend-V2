@@ -4,20 +4,16 @@ import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.webpush.domain.WebPush;
 import bssm.bsm.domain.webpush.domain.repository.WebPushRepository;
 import bssm.bsm.domain.webpush.presentation.dto.request.WebPushSubscribeRequest;
-import bssm.bsm.domain.webpush.presentation.dto.request.WebPushUnsubscribeRequest;
 import bssm.bsm.global.error.exceptions.NotFoundException;
-import bssm.bsm.global.utils.UserUtil;
+import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class WebPushService {
 
-    private final UserUtil userUtil;
+    private final CurrentUser userUtil;
     private final WebPushRepository webpushRepository;
 
     public void subscribe(WebPushSubscribeRequest dto) {

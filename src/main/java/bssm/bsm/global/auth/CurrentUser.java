@@ -1,4 +1,4 @@
-package bssm.bsm.global.utils;
+package bssm.bsm.global.auth;
 
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.facade.UserFacade;
@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserUtil {
+public class CurrentUser {
 
     private final UserFacade userFacade;
 

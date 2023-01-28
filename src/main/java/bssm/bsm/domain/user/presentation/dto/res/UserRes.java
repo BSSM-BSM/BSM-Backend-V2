@@ -1,11 +1,11 @@
-package bssm.bsm.domain.user.presentation.dto.response;
+package bssm.bsm.domain.user.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class UserResponse {
+public class UserRes {
 
     private Long code;
     private String nickname;

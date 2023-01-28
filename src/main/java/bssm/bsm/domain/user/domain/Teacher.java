@@ -1,6 +1,6 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.TeacherInfoResponse;
+import bssm.bsm.domain.user.presentation.dto.res.TeacherRes;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,8 +30,8 @@ public class Teacher {
         this.email = email;
     }
 
-    public TeacherInfoResponse toInfo() {
-        return TeacherInfoResponse.builder()
+    public TeacherRes toInfo() {
+        return TeacherRes.builder()
                 .name(name)
                 .build();
     }

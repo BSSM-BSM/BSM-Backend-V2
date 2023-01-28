@@ -1,6 +1,6 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.response.StudentInfoResponse;
+import bssm.bsm.domain.user.presentation.dto.res.StudentRes;
 import lombok.*;
 
 import javax.persistence.*;
@@ -64,8 +64,8 @@ public class Student {
         this.studentNo = studentNo;
     }
 
-    public StudentInfoResponse toInfo() {
-        return StudentInfoResponse.builder()
+    public StudentRes toInfo() {
+        return StudentRes.builder()
                 .name(name)
                 .enrolledAt(enrolledAt)
                 .grade(grade)

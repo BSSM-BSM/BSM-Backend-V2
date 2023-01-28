@@ -19,7 +19,7 @@ import bssm.bsm.domain.board.category.service.CategoryProvider;
 import bssm.bsm.domain.board.post.presentation.dto.request.GetPostListRequest;
 import bssm.bsm.domain.board.post.presentation.dto.request.PostIdRequest;
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.domain.user.facade.UserFacade;
+import bssm.bsm.domain.user.service.UserResProvider;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class PostService {
     private final PostProvider postProvider;
     private final LikeProvider likeProvider;
     private final PostFacade postFacade;
-    private final UserFacade userFacade;
+    private final UserResProvider userResProvider;
 
     @Value("${env.file.path.base}")
     private String PUBLIC_RESOURCE_PATH;
@@ -74,7 +74,7 @@ public class PostService {
         posts.forEach(post ->
                 postDtoList.add(PostResponse.builder()
                             .id(post.getPk().getId())
-                            .user(userFacade.toBoardUserResponse(post.getUser(), post.isAnonymous()))
+                            .user(userResProvider.toBoardUserResponse(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
                             .title(post.getTitle())
                             .createdAt(post.getCreatedAt())
@@ -110,7 +110,7 @@ public class PostService {
 
         return ViewPostResponse.builder()
                 .id(postId.getPostId())
-                .user(userFacade.toBoardUserResponse(post.getUser(), post.isAnonymous()))
+                .user(userResProvider.toBoardUserResponse(post.getUser(), post.isAnonymous()))
                 .category(post.getCategoryId())
                 .title(post.getTitle())
                 .content(post.getContent())

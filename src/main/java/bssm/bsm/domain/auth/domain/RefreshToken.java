@@ -1,5 +1,6 @@
-package bssm.bsm.domain.user.domain;
+package bssm.bsm.domain.auth.domain;
 
+import bssm.bsm.domain.user.domain.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -22,7 +23,7 @@ public class RefreshToken {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long userCode;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "userCode", nullable = false, insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
