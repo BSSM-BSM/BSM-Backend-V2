@@ -74,7 +74,7 @@ public class PostService {
         posts.forEach(post ->
                 postDtoList.add(PostResponse.builder()
                             .id(post.getPk().getId())
-                            .user(userResProvider.toBoardUserResponse(post.getUser(), post.isAnonymous()))
+                            .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
                             .title(post.getTitle())
                             .createdAt(post.getCreatedAt())
@@ -110,7 +110,7 @@ public class PostService {
 
         return ViewPostResponse.builder()
                 .id(postId.getPostId())
-                .user(userResProvider.toBoardUserResponse(post.getUser(), post.isAnonymous()))
+                .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
                 .category(post.getCategoryId())
                 .title(post.getTitle())
                 .content(post.getContent())

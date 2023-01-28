@@ -8,25 +8,25 @@ import java.util.Objects;
 public class AnonymousKey {
 
     private AnonymousKeyType type;
-    private Long id;
+    private String sessionId;
     private Long userCode;
 
-    public AnonymousKey(AnonymousKeyType type, Long id) {
+    public AnonymousKey(AnonymousKeyType type, String sessionId) {
         this.type = type;
-        this.id = id;
+        this.sessionId = sessionId;
         this.userCode = -1L;
     }
 
     @Override
     public boolean equals(Object o) {
         return type.equals(((AnonymousKey) o).type)
-                && id.equals(((AnonymousKey) o).id)
+                && sessionId.equals(((AnonymousKey) o).sessionId)
                 && userCode.equals(((AnonymousKey) o).userCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, id, userCode);
+        return Objects.hash(type, sessionId, userCode);
     }
 
 }

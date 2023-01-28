@@ -118,6 +118,7 @@ public class CommentService {
         postRepository.save(post);
     }
 
+    @Transactional(readOnly = true)
     public List<CommentResponse> viewCommentList(Optional<User> user, PostIdRequest request) {
         Board board = boardProvider.getBoard(request.getBoard());
         board.checkRole(user.map(User::getRole).orElse(null));
@@ -193,7 +194,7 @@ public class CommentService {
         return CommentResponse.builder()
                 .id(comment.getPk().getId())
                 .isDelete(false)
-                .user(userResProvider.toCommentUserResponse(comment))
+                .user(userResProvider.toCommentUserRes(comment))
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())
                 .depth(comment.getDepth())
