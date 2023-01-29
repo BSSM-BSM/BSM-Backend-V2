@@ -19,7 +19,7 @@ public class GetPostListRequest {
     private int limit;
 
     @NotBlank
-    private String categoryId;
+    private String category;
 
     private long startPostId;
 }

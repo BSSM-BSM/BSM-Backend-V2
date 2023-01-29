@@ -1,13 +1,11 @@
 package bssm.bsm.domain.board.category.domain;
 
-import bssm.bsm.domain.board.board.domain.Board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -18,22 +16,24 @@ public class PostCategoryPk implements Serializable {
     @Column(length = 16)
     private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Board board;
+    @Column
+    private String boardId;
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true;
+        if (!(o instanceof PostCategoryPk)) return false;
 
-        PostCategoryPk other = (PostCategoryPk)o;
+        PostCategoryPk that = (PostCategoryPk) o;
 
-        return other.board == board && Objects.equals(other.id, id);
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return boardId != null ? boardId.equals(that.boardId) : that.boardId == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, id);
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (boardId != null ? boardId.hashCode() : 0);
+        return result;
     }
 }

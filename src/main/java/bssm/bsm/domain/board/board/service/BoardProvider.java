@@ -14,10 +14,8 @@ public class BoardProvider {
     private final HashMap<String, Board> boardList = new HashMap<>();
 
     public BoardProvider(BoardRepository boardRepository) {
-        List<Board> boards = boardRepository.findAll();
-        boards.forEach(board -> {
-            boardList.put(board.getId(), board);
-        });
+        boardRepository.findAll()
+                .forEach(board -> boardList.put(board.getId(), board));
     }
 
     public Board getBoard(String id) throws NotFoundException {

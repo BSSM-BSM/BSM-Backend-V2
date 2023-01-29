@@ -37,34 +37,34 @@ public class PostProvider {
         );
     }
 
-    public Page<Post> getPostListByOffset(PostCategoryPk postCategoryId, GetPostListRequest dto) {
+    public Page<Post> getPostListByOffset(Board board, GetPostListRequest dto) {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
-        if (postCategoryId.getId().equals("all")) {
-            return postRepository.findByPkBoardAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), false, pageable);
+        if (dto.getCategory().equals("all")) {
+            return postRepository.findByPkBoardAndDeleteOrderByPkIdDesc(board, false, pageable);
         }
-        PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
+        PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPkBoardAndCategoryIdAndDeleteOrderByPk_IdDesc(postCategoryId.getBoard(), null, false, pageable);
+            return postRepository.findByPkBoardAndCategoryIdAndDeleteOrderByPk_IdDesc(board, null, false, pageable);
         }
         // 카테고리 있는 게시글
         return postRepository.findByCategoryAndDeleteOrderByPkIdDesc(postCategory, false, pageable);
     }
 
-    public List<Post> getPostListByCursor(PostCategoryPk postCategoryId, GetPostListRequest dto) {
+    public List<Post> getPostListByCursor(Board board, GetPostListRequest dto) {
         Pageable pageable = Pageable.ofSize(dto.getLimit());
         // 전체 게시글
-        if (postCategoryId.getId().equals("all")) {
-            return postRepository.findByPkBoardAndPk_IdLessThanAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), dto.getStartPostId(), false, pageable);
+        if (dto.getCategory().equals("all")) {
+            return postRepository.findByPkBoardAndPk_IdLessThanAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), false, pageable);
         }
-        PostCategory postCategory = categoryUtil.getCategory(postCategoryId);
+        PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPkBoardAndPkIdLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), dto.getStartPostId(), null, false, pageable);
+            return postRepository.findByPkBoardAndPkIdLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), null, false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByPkBoardAndPkIdLessThanAndCategoryAndDeleteOrderByPkIdDesc(postCategoryId.getBoard(), dto.getStartPostId(), postCategory, false, pageable);
+        return postRepository.findByPkBoardAndPkIdLessThanAndCategoryAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), postCategory, false, pageable);
     }
 
 }

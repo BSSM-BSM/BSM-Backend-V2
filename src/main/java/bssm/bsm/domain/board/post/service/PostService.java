@@ -7,11 +7,11 @@ import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.service.LikeProvider;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
-import bssm.bsm.domain.board.post.presentation.dto.response.PostResponse;
+import bssm.bsm.domain.board.post.presentation.dto.res.PostRes;
 import bssm.bsm.domain.board.post.presentation.dto.request.WritePostRequest;
-import bssm.bsm.domain.board.post.presentation.dto.response.PostListResponse;
-import bssm.bsm.domain.board.post.presentation.dto.response.UploadFileResponse;
-import bssm.bsm.domain.board.post.presentation.dto.response.ViewPostResponse;
+import bssm.bsm.domain.board.post.presentation.dto.res.PostListRes;
+import bssm.bsm.domain.board.post.presentation.dto.res.UploadFileRes;
+import bssm.bsm.domain.board.post.presentation.dto.res.DetailPostRes;
 import bssm.bsm.domain.board.post.facade.PostFacade;
 import bssm.bsm.domain.board.post.domain.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
@@ -53,26 +53,25 @@ public class PostService {
     @Value("${env.file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
-    public PostListResponse postList(Optional<User> user, String boardId, @Valid GetPostListRequest dto) {
+    public PostListRes postList(Optional<User> user, String boardId, @Valid GetPostListRequest dto) {
         Board board = boardProvider.getBoard(boardId);
         board.checkRole(user.map(User::getRole).orElse(null));
         postFacade.checkViewPermission(board, user);
 
-        PostCategoryPk postCategoryId = new PostCategoryPk(dto.getCategoryId(), board);
         final boolean pageMode = dto.getStartPostId() < 0;
 
         List<Post> posts;
         Page<Post> pages = null;
         if (pageMode) {
-             pages = postProvider.getPostListByOffset(postCategoryId, dto);
+             pages = postProvider.getPostListByOffset(board, dto);
              posts = pages.getContent();
         } else {
-            posts = postProvider.getPostListByCursor(postCategoryId, dto);
+            posts = postProvider.getPostListByCursor(board, dto);
         }
 
-        List<PostResponse> postDtoList = new ArrayList<>();
+        List<PostRes> postDtoList = new ArrayList<>();
         posts.forEach(post ->
-                postDtoList.add(PostResponse.builder()
+                postDtoList.add(PostRes.builder()
                             .id(post.getPk().getId())
                             .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
                             .category(post.getCategoryId())
@@ -86,21 +85,21 @@ public class PostService {
         );
 
         if (pageMode) {
-            return PostListResponse.builder()
+            return PostListRes.builder()
                     .posts(postDtoList)
                     .totalPages(pages.getTotalPages())
                     .page(dto.getPage())
                     .limit(dto.getLimit())
                     .build();
         } else {
-            return PostListResponse.builder()
+            return PostListRes.builder()
                     .posts(postDtoList)
                     .limit(dto.getLimit())
                     .build();
         }
     }
 
-    public ViewPostResponse viewPost(Optional<User> user, PostIdRequest postId) {
+    public DetailPostRes viewPost(Optional<User> user, PostIdRequest postId) {
         Board board = boardProvider.getBoard(postId.getBoard());;
         postFacade.checkViewPermission(board, user);
         Post post = postProvider.getPost(postId);
@@ -108,7 +107,7 @@ public class PostService {
         post.setHit(post.getHit() + 1);
         postRepository.save(post);
 
-        return ViewPostResponse.builder()
+        return DetailPostRes.builder()
                 .id(postId.getPostId())
                 .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
                 .category(post.getCategoryId())
@@ -130,7 +129,7 @@ public class PostService {
         board.checkRole(user.getRole());
         postFacade.checkWritePermission(board, user);
 
-        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
+        PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
 
         Post newPost = Post.builder()
                 .pk(
@@ -140,7 +139,7 @@ public class PostService {
                                 .build()
                 )
                 .userCode(user.getCode())
-                .categoryId(postCategory == null? null: postCategory.getPostCategoryPk().getId())
+                .categoryId(postCategory == null? null: postCategory.getPk().getId())
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .createdAt(new Date())
@@ -150,12 +149,13 @@ public class PostService {
         return newPost.getPk().getId();
     }
 
+    @Transactional
     public void modifyPost(User user, PostIdRequest postId, @Valid WritePostRequest dto) {
         Board board = boardProvider.getBoard(postId.getBoard());
         Post post = postProvider.getPost(postId);
         if (!post.checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
 
-        PostCategory postCategory = categoryUtil.getCategory(new PostCategoryPk(dto.getCategory(), board));
+        PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
 
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
@@ -165,6 +165,7 @@ public class PostService {
         postRepository.save(post);
     }
 
+    @Transactional
     public void deletePost(User user, PostIdRequest postId) {
         Post post = postProvider.getPost(postId);
         if (!post.checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
@@ -172,7 +173,7 @@ public class PostService {
         postRepository.save(post);
     }
 
-    public UploadFileResponse uploadFile(MultipartFile file) {
+    public UploadFileRes uploadFile(MultipartFile file) {
         String fileExt = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
         String fileId = String.valueOf(new Date().getTime());
 
@@ -189,7 +190,7 @@ public class PostService {
 
         try {
             file.transferTo(newFile);
-            return UploadFileResponse.builder()
+            return UploadFileRes.builder()
                     .id(fileId)
                     .fileExt(fileExt)
                     .build();

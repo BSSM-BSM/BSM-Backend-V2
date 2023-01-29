@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.board.presentation;
 
-import bssm.bsm.domain.board.board.presentation.dto.response.BoardResponse;
+import bssm.bsm.domain.board.board.presentation.dto.res.BoardRes;
 import bssm.bsm.domain.board.board.service.BoardService;
 import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class BoardController {
     private final CurrentUser userUtil;
 
     @GetMapping("/{boardId}")
-    public BoardResponse boardInfo(@PathVariable String boardId) {
+    public BoardRes boardInfo(@PathVariable String boardId) {
         return boardService.boardInfo(boardId, userUtil.getOptionalUser());
     }
 

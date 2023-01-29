@@ -1,17 +1,17 @@
 package bssm.bsm.domain.board.board.domain;
 
-import bssm.bsm.domain.board.board.presentation.dto.response.BoardResponse;
-import bssm.bsm.domain.board.post.presentation.dto.response.PostCategoryResponse;
+import bssm.bsm.domain.board.board.presentation.dto.res.BoardRes;
+import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
-import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -49,6 +49,9 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private UserRole accessibleRole;
 
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private final Set<PostCategory> categories = new HashSet<>();
+
     @Builder
     public Board(String id, String name, String subBoardId, String subBoardName, UserLevel writePostLevel, boolean publicPost, UserLevel writeCommentLevel, boolean publicComment, UserRole accessibleRole) {
         this.id = id;
@@ -62,34 +65,36 @@ public class Board {
         this.accessibleRole = accessibleRole;
     }
 
-    public BoardResponse toResponse(Optional<User> user, List<PostCategoryResponse> categoryResponseList) {
-        BoardResponse.BoardResponseBuilder builder = BoardResponse.builder()
+    public BoardRes toResponse(Optional<User> user) {
+        BoardRes.BoardResBuilder builder = BoardRes.builder()
                 .boardId(id)
                 .boardName(name)
                 .subBoardId(subBoardId)
                 .subBoardName(subBoardName)
-                .categoryList(categoryResponseList);
+                .categoryList(categories.stream()
+                        .map(PostCategory::toResponse)
+                        .toList());
 
         if (user.isEmpty()) {
             return builder
                     .postPermission(false)
                     .commentPermission(false)
                     .build();
-        } else {
-            UserLevel level = user.get().getLevel();
-            return builder
-                    .postPermission(writePostLevel.getValue() <= level.getValue())
-                    .commentPermission(writeCommentLevel.getValue() <= level.getValue())
-                    .build();
         }
+
+        UserLevel level = user.get().getLevel();
+        return builder
+                .postPermission(writePostLevel.getValue() <= level.getValue())
+                .commentPermission(writeCommentLevel.getValue() <= level.getValue())
+                .build();
     }
 
-    public void checkRole(UserRole role) throws NotFoundException {
-        if (accessibleRole != null && accessibleRole != role) {
-            switch (accessibleRole) {
-                case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
-                case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
-            }
+    public void checkRole(UserRole role) {
+        if (accessibleRole == null || accessibleRole == role) return;
+
+        switch (accessibleRole) {
+            case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
+            case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
         }
     }
     

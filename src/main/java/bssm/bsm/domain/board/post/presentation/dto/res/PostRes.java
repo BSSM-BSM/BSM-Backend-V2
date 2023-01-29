@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.post.presentation.dto.response;
+package bssm.bsm.domain.board.post.presentation.dto.res;
 
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @SuperBuilder
-public class PostResponse {
+public class PostRes {
 
     private long id;
     private UserRes user;

@@ -3,9 +3,9 @@ package bssm.bsm.domain.board.post.presentation;
 import bssm.bsm.domain.board.post.presentation.dto.request.GetPostListRequest;
 import bssm.bsm.domain.board.post.presentation.dto.request.PostIdRequest;
 import bssm.bsm.domain.board.post.presentation.dto.request.WritePostRequest;
-import bssm.bsm.domain.board.post.presentation.dto.response.UploadFileResponse;
-import bssm.bsm.domain.board.post.presentation.dto.response.PostListResponse;
-import bssm.bsm.domain.board.post.presentation.dto.response.ViewPostResponse;
+import bssm.bsm.domain.board.post.presentation.dto.res.UploadFileRes;
+import bssm.bsm.domain.board.post.presentation.dto.res.PostListRes;
+import bssm.bsm.domain.board.post.presentation.dto.res.DetailPostRes;
 import bssm.bsm.domain.board.post.service.PostService;
 import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{boardId}")
-    public PostListResponse postList(
+    public PostListRes postList(
             @PathVariable String boardId,
             @RequestParam(value = "p", defaultValue = "1") int page,
             @RequestParam(value = "l", defaultValue = "15") int limit,
@@ -34,7 +34,7 @@ public class PostController {
     }
 
     @GetMapping("/{boardId}/{postId}")
-    public ViewPostResponse viewPost(@PathVariable String boardId, @PathVariable int postId) {
+    public DetailPostRes viewPost(@PathVariable String boardId, @PathVariable int postId) {
         return postService.viewPost(userUtil.getOptionalUser(), new PostIdRequest(boardId, postId));
     }
 
@@ -58,7 +58,7 @@ public class PostController {
     }
 
     @PostMapping("upload")
-    public UploadFileResponse uploadFile(@RequestParam MultipartFile file) {
+    public UploadFileRes uploadFile(@RequestParam MultipartFile file) {
         return postService.uploadFile(file);
     }
 }

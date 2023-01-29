@@ -1,6 +1,6 @@
-package bssm.bsm.domain.board.board.presentation.dto.response;
+package bssm.bsm.domain.board.board.presentation.dto.res;
 
-import bssm.bsm.domain.board.post.presentation.dto.response.PostCategoryResponse;
+import bssm.bsm.domain.board.post.presentation.dto.res.PostCategoryRes;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,13 +8,13 @@ import java.util.List;
 
 @Getter
 @Builder
-public class BoardResponse {
+public class BoardRes {
 
     String boardId;
     String boardName;
     String subBoardId;
     String subBoardName;
-    List<PostCategoryResponse> categoryList;
+    List<PostCategoryRes> categoryList;
     boolean postPermission;
     boolean commentPermission;
 }

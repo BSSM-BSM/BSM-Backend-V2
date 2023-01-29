@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.post.presentation.dto.response;
+package bssm.bsm.domain.board.post.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 @Builder
-public class PostListResponse {
+public class PostListRes {
 
-    List<PostResponse> posts;
+    List<PostRes> posts;
     long totalPages;
     int page;
     int limit;

@@ -1,11 +1,11 @@
-package bssm.bsm.domain.board.post.presentation.dto.response;
+package bssm.bsm.domain.board.post.presentation.dto.res;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class ViewPostResponse extends PostResponse {
+public class DetailPostRes extends PostRes {
 
     private String content;
     private boolean permission;

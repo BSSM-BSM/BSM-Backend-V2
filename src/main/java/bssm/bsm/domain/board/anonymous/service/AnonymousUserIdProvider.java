@@ -12,22 +12,24 @@ import java.util.Optional;
 @Component
 public class AnonymousUserIdProvider {
 
+    // key: user id -> value: anonymous user id
     private final Map<AnonymousKey, Long> anonymousMap = new HashMap<>();
-    private final Map<AnonymousKey, Long> anonymousIdxMap = new HashMap<>();
+    // key: session id -> value: new anonymous user id (새로운 익명 id 발급 시 1씩 자동 증가)
+    private final Map<AnonymousKey, Long> anonymousIdMap = new HashMap<>();
 
     public long getAnonymousId(AnonymousKeyType type, String sessionId, User user) {
         AnonymousKey key = new AnonymousKey(type, sessionId, user.getCode());
         Long id = Optional.ofNullable(anonymousMap.get(key))
-                .orElseGet(() -> getNewIdx(type, sessionId));
+                .orElseGet(() -> getNewId(type, sessionId));
         anonymousMap.put(key, id);
         return id;
     }
 
-    private long getNewIdx(AnonymousKeyType type, String sessionId) {
+    private long getNewId(AnonymousKeyType type, String sessionId) {
         AnonymousKey idKey = new AnonymousKey(type, sessionId);
-        Long newId = Optional.ofNullable(anonymousIdxMap.get(idKey))
+        Long newId = Optional.ofNullable(anonymousIdMap.get(idKey))
                 .orElseGet(() -> 0L);
-        anonymousIdxMap.put(idKey, ++newId);
+        anonymousIdMap.put(idKey, ++newId);
         return newId;
     }
 
