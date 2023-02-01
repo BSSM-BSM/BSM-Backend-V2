@@ -1,12 +1,11 @@
 package bssm.bsm.domain.board.post.domain;
 
+import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -21,13 +20,18 @@ public class Post {
     @EmbeddedId
     private PostPk pk;
 
-    @Column(length = 10)
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    @MapsId("boardId")
+    private Board board;
+
+    @Column(name = "category_id")
     private String categoryId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "board_id", insertable = false, updatable = false),
-            @JoinColumn(name = "categoryId", insertable = false, updatable = false)
+            @JoinColumn(name = "category_id", insertable = false, updatable = false)
     })
     private PostCategory category;
 
@@ -35,13 +39,9 @@ public class Post {
     @ColumnDefault("0")
     private boolean delete;
 
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Long userCode;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userCode", nullable = false, insertable = false, updatable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_code")
+    private User writer;
 
     @Column(nullable = false, length = 50)
     private String title;
@@ -68,13 +68,11 @@ public class Post {
     private Date createdAt;
 
     @Builder
-    public Post(PostPk pk, String categoryId, PostCategory category, boolean delete, Long userCode, User user, String title, String content, int hit, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
+    public Post(PostPk pk, Board board, PostCategory category, boolean delete, User writer, String title, String content, int hit, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
         this.pk = pk;
-        this.categoryId = categoryId;
-        this.category = category;
+        this.board = board;
         this.delete = delete;
-        this.userCode = userCode;
-        this.user = user;
+        this.writer = writer;
         this.title = title;
         this.content = content;
         this.hit = hit;
@@ -82,10 +80,13 @@ public class Post {
         this.totalLikes = totalLikes;
         this.anonymous = anonymous;
         this.createdAt = createdAt;
+
+        setCategory(category);
     }
 
     public void setCategory(PostCategory category) {
         this.category = category;
+        this.categoryId = category == null ? null : category.getPk().getId();
     }
 
     public void setDelete(boolean delete) {
@@ -116,8 +117,8 @@ public class Post {
         this.anonymous = anonymous;
     }
 
-    public boolean checkPermission(User user, Post post) {
-        return Objects.equals(post.getUserCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
+    public boolean checkPermission(User user) {
+        return Objects.equals(writer.getCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
     }
 
 }

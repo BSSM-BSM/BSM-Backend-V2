@@ -3,6 +3,7 @@ package bssm.bsm.domain.user.service;
 import bssm.bsm.domain.board.anonymous.domain.AnonymousKeyType;
 import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
 import bssm.bsm.domain.board.comment.domain.Comment;
+import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
@@ -40,8 +41,8 @@ public class UserResProvider {
 
     private UserRes toAnonymousCommentUserRes(Comment comment) {
         User user = comment.getUser();
-        PostPk postPk = comment.getPk().getPost().getPk();
-        String sessionId = postPk.getBoard() + "/" + postPk.getId();
+        Post post = comment.getPk().getPost();
+        String sessionId = post.getBoard() + "/" + post.getPk().getId();
 
         long anonymousId = anonymousUserIdProvider.getAnonymousId(AnonymousKeyType.COMMENT, sessionId, user);
 

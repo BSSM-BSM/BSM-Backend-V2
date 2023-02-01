@@ -1,25 +1,27 @@
 package bssm.bsm.domain.board.post.domain;
 
-import bssm.bsm.domain.board.board.domain.Board;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
+@NoArgsConstructor
 public class PostPk implements Serializable {
 
+    @EqualsAndHashCode.Include
     @Column(columnDefinition = "INT UNSIGNED")
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Board board;
+    @EqualsAndHashCode.Include
+    @Column
+    private String boardId;
+
+    @Builder
+    public PostPk(long id, String boardId) {
+        this.id = id;
+        this.boardId = boardId;
+    }
 }

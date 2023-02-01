@@ -16,17 +16,17 @@ public interface PostRepository extends JpaRepository<Post, PostPk> {
     Optional<Post> findByPkAndDelete(PostPk pk, boolean delete);
 
     // 전체 게시글
-    Page<Post> findByPkBoardAndDeleteOrderByPkIdDesc(Board board, boolean delete, Pageable pageable);
-    List<Post> findByPkBoardAndPk_IdLessThanAndDeleteOrderByPkIdDesc(Board board, long id, boolean delete, Pageable pageable);
+    Page<Post> findByBoardAndDeleteOrderByPkIdDesc(Board board, boolean delete, Pageable pageable);
+    List<Post> findByBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(Board board, long id, boolean delete, Pageable pageable);
 
     // 카테고리 있는 게시글
     Page<Post> findByCategoryAndDeleteOrderByPkIdDesc(PostCategory postCategory, boolean delete, Pageable pageable);
-    List<Post> findByPkBoardAndPkIdLessThanAndCategoryAndDeleteOrderByPkIdDesc(Board board, long id, PostCategory postCategory, boolean delete, Pageable pageable);
+    List<Post> findByCategoryAndPkIdLessThanAndDeleteOrderByPkIdDesc(PostCategory category, long id, boolean delete, Pageable pageable);
 
     // 카테고리 없는 게시글
-    Page<Post> findByPkBoardAndCategoryIdAndDeleteOrderByPk_IdDesc(Board board, String categoryId, boolean delete, Pageable pageable);
-    List<Post> findByPkBoardAndPkIdLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(Board board, long id, String categoryId, boolean delete, Pageable pageable);
+    Page<Post> findByCategoryIsNullAndBoardAndDeleteOrderByPkIdDesc(Board board, boolean delete, Pageable pageable);
+    List<Post> findByCategoryIsNullAndBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(Board board, long id, boolean delete, Pageable pageable);
 
-    @Query(value = "SELECT COUNT(p) FROM Post p WHERE p.pk.board.id = :boardId")
-    long countByBoardId(@Param("boardId") String boardId);
+    @Query(value = "SELECT COUNT(p) FROM Post p WHERE p.board = :board")
+    long countByBoard(@Param("board") Board board);
 }

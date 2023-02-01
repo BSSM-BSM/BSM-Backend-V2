@@ -21,11 +21,10 @@ public class LikeProvider {
                     .like(0)
                     .build();
         }
-        return likeRepository.findByPkPostPkAndUserCode(post.getPk(), user.get().getCode()).orElseGet(
-                () -> PostLike.builder()
+        return likeRepository.findByPkPostAndUserCode(post, user.get().getCode())
+                .orElseGet(() -> PostLike.builder()
                         .like(0)
-                        .build()
-        );
+                        .build());
     }
 
 }

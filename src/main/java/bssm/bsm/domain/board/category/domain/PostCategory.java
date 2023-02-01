@@ -12,14 +12,11 @@ import javax.persistence.*;
 public class PostCategory {
 
     @EmbeddedId
-    @JoinColumns({
-            @JoinColumn(name = "categoryId", insertable = false, updatable = false),
-            @JoinColumn(name = "boardId", insertable = false, updatable = false)
-    })
     private PostCategoryPk pk;
 
     @ManyToOne
-    @JoinColumn(name = "boardId", insertable = false, updatable = false)
+    @JoinColumn(name = "board_id")
+    @MapsId("boardId")
     private Board board;
 
     @Column(nullable = false, length = 10)

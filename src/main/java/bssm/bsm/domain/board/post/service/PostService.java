@@ -2,7 +2,6 @@ package bssm.bsm.domain.board.post.service;
 
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
-import bssm.bsm.domain.board.category.domain.PostCategoryPk;
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.service.LikeProvider;
 import bssm.bsm.domain.board.post.domain.Post;
@@ -73,7 +72,7 @@ public class PostService {
         posts.forEach(post ->
                 postDtoList.add(PostRes.builder()
                             .id(post.getPk().getId())
-                            .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
+                            .user(userResProvider.toBoardUserRes(post.getWriter(), post.isAnonymous()))
                             .category(post.getCategoryId())
                             .title(post.getTitle())
                             .createdAt(post.getCreatedAt())
@@ -109,7 +108,7 @@ public class PostService {
 
         return DetailPostRes.builder()
                 .id(postId.getPostId())
-                .user(userResProvider.toBoardUserRes(post.getUser(), post.isAnonymous()))
+                .user(userResProvider.toBoardUserRes(post.getWriter(), post.isAnonymous()))
                 .category(post.getCategoryId())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -118,7 +117,7 @@ public class PostService {
                 .totalComments(post.getTotalComments())
                 .totalLikes(post.getTotalLikes())
                 .like(postLike.getLike())
-                .permission(user.isPresent() && post.checkPermission(user.get(), post))
+                .permission(user.isPresent() && post.checkPermission(user.get()))
                 .anonymous(post.isAnonymous())
                 .build();
     }
@@ -132,14 +131,12 @@ public class PostService {
         PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
 
         Post newPost = Post.builder()
-                .pk(
-                        PostPk.builder()
-                                .id(postRepository.countByBoardId(boardId) + 1)
-                                .board(board)
-                                .build()
-                )
-                .userCode(user.getCode())
-                .categoryId(postCategory == null? null: postCategory.getPk().getId())
+                .pk(PostPk.builder()
+                        .id(postRepository.countByBoard(board) + 1)
+                        .build())
+                .board(board)
+                .writer(user)
+                .category(postCategory)
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .createdAt(new Date())
@@ -153,7 +150,7 @@ public class PostService {
     public void modifyPost(User user, PostIdRequest postId, @Valid WritePostRequest dto) {
         Board board = boardProvider.getBoard(postId.getBoard());
         Post post = postProvider.getPost(postId);
-        if (!post.checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
+        if (!post.checkPermission(user)) throw new ForbiddenException("권한이 없습니다");
 
         PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
 
@@ -168,7 +165,7 @@ public class PostService {
     @Transactional
     public void deletePost(User user, PostIdRequest postId) {
         Post post = postProvider.getPost(postId);
-        if (!post.checkPermission(user, post)) throw new ForbiddenException("권한이 없습니다");
+        if (!post.checkPermission(user)) throw new ForbiddenException("권한이 없습니다");
         post.setDelete(true);
         postRepository.save(post);
     }

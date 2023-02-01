@@ -45,7 +45,7 @@ public class CommentService {
         if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
         PostPk postPk = PostPk.builder()
                 .id(request.getPostId())
-                .board(board)
+                .boardId(board.getId())
                 .build();
         Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> {throw new NotFoundException("게시글을 찾을 수 없습니다");}
@@ -75,7 +75,7 @@ public class CommentService {
         Comment newComment = Comment.builder()
                 .pk(
                         CommentPk.builder()
-                                .id(commentRepository.countByPostPk(board.getId(), request.getPostId()) + 1)
+                                .id(commentRepository.countByPostPk(postPk) + 1)
                                 .post(post)
                                 .build()
                 )
@@ -96,7 +96,7 @@ public class CommentService {
 
         PostPk postPk = PostPk.builder()
                 .id(request.getPostId())
-                .board(board)
+                .boardId(board.getId())
                 .build();
         Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> new NotFoundException("게시글을 찾을 수 없습니다")
@@ -126,7 +126,7 @@ public class CommentService {
 
         PostPk postPk = PostPk.builder()
                 .id(request.getPostId())
-                .board(board)
+                .boardId(board.getId())
                 .build();
         Post post = postRepository.findByPkAndDelete(postPk, false).orElseThrow(
                 () -> new NotFoundException("게시글을 찾을 수 없습니다")

@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.like.domain;
 
-import bssm.bsm.domain.board.post.domain.PostPk;
+import bssm.bsm.domain.board.post.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<PostLike, PostLikePk> {
 
-    @Query(value = "SELECT COUNT(l) FROM PostLike l WHERE l.pk.post.pk.board.id = :boardId AND l.pk.post.pk.id = :postId")
-    long countByPostPk(@Param("boardId") String boardId, @Param("postId") long postId);
+    @Query(value = "SELECT COUNT(l) FROM PostLike l WHERE l.pk.post = post")
+    long countByPost(@Param("post")Post post);
 
-    Optional<PostLike> findByPkPostPkAndUserCode(PostPk postPk, long userCode);
+    Optional<PostLike> findByPkPostAndUserCode(Post post, long userCode);
 }

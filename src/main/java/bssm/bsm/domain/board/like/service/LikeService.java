@@ -39,7 +39,7 @@ public class LikeService {
         Post post = postProvider.getPost(postId);
 
         int like = dto.getLike();
-        Optional<PostLike> postLikeCheck = likeRepository.findByPkPostPkAndUserCode(post.getPk(), user.getCode());
+        Optional<PostLike> postLikeCheck = likeRepository.findByPkPostAndUserCode(post, user.getCode());
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
         if (postLikeCheck.isEmpty()) {
@@ -52,7 +52,7 @@ public class LikeService {
             PostLike newLike = PostLike.builder()
                     .pk(
                             PostLikePk.builder()
-                                    .id(likeRepository.countByPostPk(board.getId(), postId.getPostId()) + 1)
+                                    .id(likeRepository.countByPost(post) + 1)
                                     .post(post)
                                     .build()
                     )

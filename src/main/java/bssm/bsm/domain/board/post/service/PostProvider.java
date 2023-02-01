@@ -32,7 +32,7 @@ public class PostProvider {
 
     public Post getPost(PostIdRequest postId) {
         Board board = boardUtil.getBoard(postId.getBoard());
-        return postRepository.findByPkAndDelete(new PostPk(postId.getPostId(), board), false).orElseThrow(
+        return postRepository.findByPkAndDelete(new PostPk(postId.getPostId(), board.getId()), false).orElseThrow(
                 () -> new NotFoundException("게시글을 찾을 수 없습니다")
         );
     }
@@ -41,12 +41,12 @@ public class PostProvider {
         Pageable pageable = PageRequest.of(dto.getPage() - 1, dto.getLimit());
         // 전체 게시글
         if (dto.getCategory().equals("all")) {
-            return postRepository.findByPkBoardAndDeleteOrderByPkIdDesc(board, false, pageable);
+            return postRepository.findByBoardAndDeleteOrderByPkIdDesc(board, false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPkBoardAndCategoryIdAndDeleteOrderByPk_IdDesc(board, null, false, pageable);
+            return postRepository.findByCategoryIsNullAndBoardAndDeleteOrderByPkIdDesc(board, false, pageable);
         }
         // 카테고리 있는 게시글
         return postRepository.findByCategoryAndDeleteOrderByPkIdDesc(postCategory, false, pageable);
@@ -56,15 +56,15 @@ public class PostProvider {
         Pageable pageable = Pageable.ofSize(dto.getLimit());
         // 전체 게시글
         if (dto.getCategory().equals("all")) {
-            return postRepository.findByPkBoardAndPk_IdLessThanAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), false, pageable);
+            return postRepository.findByBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), false, pageable);
         }
         PostCategory postCategory = categoryUtil.getCategory(dto.getCategory(), board);
         // 카테고리 없는 게시글
         if (postCategory == null) {
-            return postRepository.findByPkBoardAndPkIdLessThanAndCategoryIdAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), null, false, pageable);
+            return postRepository.findByCategoryIsNullAndBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), false, pageable);
         }
         // 카테고리 있는 게시글
-        return postRepository.findByPkBoardAndPkIdLessThanAndCategoryAndDeleteOrderByPkIdDesc(board, dto.getStartPostId(), postCategory, false, pageable);
+        return postRepository.findByCategoryAndPkIdLessThanAndDeleteOrderByPkIdDesc(postCategory, dto.getStartPostId(), false, pageable);
     }
 
 }
