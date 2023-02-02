@@ -1,5 +1,6 @@
 package bssm.bsm.domain.board.post.domain;
 
+import bssm.bsm.domain.board.board.domain.Board;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,9 +20,10 @@ public class PostPk implements Serializable {
     @Column
     private String boardId;
 
-    @Builder
-    public PostPk(long id, String boardId) {
-        this.id = id;
-        this.boardId = boardId;
+    public static PostPk create(long id, Board board) {
+        PostPk postPk = new PostPk();
+        postPk.id = id;
+        postPk.boardId = board.getId();
+        return postPk;
     }
 }

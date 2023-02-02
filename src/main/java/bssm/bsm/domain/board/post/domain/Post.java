@@ -51,7 +51,7 @@ public class Post {
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
-    private int hit;
+    private int view;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
@@ -68,14 +68,14 @@ public class Post {
     private Date createdAt;
 
     @Builder
-    public Post(PostPk pk, Board board, PostCategory category, boolean delete, User writer, String title, String content, int hit, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
+    public Post(PostPk pk, Board board, PostCategory category, boolean delete, User writer, String title, String content, int view, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
         this.pk = pk;
         this.board = board;
         this.delete = delete;
         this.writer = writer;
         this.title = title;
         this.content = content;
-        this.hit = hit;
+        this.view = view;
         this.totalComments = totalComments;
         this.totalLikes = totalLikes;
         this.anonymous = anonymous;
@@ -84,25 +84,24 @@ public class Post {
         setCategory(category);
     }
 
-    public void setCategory(PostCategory category) {
+    private void setCategory(PostCategory category) {
         this.category = category;
         this.categoryId = category == null ? null : category.getPk().getId();
     }
 
-    public void setDelete(boolean delete) {
-        this.delete = delete;
-    }
-
-    public void setTitle(String title) {
+    public void update(String title, String content, PostCategory category, boolean anonymous) {
         this.title = title;
-    }
-
-    public void setContent(String content) {
         this.content = content;
+        setCategory(category);
+        this.anonymous = anonymous;
     }
 
-    public void setHit(int hit) {
-        this.hit = hit;
+    public void delete() {
+        this.delete = true;
+    }
+
+    public void increaseViewCnt() {
+        this.view++;
     }
 
     public void setTotalComments(int totalComments) {
@@ -111,10 +110,6 @@ public class Post {
 
     public void setTotalLikes(int totalLikes) {
         this.totalLikes = totalLikes;
-    }
-
-    public void setAnonymous(boolean anonymous) {
-        this.anonymous = anonymous;
     }
 
     public boolean checkPermission(User user) {

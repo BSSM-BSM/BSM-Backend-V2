@@ -1,17 +1,18 @@
-package bssm.bsm.domain.board.post.presentation.dto.request;
+package bssm.bsm.domain.board.post.presentation.dto.req;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
-public class WritePostRequest {
+public class WritePostReq {
 
     @NotBlank
-    private String category;
+    private String boardId;
+
+    @NotBlank
+    private String categoryId;
 
     @NotBlank
     @Size(max = 50)

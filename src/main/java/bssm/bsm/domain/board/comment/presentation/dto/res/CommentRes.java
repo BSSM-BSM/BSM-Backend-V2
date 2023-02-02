@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.comment.presentation.dto.response;
+package bssm.bsm.domain.board.comment.presentation.dto.res;
 
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CommentResponse {
+public class CommentRes {
 
     private long id;
     private UserRes user;
@@ -20,9 +20,9 @@ public class CommentResponse {
     private Date createdAt;
     private boolean permission;
     private int depth;
-    private List<CommentResponse> child;
+    private List<CommentRes> child;
 
-    public void setChild(List<CommentResponse> child) {
+    public void setChild(List<CommentRes> child) {
         this.child = child;
     }
 }

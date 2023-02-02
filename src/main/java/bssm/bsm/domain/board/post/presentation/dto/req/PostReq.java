@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.post.presentation.dto.request;
+package bssm.bsm.domain.board.post.presentation.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,11 +8,12 @@ import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
-public class PostIdRequest {
+public class PostReq {
 
     @NotBlank
-    private String board;
+    private String boardId;
 
     @Positive
     private long postId;
+
 }

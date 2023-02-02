@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.post.presentation.dto.request;
+package bssm.bsm.domain.board.post.presentation.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,10 @@ import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
-public class GetPostListRequest {
+public class GetPostListReq {
+
+    @NotBlank
+    private String boardId;
 
     @Positive
     private int page;

@@ -1,11 +1,11 @@
 package bssm.bsm.domain.board.like.service;
 
-import bssm.bsm.domain.board.like.presentation.dto.request.LikeRequest;
-import bssm.bsm.domain.board.like.presentation.dto.response.LikeResponse;
+import bssm.bsm.domain.board.like.presentation.dto.req.LikeReq;
+import bssm.bsm.domain.board.like.presentation.dto.res.LikeRes;
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.domain.PostLikePk;
 import bssm.bsm.domain.board.like.domain.LikeRepository;
-import bssm.bsm.domain.board.post.presentation.dto.request.PostIdRequest;
+import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostRepository;
@@ -33,10 +33,10 @@ public class LikeService {
     private final PostProvider postProvider;
 
     @Transactional
-    public LikeResponse like(User user, PostIdRequest postId, @Valid LikeRequest dto) {
-        Board board = boardProvider.getBoard(postId.getBoard());
+    public LikeRes like(User user, PostReq postReq, @Valid LikeReq dto) {
+        Board board = boardProvider.getBoard(postReq.getBoardId());
         board.checkRole(user.getRole());
-        Post post = postProvider.getPost(postId);
+        Post post = postProvider.getPost(board, postReq.getPostId());
 
         int like = dto.getLike();
         Optional<PostLike> postLikeCheck = likeRepository.findByPkPostAndUserCode(post, user.getCode());
@@ -62,7 +62,7 @@ public class LikeService {
             likeRepository.save(newLike);
             post.setTotalLikes(post.getTotalLikes() + like);
             postRepository.save(post);
-            return LikeResponse.builder()
+            return LikeRes.builder()
                     .like(like)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -76,7 +76,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(like);
             likeRepository.save(postLike);
-            return LikeResponse.builder()
+            return LikeRes.builder()
                     .like(like)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -88,7 +88,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeResponse.builder()
+            return LikeRes.builder()
                     .like(0)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -100,7 +100,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeResponse.builder()
+            return LikeRes.builder()
                     .like(0)
                     .totalLikes(post.getTotalLikes())
                     .build();
@@ -111,7 +111,7 @@ public class LikeService {
         postRepository.save(post);
         postLike.setLike(like);
         likeRepository.save(postLike);
-        return LikeResponse.builder()
+        return LikeRes.builder()
                 .like(like)
                 .totalLikes(post.getTotalLikes())
                 .build();

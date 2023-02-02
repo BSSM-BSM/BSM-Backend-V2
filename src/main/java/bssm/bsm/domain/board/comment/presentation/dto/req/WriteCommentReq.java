@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.comment.presentation.dto.request;
+package bssm.bsm.domain.board.comment.presentation.dto.req;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
-public class WriteCommentRequest {
+public class WriteCommentReq {
 
     @PositiveOrZero
     private int depth;
