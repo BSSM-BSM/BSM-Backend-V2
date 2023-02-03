@@ -20,11 +20,12 @@ public class PostFileService {
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
     public UploadFileRes uploadFile(MultipartFile file) {
-        String fileExt = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf(".")+1);
+        String fileName = Objects.requireNonNull(file.getOriginalFilename());
+        String fileExt = fileName.substring(fileName.lastIndexOf(".")+1);
         String fileId = String.valueOf(new Date().getTime());
-
         File dir = new File(PUBLIC_RESOURCE_PATH + BOARD_UPLOAD_RESOURCE_PATH);
         File newFile = new File(dir.getPath() + "/" + fileId + "." + fileExt);
+
         if (!dir.exists()) {
             try {
                 dir.mkdirs();
@@ -36,10 +37,7 @@ public class PostFileService {
 
         try {
             file.transferTo(newFile);
-            return UploadFileRes.builder()
-                    .id(fileId)
-                    .fileExt(fileExt)
-                    .build();
+            return UploadFileRes.create(fileId, fileExt);
         } catch (IOException e) {
             e.printStackTrace();
             throw new InternalServerException("파일 업로드에 실패하였습니다");

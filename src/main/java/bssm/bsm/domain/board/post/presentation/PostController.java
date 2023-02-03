@@ -26,12 +26,11 @@ public class PostController {
     @GetMapping("/{boardId}")
     public PostListRes postList(
             @PathVariable String boardId,
-            @RequestParam(value = "p", defaultValue = "1") int page,
-            @RequestParam(value = "l", defaultValue = "15") int limit,
-            @RequestParam(value = "c", defaultValue = "all") String category,
-            @RequestParam(value = "i", defaultValue = "-1") int startPostId
+            @RequestParam(value = "limit", defaultValue = "15") int limit,
+            @RequestParam(value = "category", defaultValue = "all") String category,
+            @RequestParam(value = "postId", defaultValue = "-1") int postId
     ) {
-        return postService.postList(userUtil.getOptionalUser(), new GetPostListReq(boardId, page, limit, category, startPostId));
+        return postService.postList(userUtil.getOptionalUser(), new GetPostListReq(boardId, limit, category, postId));
     }
 
     @GetMapping("/{boardId}/{postId}")

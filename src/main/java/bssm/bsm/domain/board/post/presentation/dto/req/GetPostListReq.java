@@ -15,14 +15,12 @@ public class GetPostListReq {
     @NotBlank
     private String boardId;
 
-    @Positive
-    private int page;
-
     @Min(10) @Max(100)
     private int limit;
 
     @NotBlank
     private String category;
 
-    private long startPostId;
+    @Positive
+    private long postId;
 }

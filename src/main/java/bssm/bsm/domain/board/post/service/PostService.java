@@ -20,7 +20,6 @@ import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -46,33 +45,11 @@ public class PostService {
         board.checkRole(user.map(User::getRole).orElse(null));
         postFacade.checkViewPermission(board, user);
 
-        final boolean pageMode = req.getStartPostId() < 0;
-        List<Post> posts;
-        Page<Post> pages = null;
-        if (pageMode) {
-             pages = postProvider.getPostListByOffset(board, req);
-             posts = pages.getContent();
-        } else {
-            posts = postProvider.getPostListByCursor(board, req);
-        }
-
-        List<PostRes> postResList = posts.stream()
+        List<Post> postList = postProvider.getPostListByCursor(board, req);
+        List<PostRes> postResList = postList.stream()
                 .map(PostRes::create)
                 .toList();
-
-        if (pageMode) {
-            return PostListRes.builder()
-                    .posts(postResList)
-                    .totalPages(pages.getTotalPages())
-                    .page(req.getPage())
-                    .limit(req.getLimit())
-                    .build();
-        } else {
-            return PostListRes.builder()
-                    .posts(postResList)
-                    .limit(req.getLimit())
-                    .build();
-        }
+        return PostListRes.create(postResList, req.getLimit());
     }
 
     public DetailPostRes viewPost(Optional<User> user, @Valid PostReq req) {
