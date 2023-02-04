@@ -1,8 +1,7 @@
 package bssm.bsm.domain.board.file.service;
 
+import bssm.bsm.domain.board.file.exception.FileUploadException;
 import bssm.bsm.domain.board.post.presentation.dto.res.UploadFileRes;
-import bssm.bsm.global.error.exceptions.InternalServerException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +30,7 @@ public class PostFileService {
                 dir.mkdirs();
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new InternalServerException("파일 업로드에 실패하였습니다");
+                throw new FileUploadException();
             }
         }
 
@@ -40,7 +39,7 @@ public class PostFileService {
             return UploadFileRes.create(fileId, fileExt);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new InternalServerException("파일 업로드에 실패하였습니다");
+            throw new FileUploadException();
         }
     }
 

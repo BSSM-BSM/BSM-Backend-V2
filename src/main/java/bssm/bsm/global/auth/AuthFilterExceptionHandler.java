@@ -1,6 +1,6 @@
 package bssm.bsm.global.auth;
 
-import bssm.bsm.global.error.HttpError;
+import bssm.bsm.global.error.HttpException;
 import bssm.bsm.global.error.HttpErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +23,12 @@ public class AuthFilterExceptionHandler extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(req, res);
-        } catch (HttpError e) {
+        } catch (HttpException e) {
             exceptionHandler(res, e);
         }
     }
 
-    private void exceptionHandler(HttpServletResponse res, HttpError exception) {
+    private void exceptionHandler(HttpServletResponse res, HttpException exception) {
         res.setStatus(exception.getStatusCode());
         res.setContentType("application/json;charset=UTF-8");
         try {

@@ -1,5 +1,7 @@
-package bssm.bsm.domain.board.like.domain;
+package bssm.bsm.domain.board.like.domain.repository;
 
+import bssm.bsm.domain.board.like.domain.PostLike;
+import bssm.bsm.domain.board.like.domain.PostLikePk;
 import bssm.bsm.domain.board.post.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

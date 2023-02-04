@@ -6,12 +6,12 @@ import bssm.bsm.domain.board.comment.presentation.dto.res.CommentRes;
 import bssm.bsm.domain.board.comment.domain.Comment;
 import bssm.bsm.domain.board.comment.domain.CommentPk;
 import bssm.bsm.domain.board.comment.facade.CommentFacade;
-import bssm.bsm.domain.board.comment.domain.CommentRepository;
+import bssm.bsm.domain.board.comment.domain.repository.CommentRepository;
 import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
-import bssm.bsm.domain.board.post.domain.PostRepository;
+import bssm.bsm.domain.board.post.domain.repository.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
@@ -39,7 +39,7 @@ public class CommentService {
 
     @Transactional
     public void writeComment(User user, PostReq postReq, @Valid WriteCommentReq req) {
-        Board board = boardProvider.getBoard(postReq.getBoardId());
+        Board board = boardProvider.findBoard(postReq.getBoardId());
         board.checkRole(user.getRole());
         commentFacade.checkWritePermission(board, user);
 
@@ -88,7 +88,7 @@ public class CommentService {
     }
 
     public void deleteComment(User user, PostReq req, int commentId) {
-        Board board = boardProvider.getBoard(req.getBoardId());
+        Board board = boardProvider.findBoard(req.getBoardId());
         board.checkRole(user.getRole());
 
         PostPk postPk = PostPk.create(req.getPostId(), board);
@@ -113,7 +113,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public List<CommentRes> viewCommentList(Optional<User> user, PostReq req) {
-        Board board = boardProvider.getBoard(req.getBoardId());
+        Board board = boardProvider.findBoard(req.getBoardId());
         board.checkRole(user.map(User::getRole).orElse(null));
         commentFacade.checkViewPermission(board, user);
 

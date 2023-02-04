@@ -6,8 +6,8 @@ import bssm.bsm.domain.board.emoticon.presentation.dto.response.EmoticonResponse
 import bssm.bsm.domain.board.emoticon.domain.Emoticon;
 import bssm.bsm.domain.board.emoticon.domain.EmoticonItem;
 import bssm.bsm.domain.board.emoticon.domain.EmoticonItemPk;
-import bssm.bsm.domain.board.emoticon.domain.EmoticonItemRepository;
-import bssm.bsm.domain.board.emoticon.domain.EmoticonRepository;
+import bssm.bsm.domain.board.emoticon.domain.repository.EmoticonItemRepository;
+import bssm.bsm.domain.board.emoticon.domain.repository.EmoticonRepository;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.error.exceptions.BadRequestException;
 import bssm.bsm.global.error.exceptions.ConflictException;

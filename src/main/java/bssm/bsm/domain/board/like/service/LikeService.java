@@ -4,11 +4,11 @@ import bssm.bsm.domain.board.like.presentation.dto.req.LikeReq;
 import bssm.bsm.domain.board.like.presentation.dto.res.LikeRes;
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.domain.PostLikePk;
-import bssm.bsm.domain.board.like.domain.LikeRepository;
+import bssm.bsm.domain.board.like.domain.repository.LikeRepository;
 import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.post.domain.Post;
-import bssm.bsm.domain.board.post.domain.PostRepository;
+import bssm.bsm.domain.board.post.domain.repository.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
 import bssm.bsm.domain.board.post.service.PostProvider;
 import bssm.bsm.domain.user.domain.User;
@@ -34,9 +34,9 @@ public class LikeService {
 
     @Transactional
     public LikeRes like(User user, PostReq postReq, @Valid LikeReq dto) {
-        Board board = boardProvider.getBoard(postReq.getBoardId());
+        Board board = boardProvider.findBoard(postReq.getBoardId());
         board.checkRole(user.getRole());
-        Post post = postProvider.getPost(board, postReq.getPostId());
+        Post post = postProvider.findPost(board, postReq.getPostId());
 
         int like = dto.getLike();
         Optional<PostLike> postLikeCheck = likeRepository.findByPkPostAndUserCode(post, user.getCode());

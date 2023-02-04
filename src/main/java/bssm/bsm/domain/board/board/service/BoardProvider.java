@@ -1,26 +1,30 @@
 package bssm.bsm.domain.board.board.service;
 
 import bssm.bsm.domain.board.board.domain.Board;
-import bssm.bsm.domain.board.board.domain.BoardRepository;
-import bssm.bsm.global.error.exceptions.NotFoundException;
+import bssm.bsm.domain.board.board.domain.repository.BoardRepository;
+import bssm.bsm.domain.board.board.exception.NoSuchBoardException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BoardProvider {
 
     private final HashMap<String, Board> boardList = new HashMap<>();
+    private final BoardRepository boardRepository;
 
-    public BoardProvider(BoardRepository boardRepository) {
+    @PostConstruct
+    public void init() {
         boardRepository.findAll()
                 .forEach(board -> boardList.put(board.getId(), board));
     }
 
-    public Board getBoard(String id) throws NotFoundException {
+    public Board findBoard(String id) {
         Board board = boardList.get(id);
-        if (board == null) throw new NotFoundException("게시판을 찾을 수 없습니다");
+        if (board == null) throw new NoSuchBoardException();
         return board;
     }
 

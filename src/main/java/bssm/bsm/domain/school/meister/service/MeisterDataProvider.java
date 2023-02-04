@@ -6,7 +6,7 @@ import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterDetailRes
 import bssm.bsm.domain.school.meister.domain.MeisterDataRepository;
 import bssm.bsm.domain.school.meister.domain.MeisterInfoRepository;
 import bssm.bsm.domain.user.domain.Student;
-import bssm.bsm.global.error.HttpError;
+import bssm.bsm.global.error.HttpException;
 import bssm.bsm.global.error.exceptions.BadRequestException;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +60,7 @@ public class MeisterDataProvider {
             }
             meisterInfoRepository.save(meisterInfo);
             return meisterDataRepository.save(meisterData);
-        } catch (HttpError e) {
+        } catch (HttpException e) {
             e.printStackTrace();
             throw e;
         } catch (IOException e) {

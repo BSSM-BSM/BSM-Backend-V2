@@ -16,8 +16,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(HttpError.class)
-    public ResponseEntity<HttpErrorResponse> handleException(HttpError exception) {
+    @ExceptionHandler(HttpException.class)
+    public ResponseEntity<HttpErrorResponse> handleException(HttpException exception) {
         HttpErrorResponse httpErrorResponse = new HttpErrorResponse(exception);
         return new ResponseEntity<>(httpErrorResponse, HttpStatus.valueOf(exception.getStatusCode()));
     }
@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpErrorResponse> handleException(Exception e) {
         e.printStackTrace();
-        HttpErrorResponse httpErrorResponse = new HttpErrorResponse(new HttpError());
+        HttpErrorResponse httpErrorResponse = new HttpErrorResponse(new HttpException());
         return new ResponseEntity<>(httpErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

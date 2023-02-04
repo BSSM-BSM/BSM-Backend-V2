@@ -24,18 +24,18 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{boardId}")
-    public PostListRes postList(
+    public PostListRes findPostList(
             @PathVariable String boardId,
             @RequestParam(value = "limit", defaultValue = "15") int limit,
             @RequestParam(value = "category", defaultValue = "all") String category,
             @RequestParam(value = "postId", defaultValue = "-1") int postId
     ) {
-        return postService.postList(userUtil.getOptionalUser(), new GetPostListReq(boardId, limit, category, postId));
+        return postService.findPostList(userUtil.getOptionalUser(), new GetPostListReq(boardId, limit, category, postId));
     }
 
     @GetMapping("/{boardId}/{postId}")
-    public DetailPostRes viewPost(@PathVariable String boardId, @PathVariable int postId) {
-        return postService.viewPost(userUtil.getOptionalUser(), new PostReq(boardId, postId));
+    public DetailPostRes findPost(@PathVariable String boardId, @PathVariable int postId) {
+        return postService.findPost(userUtil.getOptionalUser(), new PostReq(boardId, postId));
     }
 
     @PostMapping

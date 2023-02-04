@@ -4,8 +4,9 @@ import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
+import bssm.bsm.domain.board.post.exception.NoSuchPostException;
 import bssm.bsm.domain.board.post.presentation.dto.req.GetPostListReq;
-import bssm.bsm.domain.board.post.domain.PostRepository;
+import bssm.bsm.domain.board.post.domain.repository.PostRepository;
 import bssm.bsm.domain.board.category.service.CategoryProvider;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,18 +24,22 @@ public class PostProvider {
     private final CategoryProvider categoryProvider;
     private final PostRepository postRepository;
 
-    public Post getPost(Board board, long postId) {
+    public Post findPost(Board board, long postId) {
         return postRepository.findByPkAndDelete(PostPk.create(postId, board), false)
-                .orElseThrow(() -> new NotFoundException("게시글을 찾을 수 없습니다"));
+                .orElseThrow(NoSuchPostException::new);
     }
 
-    public List<Post> getPostListByCursor(Board board, GetPostListReq req) {
+    public Long getNewPostId(Board board) {
+        return postRepository.countByBoard(board) + 1;
+    }
+
+    public List<Post> findPostListByCursor(Board board, GetPostListReq req) {
         Pageable pageable = Pageable.ofSize(req.getLimit());
         // 전체 게시글
         if (req.getCategory().equals("all")) {
             return postRepository.findByBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(board, req.getPostId(), false, pageable);
         }
-        PostCategory postCategory = categoryProvider.getCategory(req.getCategory(), board);
+        PostCategory postCategory = categoryProvider.findCategory(req.getCategory(), board);
         // 카테고리 없는 게시글
         if (postCategory == null) {
             return postRepository.findByCategoryIsNullAndBoardAndPkIdLessThanAndDeleteOrderByPkIdDesc(board, req.getPostId(), false, pageable);

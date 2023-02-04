@@ -1,5 +1,7 @@
-package bssm.bsm.domain.board.comment.domain;
+package bssm.bsm.domain.board.comment.domain.repository;
 
+import bssm.bsm.domain.board.comment.domain.Comment;
+import bssm.bsm.domain.board.comment.domain.CommentPk;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import org.springframework.data.jpa.repository.JpaRepository;

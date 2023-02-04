@@ -18,8 +18,8 @@ public class BoardService {
 
     private final BoardProvider boardUtil;
 
-    public BoardRes boardInfo(String boardId, Optional<User> user) {
-        Board board = boardUtil.getBoard(boardId);
+    public BoardRes findBoardInfo(String boardId, Optional<User> user) {
+        Board board = boardUtil.findBoard(boardId);
         board.checkRole(user.map(User::getRole).orElse(null));
 
         return board.toResponse(user);
