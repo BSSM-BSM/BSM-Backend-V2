@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.emoticon.presentation.dto.request;
+package bssm.bsm.domain.board.emoticon.presentation.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class EmoticonUploadRequest {
+public class EmoticonUploadReq {
 
     @Size(min = 2, max = 12)
     private String name;

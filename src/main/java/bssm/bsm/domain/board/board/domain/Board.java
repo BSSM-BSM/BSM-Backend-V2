@@ -89,7 +89,7 @@ public class Board {
                 .build();
     }
 
-    public void checkRole(UserRole role) {
+    public void checkPermissionByUserRole(UserRole role) {
         if (accessibleRole == null || accessibleRole == role) return;
 
         switch (accessibleRole) {

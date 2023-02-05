@@ -35,7 +35,7 @@ public class LikeService {
     @Transactional
     public LikeRes like(User user, PostReq postReq, @Valid LikeReq dto) {
         Board board = boardProvider.findBoard(postReq.getBoardId());
-        board.checkRole(user.getRole());
+        board.checkPermissionByUserRole(user.getRole());
         Post post = postProvider.findPost(board, postReq.getPostId());
 
         int like = dto.getLike();

@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.emoticon.presentation.dto.response;
+package bssm.bsm.domain.board.emoticon.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,11 +8,11 @@ import java.util.List;
 
 @Getter
 @Builder
-public class EmoticonResponse {
+public class EmoticonRes {
 
     private long id;
     private String name;
     private String description;
     private LocalDateTime createdAt;
-    private List<EmoticonItemResponse> items;
+    private List<EmoticonItemRes> items;
 }

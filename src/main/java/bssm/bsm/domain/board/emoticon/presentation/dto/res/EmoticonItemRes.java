@@ -1,11 +1,11 @@
-package bssm.bsm.domain.board.emoticon.presentation.dto.response;
+package bssm.bsm.domain.board.emoticon.presentation.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class EmoticonItemResponse {
+public class EmoticonItemRes {
 
     private long id;
     private long idx;

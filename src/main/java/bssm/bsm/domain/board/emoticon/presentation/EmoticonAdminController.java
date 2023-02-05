@@ -1,8 +1,8 @@
 package bssm.bsm.domain.board.emoticon.presentation;
 
-import bssm.bsm.domain.board.emoticon.presentation.dto.request.EmoticonDeleteRequest;
-import bssm.bsm.domain.board.emoticon.presentation.dto.response.EmoticonResponse;
-import bssm.bsm.domain.board.emoticon.service.EmoticonService;
+import bssm.bsm.domain.board.emoticon.presentation.dto.req.EmoticonDeleteReq;
+import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonRes;
+import bssm.bsm.domain.board.emoticon.service.EmoticonAdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,21 +14,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmoticonAdminController {
 
-    private final EmoticonService emoticonService;
+    private final EmoticonAdminService emoticonAdminService;
 
     @GetMapping("inactive")
-    public List<EmoticonResponse> getInactiveEmoticonList() {
-        return emoticonService.getInactiveEmoticonList();
+    public List<EmoticonRes> getInactiveEmoticonList() {
+        return emoticonAdminService.getInactiveEmoticonList();
     }
 
-    @PutMapping("{id}/delete")
-    public void deleteEmoticon(@PathVariable long id, @Valid @RequestBody EmoticonDeleteRequest dto) {
-        emoticonService.deleteEmoticon(id, dto);
+    @DeleteMapping("delete")
+    public void deleteEmoticon(@Valid @RequestBody EmoticonDeleteReq dto) {
+        emoticonAdminService.deleteEmoticon(dto);
     }
 
     @PutMapping("{id}")
-    public void activeEmoticon(@PathVariable long id) {
-        emoticonService.activeEmoticon(id);
+    public void activateEmoticon(@PathVariable long id) {
+        emoticonAdminService.activateEmoticon(id);
     }
 
 }

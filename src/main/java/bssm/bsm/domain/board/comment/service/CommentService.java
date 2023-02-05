@@ -40,7 +40,7 @@ public class CommentService {
     @Transactional
     public void writeComment(User user, PostReq postReq, @Valid WriteCommentReq req) {
         Board board = boardProvider.findBoard(postReq.getBoardId());
-        board.checkRole(user.getRole());
+        board.checkPermissionByUserRole(user.getRole());
         commentFacade.checkWritePermission(board, user);
 
         if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new ForbiddenException("권한이 없습니다");
@@ -89,7 +89,7 @@ public class CommentService {
 
     public void deleteComment(User user, PostReq req, int commentId) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkRole(user.getRole());
+        board.checkPermissionByUserRole(user.getRole());
 
         PostPk postPk = PostPk.create(req.getPostId(), board);
         Post post = postRepository.findByPkAndDelete(postPk, false)
@@ -114,7 +114,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public List<CommentRes> viewCommentList(Optional<User> user, PostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkRole(user.map(User::getRole).orElse(null));
+        board.checkPermissionByUserRole(user.map(User::getRole).orElse(null));
         commentFacade.checkViewPermission(board, user);
 
         PostPk postPk = PostPk.create(req.getPostId(), board);

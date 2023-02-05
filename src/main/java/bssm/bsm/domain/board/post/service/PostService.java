@@ -43,7 +43,7 @@ public class PostService {
 
     public PostListRes findPostList(Optional<User> user, @Valid GetPostListReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkRole(user.map(User::getRole).orElse(null));
+        board.checkPermissionByUserRole(user.map(User::getRole).orElse(null));
         checkViewPermission(board, user);
 
         List<Post> postList = postProvider.findPostListByCursor(board, req);
@@ -66,7 +66,7 @@ public class PostService {
     @Transactional
     public long createPost(User user, WritePostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkRole(user.getRole());
+        board.checkPermissionByUserRole(user.getRole());
         checkWritePermission(board, user);
 
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);

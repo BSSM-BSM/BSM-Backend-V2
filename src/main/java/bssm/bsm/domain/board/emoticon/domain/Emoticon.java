@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.emoticon.domain;
 
-import bssm.bsm.domain.board.emoticon.presentation.dto.response.EmoticonResponse;
+import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonRes;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -20,7 +20,7 @@ public class Emoticon extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(length = 12)
     private String name;
@@ -29,10 +29,10 @@ public class Emoticon extends BaseTimeEntity {
     private String description;
 
     @Column
-    private boolean active;
+    private Boolean active;
 
     @Column
-    private boolean deleted;
+    private Boolean deleted;
 
     @Column
     private String deleteReason;
@@ -44,11 +44,11 @@ public class Emoticon extends BaseTimeEntity {
     @JoinColumn(name = "userCode", insertable = false, updatable = false)
     private User user;
 
-    @OneToMany(mappedBy = "pk.emoticon", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "emoticon", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private final List<EmoticonItem> items = new ArrayList<>();
 
     @Builder
-    public Emoticon(long id, String name, String description, boolean active, boolean deleted, String deleteReason, Long userCode, User user) {
+    public Emoticon(Long id, String name, String description, Boolean active, Boolean deleted, String deleteReason, Long userCode, User user) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -59,29 +59,24 @@ public class Emoticon extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void activate() {
+        this.active = true;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public void setDeleteReason(String deleteReason) {
+    public void delete(String deleteReason) {
+        this.deleted = true;
         this.deleteReason = deleteReason;
     }
 
-    public EmoticonResponse toDto() {
-        return EmoticonResponse.builder()
+    public EmoticonRes toResponse() {
+        return EmoticonRes.builder()
                 .id(id)
                 .name(name)
                 .description(description)
                 .createdAt(getCreatedAt())
-                .items(
-                        getItems()
-                                .stream().map(EmoticonItem::toDto)
-                                .collect(Collectors.toList())
-                )
+                .items(items.stream()
+                        .map(EmoticonItem::toResponse)
+                        .toList())
                 .build();
     }
 }

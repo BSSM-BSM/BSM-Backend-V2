@@ -6,19 +6,23 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@RequiredArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
+@NoArgsConstructor
 public class EmoticonItemPk implements Serializable {
 
+    @EqualsAndHashCode.Include
     @Column(columnDefinition = "INT UNSIGNED")
-    private int idx;
+    private Integer idx;
 
-    @ManyToOne
-    private Emoticon emoticon;
+    @EqualsAndHashCode.Include
+    @Column
+    private Long emoticonId;
 
-    @Builder
-    public EmoticonItemPk(int idx, Emoticon emoticon) {
-        this.idx = idx;
-        this.emoticon = emoticon;
+    public static EmoticonItemPk create(Integer idx, Emoticon emoticon) {
+        EmoticonItemPk emoticonItemPk = new EmoticonItemPk();
+        emoticonItemPk.idx = idx;
+        emoticonItemPk.emoticonId = emoticon.getId();
+        return emoticonItemPk;
     }
 }

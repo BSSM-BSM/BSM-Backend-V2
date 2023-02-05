@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.emoticon.domain;
 
-import bssm.bsm.domain.board.emoticon.presentation.dto.response.EmoticonItemResponse;
+import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonItemRes;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,20 +16,27 @@ public class EmoticonItem {
     @EmbeddedId
     private EmoticonItemPk pk;
 
+    @ManyToOne
+    @JoinColumn(name = "emoticon_id")
+    @MapsId("emoticonId")
+    private Emoticon emoticon;
+
     @Column(length = 4)
     private String type;
 
-    public EmoticonItemResponse toDto() {
-        return EmoticonItemResponse.builder()
-                .id(pk.getEmoticon().getId())
+    public EmoticonItemRes toResponse() {
+        return EmoticonItemRes.builder()
+                .id(emoticon.getId())
                 .idx(pk.getIdx())
                 .type(type)
                 .build();
     }
 
-    @Builder
-    public EmoticonItem(EmoticonItemPk pk, String type) {
-        this.pk = pk;
-        this.type = type;
+    public static EmoticonItem create(Emoticon emoticon, int idx, String fileExt) {
+        EmoticonItem emoticonItem = new EmoticonItem();
+        emoticonItem.pk = EmoticonItemPk.create(idx, emoticon);
+        emoticonItem.emoticon = emoticon;
+        emoticonItem.type = fileExt;
+        return emoticonItem;
     }
 }
