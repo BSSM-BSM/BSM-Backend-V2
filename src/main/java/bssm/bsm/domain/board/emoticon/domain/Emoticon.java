@@ -37,26 +37,22 @@ public class Emoticon extends BaseTimeEntity {
     @Column
     private String deleteReason;
 
-    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
-    private Long userCode;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userCode", insertable = false, updatable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_code")
     private User user;
 
     @OneToMany(mappedBy = "emoticon", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private final List<EmoticonItem> items = new ArrayList<>();
 
-    @Builder
-    public Emoticon(Long id, String name, String description, Boolean active, Boolean deleted, String deleteReason, Long userCode, User user) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.active = active;
-        this.deleted = deleted;
-        this.deleteReason = deleteReason;
-        this.userCode = userCode;
-        this.user = user;
+    public static Emoticon create(String name, String description, User user) {
+        Emoticon emoticon = new Emoticon();
+        emoticon.name = name;
+        emoticon.description = description;
+        emoticon.user = user;
+        emoticon.active = false;
+        emoticon.deleted = false;
+        emoticon.deleteReason = null;
+        return emoticon;
     }
 
     public void activate() {
