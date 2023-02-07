@@ -30,7 +30,7 @@ public class DetailPostRes extends PostRes {
         detailPostRes.totalLikes = post.getTotalLikes();
         detailPostRes.content = post.getContent();
         detailPostRes.permission = viewer.isPresent() && post.checkPermission(viewer.get());
-        detailPostRes.myLike = postLike.getLike();
+        detailPostRes.myLike = postLike.getLike() ;
         detailPostRes.anonymous = post.isAnonymous();
         return detailPostRes;
     }

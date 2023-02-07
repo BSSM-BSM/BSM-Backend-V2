@@ -41,7 +41,7 @@ public class Emoticon extends BaseTimeEntity {
     @JoinColumn(name = "user_code")
     private User user;
 
-    @OneToMany(mappedBy = "emoticon", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "emoticon", cascade = CascadeType.REMOVE)
     private final List<EmoticonItem> items = new ArrayList<>();
 
     public static Emoticon create(String name, String description, User user) {

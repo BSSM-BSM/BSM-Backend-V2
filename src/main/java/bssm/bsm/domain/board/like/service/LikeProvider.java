@@ -17,14 +17,13 @@ public class LikeProvider {
 
     public PostLike findMyPostLike(Optional<User> user, Post post) {
         if (user.isEmpty()) {
-            return PostLike.builder()
-                    .like(0)
-                    .build();
+            return null;
         }
-        return likeRepository.findByPkPostAndUserCode(post, user.get().getCode())
-                .orElseGet(() -> PostLike.builder()
-                        .like(0)
-                        .build());
+        return likeRepository.findByPostAndUser(post, user.get())
+                .orElse(null);
+    }
+    public long getNewLikeId(Post post) {
+        return likeRepository.countByPost(post) + 1;
     }
 
 }

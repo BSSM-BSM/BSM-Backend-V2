@@ -49,7 +49,7 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private UserRole accessibleRole;
 
-    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     private final Set<PostCategory> categories = new HashSet<>();
 
     @Builder

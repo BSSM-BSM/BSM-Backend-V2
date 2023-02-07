@@ -73,6 +73,7 @@ public class PostService {
         PostPk postPk = PostPk.create(postProvider.getNewPostId(board), board);
         Post newPost = Post.builder()
                 .pk(postPk)
+                .board(board)
                 .writer(user)
                 .category(postCategory)
                 .title(req.getTitle())

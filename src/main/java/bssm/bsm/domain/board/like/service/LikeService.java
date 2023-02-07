@@ -3,7 +3,6 @@ package bssm.bsm.domain.board.like.service;
 import bssm.bsm.domain.board.like.presentation.dto.req.LikeReq;
 import bssm.bsm.domain.board.like.presentation.dto.res.LikeRes;
 import bssm.bsm.domain.board.like.domain.PostLike;
-import bssm.bsm.domain.board.like.domain.PostLikePk;
 import bssm.bsm.domain.board.like.domain.repository.LikeRepository;
 import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.board.board.domain.Board;
@@ -24,22 +23,24 @@ import java.util.Optional;
 
 @Service
 @Validated
+@Transactional
 @RequiredArgsConstructor
 public class LikeService {
 
-    private final LikeRepository likeRepository;
-    private final PostRepository postRepository;
+    private final LikeProvider likeProvider;
     private final BoardProvider boardProvider;
     private final PostProvider postProvider;
 
-    @Transactional
+    private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
+
     public LikeRes like(User user, PostReq postReq, @Valid LikeReq dto) {
         Board board = boardProvider.findBoard(postReq.getBoardId());
         board.checkPermissionByUserRole(user.getRole());
         Post post = postProvider.findPost(board, postReq.getPostId());
 
         int like = dto.getLike();
-        Optional<PostLike> postLikeCheck = likeRepository.findByPkPostAndUserCode(post, user.getCode());
+        Optional<PostLike> postLikeCheck = likeRepository.findByPostAndUser(post, user);
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
         if (postLikeCheck.isEmpty()) {
@@ -49,23 +50,10 @@ public class LikeService {
                         build()
                 );
             }
-            PostLike newLike = PostLike.builder()
-                    .pk(
-                            PostLikePk.builder()
-                                    .id(likeRepository.countByPost(post) + 1)
-                                    .post(post)
-                                    .build()
-                    )
-                    .userCode(user.getCode())
-                    .like(like)
-                    .build();
+            PostLike newLike = PostLike.create(likeProvider.getNewLikeId(post), post, user, like);
             likeRepository.save(newLike);
             post.setTotalLikes(post.getTotalLikes() + like);
-            postRepository.save(post);
-            return LikeRes.builder()
-                    .like(like)
-                    .totalLikes(post.getTotalLikes())
-                    .build();
+            return LikeRes.create(like, post);
         }
 
         PostLike postLike = postLikeCheck.get();
@@ -76,10 +64,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(like);
             likeRepository.save(postLike);
-            return LikeRes.builder()
-                    .like(like)
-                    .totalLikes(post.getTotalLikes())
-                    .build();
+            return LikeRes.create(like, post);
         }
 
         // 좋아요 또는 싫어요를 한번 더
@@ -88,10 +73,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeRes.builder()
-                    .like(0)
-                    .totalLikes(post.getTotalLikes())
-                    .build();
+            return LikeRes.create(like, post);
         }
 
         // 좋아요 또는 싫어요에서 취소
@@ -100,10 +82,7 @@ public class LikeService {
             postRepository.save(post);
             postLike.setLike(0);
             likeRepository.save(postLike);
-            return LikeRes.builder()
-                    .like(0)
-                    .totalLikes(post.getTotalLikes())
-                    .build();
+            return LikeRes.create(like, post);
         }
 
         // 좋아요에서 싫어요 또는 싫어요에서 좋아요
@@ -111,9 +90,6 @@ public class LikeService {
         postRepository.save(post);
         postLike.setLike(like);
         likeRepository.save(postLike);
-        return LikeRes.builder()
-                .like(like)
-                .totalLikes(post.getTotalLikes())
-                .build();
+        return LikeRes.create(like, post);
     }
 }
