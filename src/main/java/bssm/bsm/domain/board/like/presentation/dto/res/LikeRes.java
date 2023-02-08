@@ -1,5 +1,6 @@
 package bssm.bsm.domain.board.like.presentation.dto.res;
 
+import bssm.bsm.domain.board.like.domain.type.Like;
 import bssm.bsm.domain.board.post.domain.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,9 +12,9 @@ public class LikeRes {
     private int like;
     private int totalLikes;
 
-    public static LikeRes create(int like, Post post) {
+    public static LikeRes create(Like like, Post post) {
         LikeRes likeRes = new LikeRes();
-        likeRes.like = like;
+        likeRes.like = like.getValue();
         likeRes.totalLikes = post.getTotalLikes();
         return likeRes;
     }

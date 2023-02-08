@@ -22,6 +22,12 @@ public class LikeProvider {
         return likeRepository.findByPostAndUser(post, user.get())
                 .orElse(null);
     }
+
+    public PostLike findMyPostLike(User user, Post post) {
+        return likeRepository.findByPostAndUser(post, user)
+                .orElse(null);
+    }
+
     public long getNewLikeId(Post post) {
         return likeRepository.countByPost(post) + 1;
     }

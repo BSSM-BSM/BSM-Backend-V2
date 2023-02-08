@@ -1,6 +1,7 @@
 package bssm.bsm.domain.board.like.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
+import bssm.bsm.domain.board.like.domain.type.Like;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.user.domain.User;
 import lombok.*;
@@ -22,8 +23,8 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "post_id", insertable = false, updatable = false),
-            @JoinColumn(name = "board_id", insertable = false, updatable = false)
+            @JoinColumn(name = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "post_id", insertable = false, updatable = false)
     })
     private Post post;
 
@@ -32,9 +33,9 @@ public class PostLike {
     private User user;
 
     @Column(name = "is_like", nullable = false, columnDefinition = "tinyint")
-    private int like;
+    private Like like;
 
-    public static PostLike create(long likeId, Post post, User user, int like) {
+    public static PostLike create(long likeId, Post post, User user, Like like) {
         PostLikePk postLikePk = PostLikePk.create(likeId, post);
         PostLike postLike = new PostLike();
         postLike.pk = postLikePk;
@@ -44,7 +45,7 @@ public class PostLike {
         return postLike;
     }
 
-    public void setLike(int like) {
+    public void setLike(Like like) {
         this.like = like;
     }
 }

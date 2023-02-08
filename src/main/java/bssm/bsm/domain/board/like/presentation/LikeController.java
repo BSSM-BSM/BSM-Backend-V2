@@ -16,12 +16,8 @@ public class LikeController {
     private final CurrentUser userUtil;
     private final LikeService likeService;
 
-    @PostMapping("/{boardId}/{postId}")
-    public LikeRes like(
-            @PathVariable String boardId,
-            @PathVariable int postId,
-            @RequestBody LikeReq dto
-    ) {
-        return likeService.like(userUtil.getUser(), new PostReq(boardId, postId), dto);
+    @PostMapping
+    public LikeRes like(@RequestBody LikeReq req) {
+        return likeService.like(userUtil.getUser(), req);
     }
 }
