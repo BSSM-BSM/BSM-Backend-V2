@@ -45,7 +45,7 @@ public class PostLike {
         return postLike;
     }
 
-    public void setLike(Like like) {
+    public void updateLike(Like like) {
         this.like = like;
     }
 }

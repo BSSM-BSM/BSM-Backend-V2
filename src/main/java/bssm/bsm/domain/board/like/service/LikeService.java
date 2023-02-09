@@ -29,7 +29,7 @@ public class LikeService {
 
     public LikeRes like(User user, LikeReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkPermissionByUserRole(user.getRole());
+        board.checkAccessibleRole(user);
         Post post = postProvider.findPost(board, req.getPostId());
         Like like = req.getLike();
         PostLike prevLike = likeProvider.findMyPostLike(user, post);
@@ -46,7 +46,8 @@ public class LikeService {
     private void saveNewLike(Like like, Post post, User user) {
         PostLike newLike = PostLike.create(likeProvider.getNewLikeId(post), post, user, like);
         likeRepository.save(newLike);
-        post.setTotalLikes(post.getTotalLikes() + like.getValue());
+        if (like == Like.LIKE) post.applyPostLike();
+        if (like == Like.DISLIKE) post.applyPostDislike();
     }
 
     private void updatePrevLike(PostLike prevLike, Post post, Like like) {
@@ -56,27 +57,18 @@ public class LikeService {
         }
         // 취소한 좋아요 또는 싫어요를 다시 누름
         if (prevLike.getLike() == Like.NONE && like != Like.NONE) {
-            post.setTotalLikes(post.getTotalLikes() + like.getValue());
+            if (like == Like.LIKE) post.applyPostLike();
+            if (like == Like.DISLIKE) post.applyPostDislike();
         }
         // 좋아요 또는 싫어요 취소
         if (like == Like.NONE && prevLike.getLike() != like) {
-            cancelLike(prevLike, post);
+            post.cancelPostLike(prevLike.getLike());
         }
         // 좋아요에서 싫어요 또는 싫어요에서 좋아요
         if (prevLike.getLike() != like && like != Like.NONE) {
-            reverseLike(prevLike, post);
+            post.reservePostLike(prevLike.getLike());
         }
 
-        prevLike.setLike(like);
-    }
-
-    private void cancelLike(PostLike prevLike, Post post) {
-        int totalLikes = post.getTotalLikes() - prevLike.getLike().getValue();
-        post.setTotalLikes(totalLikes);
-    }
-
-    private void reverseLike(PostLike prevLike, Post post) {
-        int totalLikes = post.getTotalLikes() - (prevLike.getLike().getValue() * 2);
-        post.setTotalLikes(totalLikes);
+        prevLike.updateLike(like);
     }
 }

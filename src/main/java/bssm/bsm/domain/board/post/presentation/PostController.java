@@ -1,17 +1,12 @@
 package bssm.bsm.domain.board.post.presentation;
 
-import bssm.bsm.domain.board.post.presentation.dto.req.GetPostListReq;
-import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
-import bssm.bsm.domain.board.post.presentation.dto.req.UpdatePostReq;
-import bssm.bsm.domain.board.post.presentation.dto.req.WritePostReq;
-import bssm.bsm.domain.board.post.presentation.dto.res.UploadFileRes;
+import bssm.bsm.domain.board.post.presentation.dto.req.*;
 import bssm.bsm.domain.board.post.presentation.dto.res.PostListRes;
 import bssm.bsm.domain.board.post.presentation.dto.res.DetailPostRes;
 import bssm.bsm.domain.board.post.service.PostService;
 import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -28,9 +23,18 @@ public class PostController {
             @PathVariable String boardId,
             @RequestParam(value = "limit", defaultValue = "15") int limit,
             @RequestParam(value = "category", defaultValue = "all") String category,
-            @RequestParam(value = "postId", defaultValue = "-1") int postId
+            @RequestParam(value = "startPostId") long startPostId
     ) {
-        return postService.findPostList(userUtil.getOptionalUser(), new GetPostListReq(boardId, limit, category, postId));
+        return postService.findPostList(userUtil.getOptionalUser(), new FindPostListReq(boardId, limit, category, startPostId));
+    }
+
+    @GetMapping("/{boardId}/recent")
+    public PostListRes findRecentPostList(
+            @PathVariable String boardId,
+            @RequestParam(value = "limit", defaultValue = "15") int limit,
+            @RequestParam(value = "category", defaultValue = "all") String category
+    ) {
+        return postService.findRecentPostList(userUtil.getOptionalUser(), new FindRecentPostListReq(boardId, limit, category));
     }
 
     @GetMapping("/{boardId}/{postId}")

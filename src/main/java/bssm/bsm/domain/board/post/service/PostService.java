@@ -8,16 +8,12 @@ import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToModifyPostException;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToWritePostOnBoardException;
-import bssm.bsm.domain.board.post.presentation.dto.req.UpdatePostReq;
-import bssm.bsm.domain.board.post.presentation.dto.res.PostRes;
-import bssm.bsm.domain.board.post.presentation.dto.req.WritePostReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.*;
 import bssm.bsm.domain.board.post.presentation.dto.res.PostListRes;
 import bssm.bsm.domain.board.post.presentation.dto.res.DetailPostRes;
 import bssm.bsm.domain.board.post.domain.repository.PostRepository;
 import bssm.bsm.domain.board.board.service.BoardProvider;
 import bssm.bsm.domain.board.category.service.CategoryProvider;
-import bssm.bsm.domain.board.post.presentation.dto.req.GetPostListReq;
-import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -41,16 +37,20 @@ public class PostService {
     private final PostProvider postProvider;
     private final LikeProvider likeProvider;
 
-    public PostListRes findPostList(Optional<User> user, @Valid GetPostListReq req) {
+    public PostListRes findPostList(Optional<User> user, @Valid FindPostListReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkPermissionByUserRole(user.map(User::getRole).orElse(null));
         checkViewPermission(board, user);
 
         List<Post> postList = postProvider.findPostListByCursor(board, req);
-        List<PostRes> postResList = postList.stream()
-                .map(PostRes::create)
-                .toList();
-        return PostListRes.create(postResList, req.getLimit());
+        return PostListRes.create(postList, req.getLimit());
+    }
+
+    public PostListRes findRecentPostList(Optional<User> user, @Valid FindRecentPostListReq req) {
+        Board board = boardProvider.findBoard(req.getBoardId());
+        checkViewPermission(board, user);
+
+        List<Post> postList = postProvider.findRecentPostList(board, req);
+        return PostListRes.create(postList, req.getLimit());
     }
 
     public DetailPostRes findPost(Optional<User> user, @Valid PostReq req) {
@@ -59,18 +59,18 @@ public class PostService {
         Post post = postProvider.findPost(board, req.getPostId());
         PostLike postLike = likeProvider.findMyPostLike(user, post);
 
-        post.increaseViewCnt();
+        post.increaseTotalViews();
         return DetailPostRes.create(post, postLike, user);
     }
 
     @Transactional
     public long createPost(User user, WritePostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        board.checkPermissionByUserRole(user.getRole());
         checkWritePermission(board, user);
 
+        Long newPostId = postProvider.getNewPostId(board);
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);
-        PostPk postPk = PostPk.create(postProvider.getNewPostId(board), board);
+        PostPk postPk = PostPk.create(newPostId, board);
         Post newPost = Post.builder()
                 .pk(postPk)
                 .board(board)
@@ -82,7 +82,7 @@ public class PostService {
                 .anonymous(req.isAnonymous())
                 .build();
         postRepository.save(newPost);
-        return newPost.getPk().getId();
+        return newPostId;
     }
 
     @Transactional
@@ -91,8 +91,7 @@ public class PostService {
         Post post = postProvider.findPost(board, req.getPostId());
         checkPostWriter(post, user);
         PostCategory category = categoryProvider.findCategory(req.getCategoryId(), board);
-
-        post.update(post.getTitle(), post.getContent(), category, req.isAnonymous());
+        post.update(req.getTitle(), req.getContent(), category, req.isAnonymous());
     }
 
     @Transactional
@@ -100,19 +99,21 @@ public class PostService {
         Board board = boardProvider.findBoard(req.getBoardId());
         Post post = postProvider.findPost(board, req.getPostId());
         checkPostWriter(post, user);
-
         post.delete();
     }
 
     private void checkPostWriter(Post post, User user) {
+        post.getBoard().checkAccessibleRole(user);
         if (!post.checkPermission(user)) throw new DoNotHavePermissionToModifyPostException();
     }
 
     public void checkViewPermission(Board board, Optional<User> user) {
+        board.checkAccessibleRole(user);
         if (!board.isPublicPost() && user.isEmpty()) throw new UnAuthorizedException();
     }
 
     public void checkWritePermission(Board board, User user) {
+        board.checkAccessibleRole(user);
         if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new DoNotHavePermissionToWritePostOnBoardException();
     }
 

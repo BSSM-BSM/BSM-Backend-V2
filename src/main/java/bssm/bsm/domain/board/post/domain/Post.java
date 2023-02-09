@@ -2,10 +2,13 @@ package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
+import bssm.bsm.domain.board.like.domain.type.Like;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -14,6 +17,8 @@ import java.util.Objects;
 
 @Getter
 @Entity
+@DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
 
@@ -100,7 +105,7 @@ public class Post {
         this.delete = true;
     }
 
-    public void increaseViewCnt() {
+    public void increaseTotalViews() {
         this.view++;
     }
 
@@ -108,8 +113,20 @@ public class Post {
         this.totalComments = totalComments;
     }
 
-    public void setTotalLikes(int totalLikes) {
-        this.totalLikes = totalLikes;
+    public void applyPostLike() {
+        this.totalLikes++;
+    }
+
+    public void applyPostDislike() {
+        this.totalLikes--;
+    }
+
+    public void cancelPostLike(Like prevLike) {
+        this.totalLikes -= prevLike.getValue();
+    }
+
+    public void reservePostLike(Like prevLike) {
+        this.totalLikes -= (prevLike.getValue() * 2);
     }
 
     public boolean checkPermission(User user) {

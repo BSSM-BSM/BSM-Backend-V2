@@ -89,8 +89,19 @@ public class Board {
                 .build();
     }
 
-    public void checkPermissionByUserRole(UserRole role) {
-        if (accessibleRole == null || accessibleRole == role) return;
+    public void checkAccessibleRole(Optional<User> user) {
+        if (accessibleRole == null) return;
+        if (user.isPresent() && accessibleRole == user.get().getRole()) return;
+
+        switch (accessibleRole) {
+            case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
+            case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
+        }
+    }
+
+    public void checkAccessibleRole(User user) {
+        if (accessibleRole == null) return;
+        if (user != null && accessibleRole == user.getRole()) return;
 
         switch (accessibleRole) {
             case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");

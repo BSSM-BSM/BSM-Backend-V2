@@ -6,11 +6,10 @@ import lombok.Getter;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
-public class GetPostListReq {
+public class FindRecentPostListReq {
 
     @NotBlank
     private String boardId;
@@ -21,6 +20,4 @@ public class GetPostListReq {
     @NotBlank
     private String category;
 
-    @Positive
-    private long postId;
 }

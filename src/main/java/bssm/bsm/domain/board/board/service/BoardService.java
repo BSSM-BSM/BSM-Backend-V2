@@ -20,7 +20,7 @@ public class BoardService {
 
     public BoardRes findBoardInfo(String boardId, Optional<User> user) {
         Board board = boardUtil.findBoard(boardId);
-        board.checkPermissionByUserRole(user.map(User::getRole).orElse(null));
+        board.checkAccessibleRole(user);
 
         return board.toResponse(user);
     }
