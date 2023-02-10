@@ -32,7 +32,7 @@ public class UserRes {
     public static UserRes create(Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
         if (comment.isAnonymous()) return toAnonymousCommentUserRes(comment, anonymousUserIdProvider);
 
-        User user = comment.getUser();
+        User user = comment.getWriter();
         UserRes userRes = new UserRes();
         userRes.code = user.getCode();
         userRes.nickname = user.getNickname();
@@ -40,8 +40,8 @@ public class UserRes {
     }
 
     private static UserRes toAnonymousCommentUserRes(Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
-        User user = comment.getUser();
-        Post post = comment.getPk().getPost();
+        User user = comment.getWriter();
+        Post post = comment.getPost();
         String sessionId = post.getBoard() + "/" + post.getPk().getId();
         long anonymousId = anonymousUserIdProvider.getAnonymousId(AnonymousKeyType.COMMENT, sessionId, user);
 

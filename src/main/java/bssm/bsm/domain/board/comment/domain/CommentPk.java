@@ -1,28 +1,34 @@
 package bssm.bsm.domain.board.comment.domain;
 
 import bssm.bsm.domain.board.post.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
+@NoArgsConstructor
 public class CommentPk implements Serializable {
 
+    @EqualsAndHashCode.Include
     @Column(columnDefinition = "INT UNSIGNED")
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "boardId", insertable = false, updatable = false),
-            @JoinColumn(name = "postId", insertable = false, updatable = false)
-    })
-    private Post post;
+    @EqualsAndHashCode.Include
+    @Column
+    private String boardId;
+
+    @EqualsAndHashCode.Include
+    @Column(name = "post_id")
+    private Long postId;
+
+    public static CommentPk create(long id, Post post) {
+        CommentPk commentPk = new CommentPk();
+        commentPk.id = id;
+        commentPk.boardId = post.getPk().getBoardId();
+        commentPk.postId = post.getPk().getId();
+        return commentPk;
+    }
 }

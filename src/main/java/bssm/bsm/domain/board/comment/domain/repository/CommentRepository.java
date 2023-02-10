@@ -9,11 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
 
-    List<Comment> findAllByPkPost(Post post);
+    List<Comment> findAllByPost(Post post);
 
-    @Query(value = "SELECT COUNT(c) FROM Comment c WHERE c.pk.post.pk = :postPk")
-    long countByPostPk(@Param("postPk") PostPk postPk);
+    Optional<Comment> findByPkIdAndPost(long id, Post post);
+
+    @Query(value = "SELECT COUNT(c) FROM Comment c WHERE c.post = :post")
+    long countByPost(@Param("post") Post post);
 }
