@@ -38,10 +38,10 @@ public class CommentController {
     }
 
     @GetMapping("/{boardId}/{postId}")
-    public List<CommentRes> viewComment(
+    public List<CommentRes> viewCommentTree(
             @PathVariable String boardId,
             @PathVariable int postId
     ) {
-        return commentService.viewCommentList(userUtil.getOptionalUser(), new PostReq(boardId, postId));
+        return commentService.viewCommentTree(userUtil.getOptionalUser(), new PostReq(boardId, postId));
     }
 }

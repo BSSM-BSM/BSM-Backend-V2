@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
 
-    List<Comment> findAllByPost(Post post);
+    List<Comment> findAllByPostAndParentIdIsNull(Post post);
 
     Optional<Comment> findByPkIdAndPost(long id, Post post);
 

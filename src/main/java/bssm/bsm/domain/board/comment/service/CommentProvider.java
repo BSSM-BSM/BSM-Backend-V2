@@ -20,8 +20,8 @@ public class CommentProvider {
                 .orElseThrow(NoSuchCommentException::new);
     }
 
-    public List<Comment> findCommentList(Post post) {
-        return commentRepository.findAllByPost(post);
+    public List<Comment> findCommentTree(Post post) {
+        return commentRepository.findAllByPostAndParentIdIsNull(post);
     }
 
     public long getNewCommentId(Post post) {

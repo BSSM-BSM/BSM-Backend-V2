@@ -11,7 +11,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -42,9 +44,6 @@ public class Comment {
     @ColumnDefault("0")
     private boolean delete;
 
-    @Column(nullable = false)
-    private boolean haveChild;
-
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private int depth;
 
@@ -53,9 +52,9 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "board_id", insertable = false, updatable = false),
-            @JoinColumn(name = "post_id", insertable = false, updatable = false),
-            @JoinColumn(name = "parent_id", insertable = false, updatable = false),
+            @JoinColumn(name = "parent_id", referencedColumnName = "id", insertable = false, updatable = false),
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "post_id", referencedColumnName = "post_id", insertable = false, updatable = false),
     })
     private Comment parent;
 
@@ -68,6 +67,10 @@ public class Comment {
     @CreatedDate
     private Date createdAt;
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
+    @OrderBy("id")
+    private final Set<Comment> childComments = new HashSet<>();
+
     public static Comment create(long id, Post post, User writer, int depth, Comment parent, String content, boolean anonymous) {
         CommentPk commentPk = CommentPk.create(id, post);
         Comment comment = new Comment();
@@ -75,7 +78,6 @@ public class Comment {
         comment.board = post.getBoard();
         comment.writer = writer;
         comment.delete = false;
-        comment.haveChild = false;
         comment.depth = depth;
         comment.content = content;
         comment.anonymous = anonymous;
@@ -86,12 +88,8 @@ public class Comment {
         return comment;
     }
 
-    public void setDelete(boolean delete) {
-        this.delete = delete;
-    }
-
-    public void setHaveChild(boolean haveChild) {
-        this.haveChild = haveChild;
+    public void delete() {
+        this.delete = true;
     }
 
     public boolean checkPermission(User user) {

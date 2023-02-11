@@ -109,8 +109,12 @@ public class Post {
         this.view++;
     }
 
-    public void setTotalComments(int totalComments) {
-        this.totalComments = totalComments;
+    public void increaseTotalComments() {
+        this.totalComments++;
+    }
+
+    public void decreaseTotalComments() {
+        this.totalComments--;
     }
 
     public void applyPostLike() {
