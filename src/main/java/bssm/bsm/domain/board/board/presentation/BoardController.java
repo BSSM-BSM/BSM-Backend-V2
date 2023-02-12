@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BoardController {
 
     private final BoardService boardService;
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
 
     @GetMapping("/{boardId}")
     public BoardRes findBoardInfo(@PathVariable String boardId) {
-        return boardService.findBoardInfo(boardId, userUtil.getOptionalUser());
+        return boardService.findBoardInfo(boardId, currentUser.getUserOrNull());
     }
 
 }

@@ -74,13 +74,13 @@ public class CommentService {
         post.decreaseTotalComments();
     }
 
-    public List<CommentRes> viewCommentTree(Optional<User> user, PostReq req) {
+    public List<CommentRes> viewCommentTree(User nullableUser, PostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkViewPermission(board, user);
+        checkViewPermission(board, nullableUser);
         Post post = postProvider.findPost(board, req.getPostId());
 
         return commentProvider.findCommentTree(post).stream()
-                .map(comment -> CommentRes.create(user, comment, anonymousUserIdProvider))
+                .map(comment -> CommentRes.create(nullableUser, comment, anonymousUserIdProvider))
                 .toList();
     }
 
@@ -89,9 +89,9 @@ public class CommentService {
         if (!comment.checkPermission(user)) throw new DoNotHavePermissionToDeleteCommentException();
     }
 
-    private void checkViewPermission(Board board, Optional<User> user) {
-        board.checkAccessibleRole(user);
-        if (!board.isPublicComment() && user.isEmpty()) throw new UnAuthorizedException();
+    private void checkViewPermission(Board board, User nullableUser) {
+        board.checkAccessibleRole(nullableUser);
+        if (!board.isPublicComment() && nullableUser == null) throw new UnAuthorizedException();
     }
 
     public void checkWritePermission(Board board, User user) {

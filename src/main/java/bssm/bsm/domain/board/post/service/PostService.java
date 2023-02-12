@@ -37,30 +37,30 @@ public class PostService {
     private final PostProvider postProvider;
     private final LikeProvider likeProvider;
 
-    public PostListRes findPostList(Optional<User> user, @Valid FindPostListReq req) {
+    public PostListRes findPostList(User nullableUser, @Valid FindPostListReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkViewPermission(board, user);
+        checkViewPermission(board, nullableUser);
 
         List<Post> postList = postProvider.findPostListByCursor(board, req);
         return PostListRes.create(postList, req.getLimit());
     }
 
-    public PostListRes findRecentPostList(Optional<User> user, @Valid FindRecentPostListReq req) {
+    public PostListRes findRecentPostList(User nullableUser, @Valid FindRecentPostListReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkViewPermission(board, user);
+        checkViewPermission(board, nullableUser);
 
         List<Post> postList = postProvider.findRecentPostList(board, req);
         return PostListRes.create(postList, req.getLimit());
     }
 
-    public DetailPostRes findPost(Optional<User> user, @Valid PostReq req) {
+    public DetailPostRes findPost(User nullableUser, @Valid PostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkViewPermission(board, user);
+        checkViewPermission(board, nullableUser);
         Post post = postProvider.findPost(board, req.getPostId());
-        PostLike postLike = likeProvider.findMyPostLike(user, post);
+        PostLike postLike = likeProvider.findMyPostLike(nullableUser, post);
 
         post.increaseTotalViews();
-        return DetailPostRes.create(post, postLike, user);
+        return DetailPostRes.create(post, postLike, nullableUser);
     }
 
     @Transactional
@@ -107,9 +107,9 @@ public class PostService {
         if (!post.checkPermission(user)) throw new DoNotHavePermissionToModifyPostException();
     }
 
-    public void checkViewPermission(Board board, Optional<User> user) {
-        board.checkAccessibleRole(user);
-        if (!board.isPublicPost() && user.isEmpty()) throw new UnAuthorizedException();
+    public void checkViewPermission(Board board, User nullableUser) {
+        board.checkAccessibleRole(nullableUser);
+        if (!board.isPublicPost() && nullableUser == null) throw new UnAuthorizedException();
     }
 
     public void checkWritePermission(Board board, User user) {

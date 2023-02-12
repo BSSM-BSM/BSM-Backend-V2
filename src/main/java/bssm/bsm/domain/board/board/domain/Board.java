@@ -10,7 +10,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Getter
@@ -65,7 +64,7 @@ public class Board {
         this.accessibleRole = accessibleRole;
     }
 
-    public BoardRes toResponse(Optional<User> user) {
+    public BoardRes toResponse(User nullableUser) {
         BoardRes.BoardResBuilder builder = BoardRes.builder()
                 .boardId(id)
                 .boardName(name)
@@ -75,33 +74,23 @@ public class Board {
                         .map(PostCategory::toResponse)
                         .toList());
 
-        if (user.isEmpty()) {
+        if (nullableUser == null) {
             return builder
                     .postPermission(false)
                     .commentPermission(false)
                     .build();
         }
 
-        UserLevel level = user.get().getLevel();
+        UserLevel level = nullableUser.getLevel();
         return builder
                 .postPermission(writePostLevel.getValue() <= level.getValue())
                 .commentPermission(writeCommentLevel.getValue() <= level.getValue())
                 .build();
     }
 
-    public void checkAccessibleRole(Optional<User> user) {
+    public void checkAccessibleRole(User nullableUser) {
         if (accessibleRole == null) return;
-        if (user.isPresent() && accessibleRole == user.get().getRole()) return;
-
-        switch (accessibleRole) {
-            case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
-            case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
-        }
-    }
-
-    public void checkAccessibleRole(User user) {
-        if (accessibleRole == null) return;
-        if (user != null && accessibleRole == user.getRole()) return;
+        if (nullableUser != null && accessibleRole == nullableUser.getRole()) return;
 
         switch (accessibleRole) {
             case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");

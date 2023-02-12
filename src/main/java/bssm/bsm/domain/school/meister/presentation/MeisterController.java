@@ -16,21 +16,21 @@ import java.io.IOException;
 public class MeisterController {
 
     private final MeisterService meisterService;
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
 
     @PostMapping("detail")
     public MeisterDetailResponse getDetail(@RequestBody MeisterDetailRequest dto) throws IOException {
-        return meisterService.getDetail(userUtil.getUser(), dto);
+        return meisterService.getDetail(currentUser.getUser(), dto);
     }
 
     @GetMapping
     public MeisterResponse get() {
-        return meisterService.get(userUtil.getUser());
+        return meisterService.get(currentUser.getUser());
     }
 
     @GetMapping("update")
     public MeisterResponse updateAndGet() {
-        return meisterService.updateAndGet(userUtil.getUser());
+        return meisterService.updateAndGet(currentUser.getUser());
     }
 
 }

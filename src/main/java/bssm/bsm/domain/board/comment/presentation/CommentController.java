@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
     private final CommentService commentService;
 
     @PostMapping("/{boardId}/{postId}")
@@ -25,7 +25,7 @@ public class CommentController {
             @PathVariable int postId,
             @Valid @RequestBody WriteCommentReq dto
     ) {
-        commentService.writeComment(userUtil.getUser(), new PostReq(boardId, postId), dto);
+        commentService.writeComment(currentUser.getUser(), new PostReq(boardId, postId), dto);
     }
 
     @DeleteMapping("/{boardId}/{postId}/{commentId}")
@@ -34,7 +34,7 @@ public class CommentController {
             @PathVariable int postId,
             @PathVariable int commentId
     ) {
-        commentService.deleteComment(userUtil.getUser(), new PostReq(boardId, postId), commentId);
+        commentService.deleteComment(currentUser.getUser(), new PostReq(boardId, postId), commentId);
     }
 
     @GetMapping("/{boardId}/{postId}")
@@ -42,6 +42,6 @@ public class CommentController {
             @PathVariable String boardId,
             @PathVariable int postId
     ) {
-        return commentService.viewCommentTree(userUtil.getOptionalUser(), new PostReq(boardId, postId));
+        return commentService.viewCommentTree(currentUser.getUserOrNull(), new PostReq(boardId, postId));
     }
 }

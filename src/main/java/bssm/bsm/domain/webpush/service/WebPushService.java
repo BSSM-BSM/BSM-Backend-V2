@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WebPushService {
 
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
     private final WebPushRepository webpushRepository;
 
     public void subscribe(WebPushSubscribeRequest dto) {
-        User user = userUtil.getUser();
+        User user = currentUser.getUser();
 
         WebPush webPush = webpushRepository.findByUserCodeAndEndpoint(user.getCode(), dto.getEndpoint())
                 .orElseGet(() -> WebPush.builder()

@@ -15,16 +15,16 @@ import java.util.List;
 public class MeisterRankingController {
 
     private final MeisterRankingService meisterRankingService;
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
 
     @GetMapping("ranking/{grade}")
     public List<MeisterRankingResponse> getRanking(@PathVariable int grade) {
-        return meisterRankingService.getRanking(userUtil.getUser(), grade);
+        return meisterRankingService.getRanking(currentUser.getUser(), grade);
     }
 
     @PutMapping("privateRanking")
     public void updatePrivateRanking(@RequestBody UpdateMeisterPrivateRequest dto) {
-        meisterRankingService.updatePrivateRanking(userUtil.getUser(), dto.isPrivateRanking());
+        meisterRankingService.updatePrivateRanking(currentUser.getUser(), dto.isPrivateRanking());
     }
 
 }

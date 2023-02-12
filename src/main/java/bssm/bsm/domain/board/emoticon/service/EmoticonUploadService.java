@@ -49,11 +49,11 @@ public class EmoticonUploadService {
     @Value("${env.file.path.upload.emoticon}")
     private String EMOTICON_UPLOAD_PATH;
 
-    public void upload(User user, @Valid EmoticonUploadReq dto) {
-        emoticonItemValidate(dto.getEmoticonList());
-        Emoticon emoticon = saveEmoticon(user, dto);
-        List<EmoticonItem> emoticonItems = saveEmoticonItems(emoticon, dto);
-        emoticonFileUpload(emoticon, dto.getThumbnail(), emoticonItems, dto.getEmoticonList());
+    public void upload(User user, @Valid EmoticonUploadReq req) {
+        emoticonItemValidate(req.getEmoticonList());
+        Emoticon emoticon = saveEmoticon(user, req);
+        List<EmoticonItem> emoticonItems = saveEmoticonItems(emoticon, req);
+        emoticonFileUpload(emoticon, req.getThumbnail(), emoticonItems, req.getEmoticonList());
     }
 
     private void emoticonItemValidate(List<MultipartFile> emoticonItemList) {
@@ -71,16 +71,16 @@ public class EmoticonUploadService {
         return allowExtList.contains(fileExt);
     }
 
-    private Emoticon saveEmoticon(User user, EmoticonUploadReq dto) {
-        emoticonProvider.duplicateEmoticonNameCheck(dto.getName());
-        Emoticon emoticon = Emoticon.create(dto.getName(), dto.getDescription(), user);
+    private Emoticon saveEmoticon(User user, EmoticonUploadReq req) {
+        emoticonProvider.duplicateEmoticonNameCheck(req.getName());
+        Emoticon emoticon = Emoticon.create(req.getName(), req.getDescription(), user);
         return emoticonRepository.save(emoticon);
     }
 
-    private List<EmoticonItem> saveEmoticonItems(Emoticon emoticon, EmoticonUploadReq dto) {
+    private List<EmoticonItem> saveEmoticonItems(Emoticon emoticon, EmoticonUploadReq req) {
         List<EmoticonItem> emoticonItems = new ArrayList<>();
-        for (int i=0; i<dto.getEmoticonList().size(); i++) {
-            MultipartFile file = dto.getEmoticonList().get(i);
+        for (int i=0; i<req.getEmoticonList().size(); i++) {
+            MultipartFile file = req.getEmoticonList().get(i);
             String fileName = Objects.requireNonNull(file.getOriginalFilename());
             String fileExt = fileName.substring(fileName.lastIndexOf(".")+1);
             int itemIdx = i + 1;

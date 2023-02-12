@@ -18,7 +18,7 @@ public class EmoticonController {
 
     private final EmoticonService emoticonService;
     private final EmoticonUploadService emoticonUploadService;
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
 
     @GetMapping("{id}")
     public EmoticonRes getEmoticon(@PathVariable long id) {
@@ -37,7 +37,7 @@ public class EmoticonController {
             @RequestPart(value = "thumbnail") MultipartFile thumbnail,
             @RequestPart(value = "emoticonList") List<MultipartFile> emoticonList
     ) {
-        emoticonUploadService.upload(userUtil.getUser(), new EmoticonUploadReq(name, description, thumbnail, emoticonList));
+        emoticonUploadService.upload(currentUser.getUser(), new EmoticonUploadReq(name, description, thumbnail, emoticonList));
     }
 
 }

@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class LikeController {
 
-    private final CurrentUser userUtil;
+    private final CurrentUser currentUser;
     private final LikeService likeService;
 
     @PostMapping
     public LikeRes like(@RequestBody LikeReq req) {
-        return likeService.like(userUtil.getUser(), req);
+        return likeService.like(currentUser.getUser(), req);
     }
 }

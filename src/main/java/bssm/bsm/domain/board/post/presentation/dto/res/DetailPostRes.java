@@ -7,8 +7,6 @@ import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
 @Getter
 @NoArgsConstructor
 public class DetailPostRes extends PostRes {
@@ -18,7 +16,7 @@ public class DetailPostRes extends PostRes {
     private int myLike;
     private boolean anonymous;
 
-    public static DetailPostRes create(Post post, PostLike postLike, Optional<User> viewer) {
+    public static DetailPostRes create(Post post, PostLike postLike, User nullableViewer) {
         DetailPostRes detailPostRes = new DetailPostRes();
         detailPostRes.id = post.getPk().getId();
         detailPostRes.user = UserRes.create(post);
@@ -29,7 +27,7 @@ public class DetailPostRes extends PostRes {
         detailPostRes.totalComments = post.getTotalComments();
         detailPostRes.totalLikes = post.getTotalLikes();
         detailPostRes.content = post.getContent();
-        detailPostRes.permission = viewer.isPresent() && post.checkPermission(viewer.get());
+        detailPostRes.permission = nullableViewer != null && post.checkPermission(nullableViewer);
         detailPostRes.myLike = postLike == null ? 0 : postLike.getLike().getValue();
         detailPostRes.anonymous = post.isAnonymous();
         return detailPostRes;

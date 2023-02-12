@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
 public class CurrentUser {
@@ -19,12 +17,10 @@ public class CurrentUser {
         return userFacade.getCachedUserByCode(Long.parseLong(userCode));
     }
 
-    public Optional<User> getOptionalUser() {
+    public User getUserOrNull() {
         String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (userCode.equals("anonymousUser")) return Optional.empty();
-        return Optional.ofNullable(
-                userFacade.getCachedUserByCode(Long.parseLong(userCode))
-        );
+        if (userCode.equals("anonymousUser")) return null;
+        return userFacade.getCachedUserByCode(Long.parseLong(userCode));
     }
 
 }

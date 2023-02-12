@@ -14,7 +14,7 @@ public class AnonymousUserIdProvider {
 
     // key: user id -> value: anonymous user id
     private final Map<AnonymousKey, Long> anonymousMap = new HashMap<>();
-    // key: session id -> value: new anonymous user id (새로운 익명 id 발급 시 1씩 자동 증가)
+    // key: key -> value: new anonymous user id (새로운 익명 id 발급 시 1씩 자동 증가)
     private final Map<AnonymousKey, Long> anonymousIdMap = new HashMap<>();
 
     public long getAnonymousId(AnonymousKeyType type, String sessionId, User user) {
