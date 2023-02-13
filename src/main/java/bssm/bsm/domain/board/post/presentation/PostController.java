@@ -39,7 +39,7 @@ public class PostController {
 
     @GetMapping("/{boardId}/{postId}")
     public DetailPostRes findPost(@PathVariable String boardId, @PathVariable int postId) {
-        return postService.findPost(currentUser.getUserOrNull(), new PostReq(boardId, postId));
+        return postService.findPost(currentUser.getUserOrNull(), new FindPostReq(boardId, postId));
     }
 
     @PostMapping
@@ -54,6 +54,6 @@ public class PostController {
 
     @DeleteMapping("/{boardId}/{postId}")
     public void deletePost(@PathVariable String boardId, @PathVariable int postId) {
-        postService.deletePost(currentUser.getUser(), new PostReq(boardId, postId));
+        postService.deletePost(currentUser.getUser(), new DeletePostReq(boardId, postId));
     }
 }

@@ -9,11 +9,11 @@ import javax.validation.constraints.Size;
 @Getter
 public class UpdatePostReq {
 
-    @Positive
-    private long postId;
-
     @NotBlank
     private String boardId;
+
+    @Positive
+    private long postId;
 
     @NotBlank
     private String categoryId;

@@ -3,13 +3,13 @@ package bssm.bsm.domain.board.anonymous.service;
 import bssm.bsm.domain.board.anonymous.domain.AnonymousKey;
 import bssm.bsm.domain.board.anonymous.domain.AnonymousKeyType;
 import bssm.bsm.domain.user.domain.User;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Service
 public class AnonymousUserIdProvider {
 
     // key: user id -> value: anonymous user id

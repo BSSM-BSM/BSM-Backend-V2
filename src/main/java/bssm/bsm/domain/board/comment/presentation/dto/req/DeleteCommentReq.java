@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.post.presentation.dto.req;
+package bssm.bsm.domain.board.comment.presentation.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
-public class PostReq {
+public class DeleteCommentReq {
 
     @NotBlank
     private String boardId;
@@ -16,4 +16,6 @@ public class PostReq {
     @Positive
     private long postId;
 
+    @Positive
+    private int commentId;
 }

@@ -32,7 +32,7 @@ public class JwtProvider {
     private long JWT_REFRESH_TOKEN_MAX_TIME;
 
     public String createAccessToken(User user) {
-        userFacade.saveCacheUser(user);
+        userFacade.saveUserCache(user);
 
         Claims claims = Jwts.claims();
         claims.put("code", user.getCode());

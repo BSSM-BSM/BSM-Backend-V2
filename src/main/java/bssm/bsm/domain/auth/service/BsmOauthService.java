@@ -1,7 +1,5 @@
 package bssm.bsm.domain.auth.service;
 
-import bssm.bsm.domain.auth.domain.repository.RefreshTokenRepository;
-import bssm.bsm.domain.auth.presentation.dto.res.AuthTokenRes;
 import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.domain.user.domain.Teacher;
 import bssm.bsm.domain.user.domain.User;
@@ -12,8 +10,6 @@ import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
-import bssm.bsm.global.jwt.JwtProvider;
-import bssm.bsm.global.utils.CookieUtil;
 import leehj050211.bsmOauth.BsmOauth;
 import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
 import leehj050211.bsmOauth.dto.response.BsmStudentResponse;
@@ -21,15 +17,9 @@ import leehj050211.bsmOauth.exceptions.BsmAuthCodeNotFoundException;
 import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
 import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 

@@ -81,8 +81,8 @@ public class User extends BaseTimeEntity {
         ).build();
     }
 
-    public UserRedis toUserRedis() {
-        return UserRedis.builder()
+    public UserCache toUserCache() {
+        return UserCache.builder()
                 .code(code)
                 .nickname(nickname)
                 .role(role)

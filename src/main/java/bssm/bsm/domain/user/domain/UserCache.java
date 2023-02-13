@@ -10,7 +10,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RedisHash(value = "user")
-public class UserRedis extends BaseTimeEntity {
+public class UserCache extends BaseTimeEntity {
 
     @Id
     private Long code;
@@ -24,7 +24,7 @@ public class UserRedis extends BaseTimeEntity {
     private String oauthToken;
 
     @Builder
-    public UserRedis(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken, int point) {
+    public UserCache(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken, int point) {
         this.code = code;
         this.nickname = nickname;
         this.role = role;

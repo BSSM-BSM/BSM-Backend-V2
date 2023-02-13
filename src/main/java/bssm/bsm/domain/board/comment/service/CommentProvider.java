@@ -5,11 +5,11 @@ import bssm.bsm.domain.board.comment.domain.repository.CommentRepository;
 import bssm.bsm.domain.board.comment.exception.NoSuchCommentException;
 import bssm.bsm.domain.board.post.domain.Post;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CommentProvider {
 

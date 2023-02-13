@@ -53,7 +53,7 @@ public class PostService {
         return PostListRes.create(postList, req.getLimit());
     }
 
-    public DetailPostRes findPost(User nullableUser, @Valid PostReq req) {
+    public DetailPostRes findPost(User nullableUser, @Valid FindPostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
         Post post = postProvider.findPost(board, req.getPostId());
@@ -95,7 +95,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(User user, PostReq req) {
+    public void deletePost(User user, DeletePostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         Post post = postProvider.findPost(board, req.getPostId());
         checkPostWriter(post, user);

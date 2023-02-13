@@ -4,11 +4,12 @@ import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToDeleteCommentException;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToWriteCommentOnBoardException;
 import bssm.bsm.domain.board.comment.exception.NoSuchCommentException;
+import bssm.bsm.domain.board.comment.presentation.dto.req.DeleteCommentReq;
+import bssm.bsm.domain.board.comment.presentation.dto.req.FindCommentTreeReq;
 import bssm.bsm.domain.board.comment.presentation.dto.req.WriteCommentReq;
 import bssm.bsm.domain.board.comment.presentation.dto.res.CommentRes;
 import bssm.bsm.domain.board.comment.domain.Comment;
 import bssm.bsm.domain.board.comment.domain.repository.CommentRepository;
-import bssm.bsm.domain.board.post.presentation.dto.req.PostReq;
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.board.service.BoardProvider;
@@ -37,10 +38,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public void writeComment(User user, PostReq postReq, @Valid WriteCommentReq req) {
-        Board board = boardProvider.findBoard(postReq.getBoardId());
+    public void writeComment(User user, @Valid WriteCommentReq req) {
+        Board board = boardProvider.findBoard(req.getBoardId());
         checkWritePermission(board, user);
-        Post post = postProvider.findPost(board, postReq.getPostId());
+        Post post = postProvider.findPost(board, req.getPostId());
 
         Comment parentComment = null;
 
@@ -63,18 +64,18 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(User user, PostReq req, int commentId) {
+    public void deleteComment(User user, DeleteCommentReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         board.checkAccessibleRole(user);
         Post post = postProvider.findPost(board, req.getPostId());
-        Comment comment = commentProvider.findComment(post, commentId);
+        Comment comment = commentProvider.findComment(post, req.getCommentId());
         checkCommentDeletable(comment, user);
 
         comment.delete();
         post.decreaseTotalComments();
     }
 
-    public List<CommentRes> viewCommentTree(User nullableUser, PostReq req) {
+    public List<CommentRes> viewCommentTree(User nullableUser, FindCommentTreeReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
         Post post = postProvider.findPost(board, req.getPostId());

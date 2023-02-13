@@ -2,13 +2,13 @@ package bssm.bsm.global.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-@Component
-public class CookieUtil {
+@Service
+public class CookieProvider {
 
     @Value("${env.cookie.domain}")
     private String COOKIE_DOMAIN;
@@ -28,7 +28,7 @@ public class CookieUtil {
                 .build();
     }
 
-    public Cookie getCookie(HttpServletRequest req, String name) {
+    public Cookie findCookie(HttpServletRequest req, String name) {
         final Cookie[] cookies = req.getCookies();
         if (cookies == null) return null;
         for (Cookie cookie : cookies) {
