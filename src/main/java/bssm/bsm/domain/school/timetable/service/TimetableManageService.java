@@ -35,7 +35,7 @@ public class TimetableManageService {
     private final TimetableItemRepository timetableItemRepository;
     private final TimetableManageRepository timetableManageRepository;
     private final TimetableManageItemRepository timetableManageItemRepository;
-    private final TimetableNotification timetableNotification;
+    private final TimetableNotificationService timetableNotification;
 
     public List<TimetableManageResponse> getManageList(@Valid TimetableRequest dto) {
         return timetableManageRepository.findAllByGradeAndClassNoOrderByModifiedAtDesc(dto.getGrade(), dto.getClassNo())

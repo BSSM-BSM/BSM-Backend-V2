@@ -6,8 +6,8 @@ import bssm.bsm.domain.school.meal.facade.MealFacade;
 import bssm.bsm.domain.school.meal.domain.MealRepository;
 import bssm.bsm.domain.webpush.domain.WebPush;
 import bssm.bsm.domain.webpush.domain.repository.WebPushRepository;
-import bssm.bsm.domain.webpush.presentation.dto.request.WebPushSendDto;
-import bssm.bsm.global.utils.WebPushUtil;
+import bssm.bsm.domain.webpush.presentation.dto.request.WebPushMsgDto;
+import bssm.bsm.domain.webpush.service.SendWebPushService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +24,10 @@ public class MealScheduler {
 
     private final MealRepository mealRepository;
     private final WebPushRepository webPushRepository;
-    private final WebPushUtil webPushUtil;
+    private final SendWebPushService webPushUtil;
     private final MealFacade mealFacade;
     private final MealProvider mealProvider;
+
     @Value("${env.meal.url}")
     private String MEAL_ACCESS_URL;
 
@@ -42,35 +43,32 @@ public class MealScheduler {
 
     @Scheduled(cron = "0 30 6 * * 1-5")
     private void morningNotification() throws JsonProcessingException {
-        WebPushSendDto dto = WebPushSendDto.builder()
-                .title("오늘의 아침")
-                .body(mealFacade.getTodayMealStr(MealType.MORNING))
-                .link(MEAL_ACCESS_URL)
-                .build();
+        WebPushMsgDto dto = WebPushMsgDto.create(
+                "오늘의 아침",
+                mealFacade.getTodayMealStr(MealType.MORNING),
+                MEAL_ACCESS_URL);
         sendMealNotification(dto);
     }
 
     @Scheduled(cron = "0 30 11 * * 1-5")
     private void lunchNotification() throws JsonProcessingException {
-        WebPushSendDto dto = WebPushSendDto.builder()
-                .title("오늘의 점심")
-                .body(mealFacade.getTodayMealStr(MealType.LUNCH))
-                .link(MEAL_ACCESS_URL)
-                .build();
+        WebPushMsgDto dto = WebPushMsgDto.create(
+                "오늘의 점심",
+                mealFacade.getTodayMealStr(MealType.LUNCH),
+                MEAL_ACCESS_URL);
         sendMealNotification(dto);
     }
 
     @Scheduled(cron = "0 0 17 * * 1-5")
     private void dinnerNotification() throws JsonProcessingException {
-        WebPushSendDto dto = WebPushSendDto.builder()
-                .title("오늘의 저녁")
-                .body(mealFacade.getTodayMealStr(MealType.DINNER))
-                .link(MEAL_ACCESS_URL)
-                .build();
+        WebPushMsgDto dto = WebPushMsgDto.create(
+                "오늘의 저녁",
+                mealFacade.getTodayMealStr(MealType.DINNER),
+                MEAL_ACCESS_URL);
         sendMealNotification(dto);
     }
 
-    private void sendMealNotification(WebPushSendDto dto) throws JsonProcessingException {
+    private void sendMealNotification(WebPushMsgDto dto) throws JsonProcessingException {
         List<WebPush> pushList = webPushRepository.findAll();
         webPushUtil.sendNotificationToAll(pushList, dto);
     }
