@@ -1,9 +1,9 @@
 package bssm.bsm.domain.school.meal.domain;
 
-import bssm.bsm.domain.school.meal.presentation.dto.response.MealResponseItem;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -13,34 +13,27 @@ public class Meal {
     @EmbeddedId
     private MealPk pk;
 
+    @Column(nullable = false, length = 7, insertable = false, updatable = false)
+    @Enumerated(EnumType.STRING)
+    private MealType type;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false)
     private float cal;
 
-    @Builder
-    public Meal(MealPk pk, String content, float cal) {
-        this.pk = pk;
+    public static Meal create(LocalDate date, MealType type, String content, float cal) {
+        Meal meal = new Meal();
+        meal.pk = MealPk.create(date, type);
+        meal.content = content;
+        meal.cal = cal;
+        return meal;
+    }
+
+    public void update(String content, float cal) {
         this.content = content;
         this.cal = cal;
-    }
-
-    public MealResponseItem toResponseItem() {
-        return new MealResponseItem(content, cal);
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setCal(float cal) {
-        this.cal = cal;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return pk.equals(((Meal)o).pk);
     }
 
 }

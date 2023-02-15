@@ -11,16 +11,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class MealProvider {
 

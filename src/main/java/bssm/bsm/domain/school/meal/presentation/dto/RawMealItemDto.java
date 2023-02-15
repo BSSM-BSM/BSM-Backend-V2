@@ -1,8 +1,8 @@
 package bssm.bsm.domain.school.meal.presentation.dto;
 
 import bssm.bsm.domain.school.meal.domain.Meal;
-import bssm.bsm.domain.school.meal.domain.MealPk;
 import bssm.bsm.domain.school.meal.domain.MealType;
+import bssm.bsm.domain.school.meal.exception.ParseMealCalException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -21,22 +21,16 @@ public class RawMealItemDto {
     private String CAL_INFO; // 칼로리 정보
 
     public Meal toEntity(String content) {
-        float cal = 0;
-        Matcher calMatch = Pattern.compile("[0-9.]+").matcher(CAL_INFO);
-        if (calMatch.find()) cal = Float.parseFloat(calMatch.group());
-
-        MealPk.MealPkBuilder Pkbuilder = MealPk.builder()
-                .date(LocalDate.parse(MLSV_YMD, DateTimeFormatter.ofPattern("yyyyMMdd")));
-        switch (MMEAL_SC_NM) {
-            case "조식" -> Pkbuilder = Pkbuilder.type(MealType.MORNING);
-            case "중식" -> Pkbuilder = Pkbuilder.type(MealType.LUNCH);
-            case "석식" -> Pkbuilder = Pkbuilder.type(MealType.DINNER);
-        }
-        return Meal.builder()
-                .pk(Pkbuilder.build())
-                .content(content)
-                .cal(cal)
-                .build();
+        LocalDate date = LocalDate.parse(MLSV_YMD, DateTimeFormatter.ofPattern("yyyyMMdd"));
+        MealType type = MealType.create(MMEAL_SC_NM);
+        float cal = parseCalInfo();
+        return Meal.create(date, type, content, cal);
     }
 
+    private float parseCalInfo() {
+        Matcher calMatch = Pattern.compile("[0-9.]+").matcher(CAL_INFO);
+        if (calMatch.find()) return Float.parseFloat(calMatch.group());
+
+        throw new ParseMealCalException();
+    }
 }

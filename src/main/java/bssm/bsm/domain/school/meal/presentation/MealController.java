@@ -1,6 +1,6 @@
 package bssm.bsm.domain.school.meal.presentation;
 
-import bssm.bsm.domain.school.meal.presentation.dto.response.MealResponse;
+import bssm.bsm.domain.school.meal.presentation.dto.res.MealRes;
 import bssm.bsm.domain.school.meal.service.MealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +19,7 @@ public class MealController {
     private final MealService mealService;
 
     @GetMapping("{date}")
-    public MealResponse getMeal(@PathVariable @DateTimeFormat(pattern = "yyMMdd") LocalDate date) {
+    public MealRes getMeal(@PathVariable @DateTimeFormat(pattern = "yyMMdd") LocalDate date) {
         return mealService.getMeal(date);
     }
 }
