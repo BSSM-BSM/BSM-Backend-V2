@@ -41,7 +41,7 @@ public class PostService {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
 
-        List<Post> postList = postProvider.findPostListByCursor(board, req);
+        List<Post> postList = postProvider.findPostListByCursor(board, req.getStartPostId(), req.getLimit(), req.getCategory());
         return PostListRes.create(postList, req.getLimit());
     }
 
@@ -49,7 +49,7 @@ public class PostService {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
 
-        List<Post> postList = postProvider.findRecentPostList(board, req);
+        List<Post> postList = postProvider.findRecentPostList(board, req.getLimit(), req.getCategory());
         return PostListRes.create(postList, req.getLimit());
     }
 

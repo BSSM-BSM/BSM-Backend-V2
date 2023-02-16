@@ -2,6 +2,9 @@ plugins {
 	id 'org.springframework.boot' version '2.7.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+
+	// querydsl
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'bssm'
@@ -18,24 +21,65 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// querydsl
+	implementation 'com.querydsl:querydsl-jpa'
+	implementation 'com.querydsl:querydsl-apt'
+
+	// jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// bsm oauth
+	implementation 'com.github.leehj050211:bsm-oauth-java:1.0.0'
+
+	// mysql
+	runtimeOnly 'mysql:mysql-connector-java'
+
+	// http client
+	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
+	// json
+	implementation 'com.google.code.gson:gson'
+
+	// web push
+	implementation 'nl.martijndwars:web-push:5.1.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
-	implementation 'com.github.leehj050211:bsm-oauth-java:1.0.0'
-	runtimeOnly 'mysql:mysql-connector-java'
-	implementation 'com.squareup.okhttp3:okhttp:4.10.0'
-	implementation 'com.google.code.gson:gson'
 	implementation 'com.google.guava:guava:31.1-jre'
-	implementation 'nl.martijndwars:web-push:5.1.1'
 	implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// querydsl
+def querydslSrcDir = 'src/main/querydsl'
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslSrcDir
+	library = "com.querydsl:querydsl-apt"
+}
+
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java', querydslSrcDir]
+		}
+	}
 }

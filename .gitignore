@@ -1,4 +1,5 @@
 src/main/resources/env.yml
+src/main/querydsl/
 HELP.md
 .gradle
 build/
