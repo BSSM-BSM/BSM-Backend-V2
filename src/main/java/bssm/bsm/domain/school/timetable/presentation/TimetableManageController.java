@@ -1,11 +1,11 @@
 package bssm.bsm.domain.school.timetable.presentation;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableListRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.CreateTimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableListReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.CreateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.TimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
 import bssm.bsm.domain.school.timetable.service.TimetableManageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -22,22 +22,19 @@ public class TimetableManageController {
     private final TimetableManageService timetableManageService;
 
     @GetMapping("{grade}/{classNo}")
-    public List<TimetableManageResponse> getDayTimetable(
-            @PathVariable int grade,
-            @PathVariable int classNo
-    ) {
-        return timetableManageService.getManageList(new TimetableRequest(grade, classNo));
+    public List<TimetableManageRes> getDayTimetable(@PathVariable int grade, @PathVariable int classNo) {
+        return timetableManageService.getManageList(new TimetableReq(grade, classNo));
     }
 
     @PostMapping
-    public void createTimetable(@Valid @RequestBody CreateTimetableRequest dto) {
+    public void createTimetable(@Valid @RequestBody CreateTimetableReq dto) {
         timetableManageService.createTimetable(dto);
     }
 
     @PutMapping("{id}")
     public void updateTimetable(
             @PathVariable long id,
-            @Valid @RequestBody UpdateTimetableRequest dto
+            @Valid @RequestBody UpdateTimetableReq dto
     ) {
         timetableManageService.updateTimetable(id, dto);
     }
@@ -45,7 +42,7 @@ public class TimetableManageController {
     @PutMapping("{id}/list")
     public void updateTimetableList(
             @PathVariable long id,
-            @Valid @RequestBody UpdateTimetableListRequest dto
+            @Valid @RequestBody UpdateTimetableListReq dto
     ) {
         timetableManageService.updateTimetableList(id, dto);
     }
@@ -61,7 +58,7 @@ public class TimetableManageController {
     }
 
     @GetMapping("{id}")
-    public List<List<TimetableResponse>> getTimetable(@PathVariable long id) {
+    public List<List<TimetableRes>> getTimetable(@PathVariable long id) {
         return timetableManageService.getTimetableList(id);
     }
 

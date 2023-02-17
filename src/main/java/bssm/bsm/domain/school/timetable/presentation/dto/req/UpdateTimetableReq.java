@@ -1,17 +1,14 @@
-package bssm.bsm.domain.school.timetable.presentation.dto.request;
+package bssm.bsm.domain.school.timetable.presentation.dto.req;
 
 import bssm.bsm.domain.school.timetable.domain.TimetableType;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor
-public class UpdateTimetableRequest {
+public class UpdateTimetableReq {
 
     @NotBlank
     @Size(max = 12)

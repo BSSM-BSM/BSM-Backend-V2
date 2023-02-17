@@ -1,37 +1,34 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
+@NoArgsConstructor
 public class TimetableManageItemPk implements Serializable {
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private TimetableManage timetableManage;
+    @EqualsAndHashCode.Include
+    @Column
+    private long timetableManageId;
 
+    @EqualsAndHashCode.Include
     @Column
     private int day;
 
+    @EqualsAndHashCode.Include
     @Column
     private int idx;
 
-    @Override
-    public boolean equals(Object o) {
-        return timetableManage.equals(((TimetableManageItemPk) o).timetableManage)
-                && day == ((TimetableManageItemPk) o).day
-                && idx == ((TimetableManageItemPk) o).idx;
+    public static TimetableManageItemPk create(TimetableManage timetableManage, int day, int idx) {
+        TimetableManageItemPk pk = new TimetableManageItemPk();
+        pk.timetableManageId = timetableManage.getId();
+        pk.day = day;
+        pk.idx = idx;
+        return pk;
     }
 
 }

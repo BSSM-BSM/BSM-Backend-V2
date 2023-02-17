@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.timetable.presentation.dto.response;
+package bssm.bsm.domain.school.timetable.presentation.dto.res;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import java.sql.Time;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TimetableResponse {
+public class TimetableRes {
 
     private String className;
     private Time endTime;

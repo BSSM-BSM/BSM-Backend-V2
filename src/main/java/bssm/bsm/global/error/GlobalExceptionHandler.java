@@ -1,6 +1,7 @@
 package bssm.bsm.global.error;
 
 import bssm.bsm.global.error.exceptions.BadRequestException;
+import bssm.bsm.global.error.exceptions.InternalServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,9 +18,16 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpException.class)
-    public ResponseEntity<HttpErrorResponse> handleException(HttpException exception) {
-        HttpErrorResponse httpErrorResponse = new HttpErrorResponse(exception);
-        return new ResponseEntity<>(httpErrorResponse, HttpStatus.valueOf(exception.getStatusCode()));
+    public ResponseEntity<HttpErrorResponse> handleException(HttpException e) {
+        HttpErrorResponse response = new HttpErrorResponse(e);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(e.getStatusCode()));
+    }
+
+    @ExceptionHandler(InternalServerException.class)
+    public ResponseEntity<HttpErrorResponse> handleException(InternalServerException e) {
+        e.printStackTrace();
+        HttpErrorResponse response = new HttpErrorResponse(e);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -44,7 +52,7 @@ public class GlobalExceptionHandler {
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             String propertyPath = violation.getPropertyPath().toString();
             errorMap.put(
-                    propertyPath.substring(propertyPath.lastIndexOf(".")+1),
+                    propertyPath.substring(propertyPath.lastIndexOf(".") + 1),
                     violation.getMessage());
         }
         ValidationErrorResponse response = new ValidationErrorResponse(errorMap);
@@ -54,7 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpErrorResponse> handleException(Exception e) {
         e.printStackTrace();
-        HttpErrorResponse httpErrorResponse = new HttpErrorResponse(new HttpException());
-        return new ResponseEntity<>(httpErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        HttpErrorResponse response = new HttpErrorResponse(new HttpException());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -2,19 +2,15 @@ package bssm.bsm.domain.school.timetable.service;
 
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManage;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
-import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItemRepository;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageRepository;
 import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItemRepository;
-import bssm.bsm.domain.school.timetable.domain.timetable.TimetableRepository;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.CreateTimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.TimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableListRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.request.UpdateTimetableRequest;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
-import bssm.bsm.global.error.exceptions.NotFoundException;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.CreateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.TimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableListReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,89 +19,77 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @Validated
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class TimetableManageService {
 
-    private final TimetableRepository timetableRepository;
-    private final TimetableItemRepository timetableItemRepository;
+    private final TimetableProvider timetableProvider;
+    private final TimetableManageProvider timetableManageProvider;
+
     private final TimetableManageRepository timetableManageRepository;
-    private final TimetableManageItemRepository timetableManageItemRepository;
+
     private final TimetableNotificationService timetableNotification;
 
-    public List<TimetableManageResponse> getManageList(@Valid TimetableRequest dto) {
-        return timetableManageRepository.findAllByGradeAndClassNoOrderByModifiedAtDesc(dto.getGrade(), dto.getClassNo())
-                .stream().map(TimetableManage::toResponse).toList();
+    public List<TimetableManageRes> getManageList(@Valid TimetableReq dto) {
+        return timetableManageProvider.findManageList(dto.getGrade(), dto.getClassNo()).stream()
+                .map(TimetableManage::toResponse)
+                .toList();
     }
 
-    public void createTimetable(CreateTimetableRequest dto) {
-        TimetableManage manage = TimetableManage.builder()
-                .name(dto.getName())
-                .type(dto.getType())
-                .grade(dto.getGrade())
-                .classNo(dto.getClassNo())
-                .build();
+    @Transactional
+    public void createTimetable(CreateTimetableReq dto) {
+        TimetableManage manage = TimetableManage.create(
+                dto.getName(),
+                dto.getType(),
+                dto.getGrade(),
+                dto.getClassNo());
         timetableManageRepository.save(manage);
     }
 
     @Transactional
     public void applyTimetable(long id) throws JsonProcessingException {
-        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
-        Timetable timetable = timetableRepository.findByPkGradeAndPkClassNo(manage.getGrade(), manage.getClassNo())
-                .orElseThrow(NotFoundException::new);
+        TimetableManage manage = timetableManageProvider.findManage(id);
+        Timetable timetable = timetableProvider.findTimetable(manage.getGrade(), manage.getClassNo());
 
-        List<TimetableItem> deleteList = timetable.getItems();
-        List<TimetableItem> newTimetableList = manage.getItems().stream()
+        List<TimetableItem> newItemList = manage.getItems().stream()
                 .map(item -> item.toTimetableItem(timetable))
                 .toList();
-
-        newTimetableList.forEach(deleteList::remove);
-        timetableItemRepository.deleteAll(deleteList);
-        timetableItemRepository.saveAll(newTimetableList);
+        timetable.upsertItems(newItemList);
 
         timetableNotification.sendChangeTimetableNotification(manage);
     }
 
     @Transactional
     public void deleteTimetable(long id) {
-        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
+        TimetableManage manage = timetableManageProvider.findManage(id);
         timetableManageRepository.delete(manage);
     }
 
     @Transactional
-    public void updateTimetable(long id, UpdateTimetableRequest dto) {
-        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
-        manage.setName(dto.getName());
-        manage.setType(dto.getType());
+    public void updateTimetable(long id, UpdateTimetableReq dto) {
+        TimetableManage manage = timetableManageProvider.findManage(id);
+        manage.update(dto.getName(), dto.getType());
         timetableManageRepository.save(manage);
     }
 
     @Transactional
-    public void updateTimetableList(long id, UpdateTimetableListRequest dto) {
-        TimetableManage manage = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
-        manage.setModifiedAt(LocalDateTime.now());
-
-        List<TimetableManageItem> deleteList = manage.getItems();
-        List<TimetableManageItem> newTimetableList = dto.getTimetableList().stream()
-                .filter(Objects::nonNull)
+    public void updateTimetableList(long id, UpdateTimetableListReq dto) {
+        TimetableManage manage = timetableManageProvider.findManage(id);
+        List<TimetableManageItem> newItemList = dto.getTimetableList().stream()
                 .map(item -> item.toEntity(manage))
                 .toList();
-
-        newTimetableList.forEach(deleteList::remove);
-        timetableManageItemRepository.deleteAll(deleteList);
-
-        timetableManageItemRepository.saveAll(newTimetableList);
-        timetableManageRepository.save(manage);
+        manage.upsertItems(newItemList);
+        manage.updateModifiedAt();
     }
 
-    public List<List<TimetableResponse>> getTimetableList(@Valid @Positive Long id) {
-        TimetableManage timetable = timetableManageRepository.findById(id).orElseThrow(NotFoundException::new);
+    public List<List<TimetableRes>> getTimetableList(@Valid @Positive Long id) {
+        TimetableManage timetable = timetableManageProvider.findManage(id);
 
-        Map<Integer, List<TimetableResponse>> timetableMap = new HashMap<>();
+        Map<Integer, List<TimetableRes>> timetableMap = new HashMap<>();
         timetable.getItems().forEach(item -> {
             int day = item.getPk().getDay();
             if (timetableMap.get(day) == null) {

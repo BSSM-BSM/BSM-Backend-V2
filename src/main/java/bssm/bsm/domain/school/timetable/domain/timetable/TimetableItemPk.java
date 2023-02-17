@@ -1,39 +1,40 @@
 package bssm.bsm.domain.school.timetable.domain.timetable;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Getter
-@RequiredArgsConstructor
-@AllArgsConstructor
-@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Embeddable
+@NoArgsConstructor
 public class TimetableItemPk implements Serializable {
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Timetable timetable;
+    @EqualsAndHashCode.Include
+    @Column
+    private int grade;
 
+    @EqualsAndHashCode.Include
+    @Column(name = "class_no")
+    private int classNo;
+
+    @EqualsAndHashCode.Include
     @Column
     private int day;
 
+    @EqualsAndHashCode.Include
     @Column
     private int idx;
 
-    @Override
-    public boolean equals(Object o) {
-        return timetable.equals(((TimetableItemPk) o).timetable)
-                && day == ((TimetableItemPk) o).day
-                && idx == ((TimetableItemPk) o).idx;
+    public static TimetableItemPk create(int grade, int classNo, int day, int idx) {
+        TimetableItemPk pk = new TimetableItemPk();
+        pk.grade = grade;
+        pk.classNo = classNo;
+        pk.day = day;
+        pk.idx = idx;
+        return pk;
     }
 
 }

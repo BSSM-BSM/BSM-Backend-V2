@@ -1,4 +1,4 @@
-package bssm.bsm.domain.school.timetable.presentation.dto.response;
+package bssm.bsm.domain.school.timetable.presentation.dto.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class TimetableManageResponse {
+public class TimetableManageRes {
 
     private long id;
     private String name;

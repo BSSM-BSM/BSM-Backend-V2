@@ -2,25 +2,35 @@ package bssm.bsm.domain.school.timetable.domain.manage;
 
 import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItemPk;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableResponse;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.sql.Time;
 
 @Getter
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TimetableManageItem {
 
+    @EqualsAndHashCode.Include
     @EmbeddedId
     private TimetableManageItemPk pk;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "timetable_manage_id")
+    @MapsId("timetableManageId")
+    private TimetableManage timetableManage;
+
+    @Column(name = "day", insertable = false, updatable = false)
+    private int day;
+
+    @Column(name = "idx", insertable = false, updatable = false)
+    private int idx;
 
     @Column(length = 30)
     private String className;
@@ -34,17 +44,27 @@ public class TimetableManageItem {
     @Column(nullable = false)
     private Time endTime;
 
-    @Builder
-    public TimetableManageItem(TimetableManageItemPk pk, String className, String type, Time startTime, Time endTime) {
-        this.pk = pk;
-        this.className = className;
-        this.type = type;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public static TimetableManageItem create(TimetableManage timetableManage, int day, int idx,
+                                       String className, String type, Time startTime, Time endTime) {
+        TimetableManageItem item = new TimetableManageItem();
+        item.pk = TimetableManageItemPk.create(timetableManage, day, idx);
+        item.timetableManage = timetableManage;
+        item.className = className;
+        item.type = type;
+        item.startTime = startTime;
+        item.endTime = endTime;
+        return item;
     }
 
-    public TimetableResponse toResponse() {
-        return TimetableResponse.builder()
+    public void update(TimetableManageItem item) {
+        this.className = item.className;
+        this.type = item.type;
+        this.startTime = item.startTime;
+        this.endTime = item.endTime;
+    }
+
+    public TimetableRes toResponse() {
+        return TimetableRes.builder()
                 .className(className)
                 .startTime(startTime)
                 .endTime(endTime)
@@ -53,24 +73,14 @@ public class TimetableManageItem {
     }
 
     public TimetableItem toTimetableItem(Timetable timetable) {
-        return TimetableItem.builder()
-                .pk(
-                        TimetableItemPk.builder()
-                                .timetable(timetable)
-                                .day(pk.getDay())
-                                .idx(pk.getIdx())
-                                .build()
-                )
-                .className(className)
-                .type(type)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return pk.equals(((TimetableManageItem)o).pk);
+        return TimetableItem.create(
+                timetable,
+                day,
+                idx,
+                className,
+                type,
+                startTime,
+                endTime);
     }
 
 }

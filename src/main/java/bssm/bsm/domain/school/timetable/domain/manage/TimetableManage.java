@@ -1,16 +1,14 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
 import bssm.bsm.domain.school.timetable.domain.TimetableType;
-import bssm.bsm.domain.school.timetable.presentation.dto.response.TimetableManageResponse;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Entity
@@ -34,28 +32,40 @@ public class TimetableManage extends BaseTimeEntity {
     @Column
     private int classNo;
 
-    @OneToMany(mappedBy = "pk.timetableManage", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    private final List<TimetableManageItem> items = new ArrayList<>();
+    @OneToMany(mappedBy = "timetableManage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TimetableManageItem> items = new HashSet<>();
 
-    @Builder
-    public TimetableManage(long id, String name, TimetableType type, int grade, int classNo) {
-        this.id = id;
+    public static TimetableManage create(String name, TimetableType type, int grade, int classNo) {
+        TimetableManage manage = new TimetableManage();
+        manage.name = name;
+        manage.type = type;
+        manage.grade = grade;
+        manage.classNo = classNo;
+        return manage;
+    }
+
+    public void update(String name, TimetableType type) {
         this.name = name;
         this.type = type;
-        this.grade = grade;
-        this.classNo = classNo;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void upsertItems(List<TimetableManageItem> items) {
+        Map<TimetableManageItemPk, TimetableManageItem> map = new HashMap<>();
+        items.forEach(item -> map.put(item.getPk(), item));
+        // 삭제하려는 기존의 아이템들만 remove
+        this.items.removeIf(item -> !items.contains(item));
+        // 기존의 아이템들 update
+        this.items.forEach(item ->
+                item.update(map.get(item.getPk()))
+        );
+        // 새로 추가된 아이템들 add
+        this.items.addAll(items.stream()
+                .filter(item -> !this.items.contains(item))
+                .toList());
     }
 
-    public void setType(TimetableType type) {
-        this.type = type;
-    }
-
-    public TimetableManageResponse toResponse() {
-        return new TimetableManageResponse(id, name, getModifiedAt());
+    public TimetableManageRes toResponse() {
+        return new TimetableManageRes(id, name, getModifiedAt());
     }
 
 }
