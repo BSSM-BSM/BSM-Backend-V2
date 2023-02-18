@@ -6,12 +6,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Getter
-public class DayTimetableReq extends TimetableReq {
+public class FindDayTimetableReq extends FindTimetableReq {
 
     @Max(6) @Min(0)
     private int day;
 
-    public DayTimetableReq(int grade, int classNo, int day) {
+    public FindDayTimetableReq(int grade, int classNo, int day) {
         super(grade, classNo);
         this.day = day;
     }

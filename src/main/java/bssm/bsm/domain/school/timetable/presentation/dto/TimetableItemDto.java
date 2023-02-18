@@ -1,5 +1,6 @@
-package bssm.bsm.domain.school.timetable.presentation.dto.req;
+package bssm.bsm.domain.school.timetable.presentation.dto;
 
+import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManage;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.sql.Time;
 
 @Getter
-public class TimetableItemReq {
+public class TimetableItemDto {
 
     @NotBlank
     private String className;
@@ -23,7 +24,7 @@ public class TimetableItemReq {
     @NotNull
     private String type;
 
-    private int day;
+    private TimetableDayType day;
 
     private int idx;
 

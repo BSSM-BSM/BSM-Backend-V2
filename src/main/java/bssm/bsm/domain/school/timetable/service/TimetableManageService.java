@@ -5,12 +5,9 @@ import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageRepository;
 import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import bssm.bsm.domain.school.timetable.presentation.dto.req.CreateTimetableReq;
-import bssm.bsm.domain.school.timetable.presentation.dto.req.TimetableReq;
-import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableListReq;
-import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.*;
+import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableListRes;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
-import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,74 +31,61 @@ public class TimetableManageService {
 
     private final TimetableNotificationService timetableNotification;
 
-    public List<TimetableManageRes> getManageList(@Valid TimetableReq dto) {
-        return timetableManageProvider.findManageList(dto.getGrade(), dto.getClassNo()).stream()
-                .map(TimetableManage::toResponse)
+    public List<TimetableManageRes> findManageList(@Valid FindTimetableReq req) {
+        return timetableManageProvider.findManageList(req.getGrade(), req.getClassNo()).stream()
+                .map(TimetableManageRes::create)
                 .toList();
     }
 
     @Transactional
-    public void createTimetable(CreateTimetableReq dto) {
-        TimetableManage manage = TimetableManage.create(
-                dto.getName(),
-                dto.getType(),
-                dto.getGrade(),
-                dto.getClassNo());
-        timetableManageRepository.save(manage);
+    public void createTimetable(CreateTimetableReq req) {
+        TimetableManage timetableManage = TimetableManage.create(
+                req.getName(),
+                req.getType(),
+                req.getGrade(),
+                req.getClassNo());
+        timetableManageRepository.save(timetableManage);
     }
 
     @Transactional
-    public void applyTimetable(long id) throws JsonProcessingException {
-        TimetableManage manage = timetableManageProvider.findManage(id);
-        Timetable timetable = timetableProvider.findTimetable(manage.getGrade(), manage.getClassNo());
+    public void applyTimetable(ApplyTimetableReq req) throws JsonProcessingException {
+        TimetableManage timetableManage = timetableManageProvider.findManage(req.getId());
+        Timetable timetable = timetableProvider.findTimetable(timetableManage.getGrade(), timetableManage.getClassNo());
 
-        List<TimetableItem> newItemList = manage.getItems().stream()
+        List<TimetableItem> newItemList = timetableManage.getItems().stream()
                 .map(item -> item.toTimetableItem(timetable))
                 .toList();
         timetable.upsertItems(newItemList);
 
-        timetableNotification.sendChangeTimetableNotification(manage);
+        timetableNotification.sendChangeTimetableNotification(timetableManage);
     }
 
     @Transactional
     public void deleteTimetable(long id) {
-        TimetableManage manage = timetableManageProvider.findManage(id);
-        timetableManageRepository.delete(manage);
+        TimetableManage timetableManage = timetableManageProvider.findManage(id);
+        timetableManageRepository.delete(timetableManage);
     }
 
     @Transactional
-    public void updateTimetable(long id, UpdateTimetableReq dto) {
-        TimetableManage manage = timetableManageProvider.findManage(id);
-        manage.update(dto.getName(), dto.getType());
-        timetableManageRepository.save(manage);
+    public void updateTimetable(UpdateTimetableReq req) {
+        TimetableManage timetableManage = timetableManageProvider.findManage(req.getId());
+        timetableManage.update(req.getName(), req.getType());
+        timetableManageRepository.save(timetableManage);
     }
 
     @Transactional
-    public void updateTimetableList(long id, UpdateTimetableListReq dto) {
-        TimetableManage manage = timetableManageProvider.findManage(id);
-        List<TimetableManageItem> newItemList = dto.getTimetableList().stream()
-                .map(item -> item.toEntity(manage))
+    public void updateTimetableList(UpdateTimetableListReq req) {
+        TimetableManage timetableManage = timetableManageProvider.findManage(req.getId());
+        List<TimetableManageItem> newItemList = req.getTimetableList().stream()
+                .map(item -> item.toEntity(timetableManage))
                 .toList();
-        manage.upsertItems(newItemList);
-        manage.updateModifiedAt();
+        timetableManage.upsertItems(newItemList);
+        timetableManage.updateModifiedAt();
     }
 
-    public List<List<TimetableRes>> getTimetableList(@Valid @Positive Long id) {
+    public TimetableListRes getTimetableList(@Valid @Positive Long id) {
         TimetableManage timetable = timetableManageProvider.findManage(id);
-
-        Map<Integer, List<TimetableRes>> timetableMap = new HashMap<>();
-        timetable.getItems().forEach(item -> {
-            int day = item.getPk().getDay();
-            if (timetableMap.get(day) == null) {
-                timetableMap.put(day, new ArrayList<>(List.of(item.toResponse())));
-                return;
-            }
-            timetableMap.get(day).add(item.toResponse());
-        });
-
-        return new ArrayList<>(List.of(0, 1, 2, 3, 4, 5, 6))
-                .stream().map(timetableMap::get)
-                .toList();
+        return TimetableListRes.create(timetable);
     }
 
 }

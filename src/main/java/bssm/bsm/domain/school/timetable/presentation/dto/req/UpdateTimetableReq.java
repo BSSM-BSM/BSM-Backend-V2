@@ -10,6 +10,8 @@ import javax.validation.constraints.Size;
 @Getter
 public class UpdateTimetableReq {
 
+    private long id;
+
     @NotBlank
     @Size(max = 12)
     private String name;

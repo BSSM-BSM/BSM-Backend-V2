@@ -1,6 +1,6 @@
 package bssm.bsm.domain.school.timetable.domain.timetable;
 
-import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
+import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,7 +24,7 @@ public class TimetableItem {
     private Timetable timetable;
 
     @Column(name = "day", insertable = false, updatable = false)
-    private int day;
+    private TimetableDayType day;
 
     @Column(name = "idx", insertable = false, updatable = false)
     private int idx;
@@ -41,7 +41,7 @@ public class TimetableItem {
     @Column(nullable = false)
     private Time endTime;
 
-    public static TimetableItem create(Timetable timetable, int day, int idx,
+    public static TimetableItem create(Timetable timetable, TimetableDayType day, int idx,
                                        String className, String type, Time startTime, Time endTime) {
         TimetableItem item = new TimetableItem();
         item.pk = TimetableItemPk.create(timetable.getGrade(), timetable.getClassNo(), day, idx);
@@ -57,15 +57,6 @@ public class TimetableItem {
         this.type = item.type;
         this.startTime = item.startTime;
         this.endTime = item.endTime;
-    }
-
-    public TimetableRes toResponse() {
-        return TimetableRes.builder()
-                .className(className)
-                .startTime(startTime)
-                .endTime(endTime)
-                .type(type)
-                .build();
     }
 
 }

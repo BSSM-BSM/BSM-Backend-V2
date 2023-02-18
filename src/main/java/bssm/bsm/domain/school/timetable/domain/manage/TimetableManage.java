@@ -64,8 +64,4 @@ public class TimetableManage extends BaseTimeEntity {
                 .toList());
     }
 
-    public TimetableManageRes toResponse() {
-        return new TimetableManageRes(id, name, getModifiedAt());
-    }
-
 }

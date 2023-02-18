@@ -25,12 +25,12 @@ public class TimetableNotificationService {
     @Value("${env.timetable.url}")
     private String TIMETABLE_ACCESS_URL;
 
-    public void sendChangeTimetableNotification(TimetableManage manage) throws JsonProcessingException {
+    public void sendChangeTimetableNotification(TimetableManage timetableManage) throws JsonProcessingException {
         WebPushMsgDto dto = WebPushMsgDto.create(
-                "시간표가 " + manage.getName() + "(으)로 변경되었습니다",
+                "시간표가 " + timetableManage.getName() + "(으)로 변경되었습니다",
                 "여기를 클릭하여 변경된 시간표를 확인해보세요",
                 TIMETABLE_ACCESS_URL);
-        List<User> userList = userFacade.findAllByGradeAndClassNo(manage.getGrade(), manage.getClassNo());
+        List<User> userList = userFacade.findAllByGradeAndClassNo(timetableManage.getGrade(), timetableManage.getClassNo());
         List<WebPush> webPushList = webPushRepository.findAllByUserIn(userList);
 
         webPushUtil.sendNotificationToAll(webPushList, dto);

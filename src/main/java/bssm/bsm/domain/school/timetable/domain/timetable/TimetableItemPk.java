@@ -1,5 +1,6 @@
 package bssm.bsm.domain.school.timetable.domain.timetable;
 
+import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
 import lombok.*;
 
 import javax.persistence.Column;
@@ -22,13 +23,13 @@ public class TimetableItemPk implements Serializable {
 
     @EqualsAndHashCode.Include
     @Column
-    private int day;
+    private TimetableDayType day;
 
     @EqualsAndHashCode.Include
     @Column
     private int idx;
 
-    public static TimetableItemPk create(int grade, int classNo, int day, int idx) {
+    public static TimetableItemPk create(int grade, int classNo, TimetableDayType day, int idx) {
         TimetableItemPk pk = new TimetableItemPk();
         pk.grade = grade;
         pk.classNo = classNo;

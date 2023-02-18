@@ -7,7 +7,7 @@ import javax.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor
-public class TimetableReq {
+public class FindTimetableReq {
 
     @Positive
     private int grade;

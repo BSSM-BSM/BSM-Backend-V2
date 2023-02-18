@@ -1,8 +1,8 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
+import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
 import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableRes;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class TimetableManageItem {
     private TimetableManage timetableManage;
 
     @Column(name = "day", insertable = false, updatable = false)
-    private int day;
+    private TimetableDayType day;
 
     @Column(name = "idx", insertable = false, updatable = false)
     private int idx;
@@ -44,8 +44,8 @@ public class TimetableManageItem {
     @Column(nullable = false)
     private Time endTime;
 
-    public static TimetableManageItem create(TimetableManage timetableManage, int day, int idx,
-                                       String className, String type, Time startTime, Time endTime) {
+    public static TimetableManageItem create(TimetableManage timetableManage, TimetableDayType day, int idx,
+                                             String className, String type, Time startTime, Time endTime) {
         TimetableManageItem item = new TimetableManageItem();
         item.pk = TimetableManageItemPk.create(timetableManage, day, idx);
         item.timetableManage = timetableManage;
@@ -61,15 +61,6 @@ public class TimetableManageItem {
         this.type = item.type;
         this.startTime = item.startTime;
         this.endTime = item.endTime;
-    }
-
-    public TimetableRes toResponse() {
-        return TimetableRes.builder()
-                .className(className)
-                .startTime(startTime)
-                .endTime(endTime)
-                .type(type)
-                .build();
     }
 
     public TimetableItem toTimetableItem(Timetable timetable) {
