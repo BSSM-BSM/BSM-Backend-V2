@@ -27,6 +27,7 @@ public class Timetable {
     private TimetableType type;
 
     @OneToMany(mappedBy = "timetable", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("idx")
     private final Set<TimetableItem> items = new HashSet<>();
 
     public static Timetable create(int grade, int classNo, TimetableType type) {

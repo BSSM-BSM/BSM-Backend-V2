@@ -33,6 +33,7 @@ public class TimetableManage extends BaseTimeEntity {
     private int classNo;
 
     @OneToMany(mappedBy = "timetableManage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("idx")
     private Set<TimetableManageItem> items = new HashSet<>();
 
     public static TimetableManage create(String name, TimetableType type, int grade, int classNo) {
