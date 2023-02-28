@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import static bssm.bsm.domain.board.post.domain.QPost.post;
+import static bssm.bsm.domain.user.domain.QUser.user;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom {
@@ -20,8 +21,8 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
 
     @Override
     public List<Post> findPostList(Board board, Long startPostId, int limit, String category) {
-        return jpaQueryFactory
-                .selectFrom(post)
+        return jpaQueryFactory.selectFrom(post)
+                .join(post.writer, user)
                 .where(
                         post.delete.isFalse(),
                         post.board.eq(board),

@@ -4,6 +4,7 @@ import bssm.bsm.domain.board.comment.domain.Comment;
 import bssm.bsm.domain.board.comment.domain.CommentPk;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.PostPk;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
 
+    @EntityGraph(attributePaths = {"childComments", "writer"})
     List<Comment> findAllByPostAndParentIdIsNull(Post post);
 
     Optional<Comment> findByPkIdAndPost(long id, Post post);

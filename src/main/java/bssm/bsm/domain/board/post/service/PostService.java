@@ -53,6 +53,7 @@ public class PostService {
         return PostListRes.create(postList, req.getLimit());
     }
 
+    @Transactional
     public DetailPostRes findPost(User nullableUser, @Valid FindPostReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
@@ -70,17 +71,7 @@ public class PostService {
 
         Long newPostId = postProvider.getNewPostId(board);
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);
-        PostPk postPk = PostPk.create(newPostId, board);
-        Post newPost = Post.builder()
-                .pk(postPk)
-                .board(board)
-                .writer(user)
-                .category(postCategory)
-                .title(req.getTitle())
-                .content(req.getContent())
-                .createdAt(new Date())
-                .anonymous(req.isAnonymous())
-                .build();
+        Post newPost = Post.create(newPostId, board, user, req.getTitle(), req.getContent(), req.isAnonymous(), postCategory);
         postRepository.save(newPost);
         return newPostId;
     }
@@ -107,15 +98,14 @@ public class PostService {
         if (!post.checkPermission(user)) throw new DoNotHavePermissionToModifyPostException();
     }
 
-    public void checkViewPermission(Board board, User nullableUser) {
+    private void checkViewPermission(Board board, User nullableUser) {
         board.checkAccessibleRole(nullableUser);
         if (!board.isPublicPost() && nullableUser == null) throw new UnAuthorizedException();
     }
 
-    public void checkWritePermission(Board board, User user) {
+    private void checkWritePermission(Board board, User user) {
         board.checkAccessibleRole(user);
         if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new DoNotHavePermissionToWritePostOnBoardException();
     }
-
 
 }

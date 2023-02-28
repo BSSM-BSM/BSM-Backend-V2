@@ -12,14 +12,13 @@ spring:
       max-file-size: ${env.file.uploadSize}
   jpa:
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    open-in-view: false
     show-sql: true
     generate-ddl: true
     hibernate:
       ddl-auto: update
     properties:
-      hibernate: format_sql=true
+      hibernate:
+        format_sql: true
   datasource:
     url: jdbc:mysql://${env.db.host}:${env.db.port}/${env.db.name}?autoReconnect=true
     username: ${env.db.user}

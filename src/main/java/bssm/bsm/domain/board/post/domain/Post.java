@@ -72,21 +72,22 @@ public class Post {
     @CreatedDate
     private Date createdAt;
 
-    @Builder
-    public Post(PostPk pk, Board board, PostCategory category, boolean delete, User writer, String title, String content, int view, int totalComments, int totalLikes, boolean anonymous, Date createdAt) {
-        this.pk = pk;
-        this.board = board;
-        this.delete = delete;
-        this.writer = writer;
-        this.title = title;
-        this.content = content;
-        this.view = view;
-        this.totalComments = totalComments;
-        this.totalLikes = totalLikes;
-        this.anonymous = anonymous;
-        this.createdAt = createdAt;
-
-        setCategory(category);
+    public static Post create(long id, Board board, User writer, String title,
+                              String content, boolean anonymous, PostCategory category) {
+        Post post = new Post();
+        post.pk = PostPk.create(id, board);
+        post.board = board;
+        post.writer = writer;
+        post.title = title;
+        post.content = content;
+        post.anonymous = anonymous;
+        post.delete = false;
+        post.createdAt = new Date();
+        post.view = 0;
+        post.totalComments = 0;
+        post.totalLikes = 0;
+        post.setCategory(category);
+        return post;
     }
 
     private void setCategory(PostCategory category) {

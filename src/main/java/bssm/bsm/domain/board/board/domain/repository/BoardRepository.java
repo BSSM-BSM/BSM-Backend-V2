@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface BoardRepository  extends JpaRepository<Board, String> {
 
+    @Override
     @NotNull
     @EntityGraph(attributePaths = "categories")
     List<Board> findAll();
