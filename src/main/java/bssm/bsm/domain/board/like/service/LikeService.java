@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.like.service;
 
-import bssm.bsm.domain.board.like.domain.type.Like;
+import bssm.bsm.domain.board.like.domain.enums.Like;
 import bssm.bsm.domain.board.like.presentation.dto.req.LikeReq;
 import bssm.bsm.domain.board.like.presentation.dto.res.LikeRes;
 import bssm.bsm.domain.board.like.domain.PostLike;

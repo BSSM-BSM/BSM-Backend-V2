@@ -1,4 +1,4 @@
-package bssm.bsm.domain.board.like.domain.type;
+package bssm.bsm.domain.board.like.domain.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

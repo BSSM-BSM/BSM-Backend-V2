@@ -2,7 +2,7 @@ package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
-import bssm.bsm.domain.board.like.domain.type.Like;
+import bssm.bsm.domain.board.like.domain.enums.Like;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.*;

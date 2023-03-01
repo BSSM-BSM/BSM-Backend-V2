@@ -1,7 +1,8 @@
 package bssm.bsm.domain.board.like.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
-import bssm.bsm.domain.board.like.domain.type.Like;
+import bssm.bsm.domain.board.like.domain.enums.Like;
+import bssm.bsm.domain.board.like.domain.enums.LikeConverter;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.user.domain.User;
 import lombok.*;
@@ -32,6 +33,7 @@ public class PostLike {
     @JoinColumn(name = "user_code")
     private User user;
 
+    @Convert(converter = LikeConverter.class)
     @Column(name = "is_like", nullable = false, columnDefinition = "tinyint")
     private Like like;
 

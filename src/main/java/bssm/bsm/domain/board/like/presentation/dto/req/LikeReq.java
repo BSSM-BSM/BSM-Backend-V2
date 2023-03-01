@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.like.presentation.dto.req;
 
-import bssm.bsm.domain.board.like.domain.type.Like;
+import bssm.bsm.domain.board.like.domain.enums.Like;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
