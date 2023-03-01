@@ -15,7 +15,7 @@ public class TimetablePk implements Serializable {
     @Column
     private int grade;
 
-    @Column
+    @Column(name = "class_no")
     private int classNo;
 
     public static TimetablePk create(int grade, int classNo) {

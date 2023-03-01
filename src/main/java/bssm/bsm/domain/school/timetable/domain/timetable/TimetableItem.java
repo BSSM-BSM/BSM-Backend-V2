@@ -18,8 +18,8 @@ public class TimetableItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
-            @JoinColumn(name = "grade", insertable = false, updatable = false),
-            @JoinColumn(name = "class_no", insertable = false, updatable = false)
+            @JoinColumn(name = "grade", referencedColumnName = "grade", insertable = false, updatable = false),
+            @JoinColumn(name = "class_no", referencedColumnName = "class_no", insertable = false, updatable = false)
     })
     private Timetable timetable;
 

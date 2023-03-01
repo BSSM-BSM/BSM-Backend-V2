@@ -31,8 +31,8 @@ public class Comment {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "board_id", insertable = false, updatable = false),
-            @JoinColumn(name = "post_id", insertable = false, updatable = false)
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "post_id", referencedColumnName = "id", insertable = false, updatable = false)
     })
     private Post post;
 

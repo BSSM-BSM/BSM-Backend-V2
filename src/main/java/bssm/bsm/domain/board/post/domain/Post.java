@@ -35,8 +35,8 @@ public class Post {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "board_id", insertable = false, updatable = false),
-            @JoinColumn(name = "category_id", insertable = false, updatable = false)
+            @JoinColumn(name = "board_id", referencedColumnName = "board_id", insertable = false, updatable = false),
+            @JoinColumn(name = "category_id", referencedColumnName = "id", insertable = false, updatable = false)
     })
     private PostCategory category;
 

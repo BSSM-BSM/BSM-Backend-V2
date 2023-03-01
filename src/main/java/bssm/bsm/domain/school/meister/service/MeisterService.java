@@ -32,10 +32,9 @@ public class MeisterService {
     private final MeisterInfoFacade meisterInfoFacade;
 
     public MeisterDetailResponse getDetail(User user, MeisterDetailRequest dto) throws IOException {
-        Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo()).orElseThrow(
-                () -> {throw new NotFoundException("학생을 찾을 수 없습니다");}
-        );
-        meisterInfoFacade.viewPermissionCheck(user);
+        Student student = studentRepository.findByGradeAndClassNoAndStudentNo(dto.getGrade(), dto.getClassNo(), dto.getStudentNo())
+                .orElseThrow(() -> {throw new NotFoundException("학생을 찾을 수 없습니다");});
+        meisterInfoFacade.viewPermissionCheck(user, student);
 
         MeisterData meisterData = meisterDataProvider.findOrElseCreateMeisterData(student);
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
@@ -61,11 +60,10 @@ public class MeisterService {
     }
 
     public MeisterResponse get(User user) {
-        MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay()).orElseGet(
-                () -> meisterDataProvider.getAndUpdateMeisterData(
+        MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay())
+                .orElseGet(() -> meisterDataProvider.getAndUpdateMeisterData(
                         meisterDataProvider.findOrElseCreateMeisterData(user.getStudent())
-                )
-        );
+                ));
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
 
         if (meisterInfo.isLoginError()) {

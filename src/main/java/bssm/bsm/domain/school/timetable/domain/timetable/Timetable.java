@@ -19,7 +19,7 @@ public class Timetable {
     @Column(name = "grade", insertable = false, updatable = false)
     private int grade;
 
-    @Column(name = "classNo", insertable = false, updatable = false)
+    @Column(name = "class_no", insertable = false, updatable = false)
     private int classNo;
 
     @Column(nullable = false, length = 6)
