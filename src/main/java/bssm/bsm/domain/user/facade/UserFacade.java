@@ -40,6 +40,11 @@ public class UserFacade {
                 .orElseThrow(NoSuchUserException::new);
     }
 
+    public User findByCodeOrNull(long userCode) {
+        return userRepository.findById(userCode)
+                .orElseGet(() -> null);
+    }
+
     public User findCachedUserByCode(long userCode) {
         return userRedisRepository.findById(userCode)
                 .orElseGet(() -> findAndSaveUserCache(userCode))

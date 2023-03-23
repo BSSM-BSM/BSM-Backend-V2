@@ -8,14 +8,16 @@ import bssm.bsm.domain.user.domain.repository.TeacherRepository;
 import bssm.bsm.domain.user.domain.repository.UserRepository;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
+import bssm.bsm.domain.user.facade.UserFacade;
 import bssm.bsm.global.error.exceptions.InternalServerException;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import leehj050211.bsmOauth.BsmOauth;
-import leehj050211.bsmOauth.dto.response.BsmResourceResponse;
-import leehj050211.bsmOauth.dto.response.BsmStudentResponse;
-import leehj050211.bsmOauth.exceptions.BsmAuthCodeNotFoundException;
-import leehj050211.bsmOauth.exceptions.BsmAuthInvalidClientException;
-import leehj050211.bsmOauth.exceptions.BsmAuthTokenNotFoundException;
+import leehj050211.bsmOauth.dto.resource.BsmStudent;
+import leehj050211.bsmOauth.dto.resource.BsmTeacher;
+import leehj050211.bsmOauth.dto.resource.BsmUserResource;
+import leehj050211.bsmOauth.exception.BsmOAuthCodeNotFoundException;
+import leehj050211.bsmOauth.exception.BsmOAuthInvalidClientException;
+import leehj050211.bsmOauth.exception.BsmOAuthTokenNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +29,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BsmOauthService {
 
+    private final UserFacade userFacade;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final BsmOauth bsmOauth;
 
     @Transactional
-    private User studentSignUp(BsmResourceResponse dto, String oauthToken) {
-        BsmStudentResponse studentDto = dto.getStudent();
+    private User studentSignUp(BsmUserResource resource, String oauthToken) {
+        BsmStudent studentDto = resource.getStudent();
         Student student = studentRepository.findByEnrolledAtAndGradeAndClassNoAndStudentNo(
                 studentDto.getEnrolledAt(),
                 studentDto.getGrade(),
@@ -43,8 +46,8 @@ public class BsmOauthService {
         ).orElseThrow(() -> new NotFoundException("학생을 찾을 수 없습니다"));
 
         User user = User.builder()
-                .code(dto.getUserCode())
-                .nickname(dto.getNickname())
+                .code(resource.getUserCode())
+                .nickname(resource.getNickname())
                 .role(UserRole.STUDENT)
                 .studentId(student.getStudentId())
                 .student(student)
@@ -55,17 +58,17 @@ public class BsmOauthService {
     }
 
     @Transactional
-    private User teacherSignUp(BsmResourceResponse dto, String oauthToken) {
+    private User teacherSignUp(BsmUserResource resource, String oauthToken) {
         Teacher teacher = teacherRepository.save(
                 Teacher.builder()
-                        .email(dto.getEmail())
-                        .name(dto.getTeacher().getName())
+                        .email(resource.getEmail())
+                        .name(resource.getTeacher().getName())
                         .build()
         );
 
         User user = User.builder()
-                .code(dto.getUserCode())
-                .nickname(dto.getNickname())
+                .code(resource.getUserCode())
+                .nickname(resource.getNickname())
                 .role(UserRole.TEACHER)
                 .teacher(teacher)
                 .teacherId(teacher.getTeacherId())
@@ -77,41 +80,44 @@ public class BsmOauthService {
     }
 
     @Transactional
-    private User studentUpdate(BsmResourceResponse dto, User user) {
-        BsmStudentResponse studentDto = dto.getStudent();
+    private User studentUpdate(BsmUserResource resource, User user) {
+        BsmStudent studentDto = resource.getStudent();
         Student student = user.getStudent();
         student.setGrade(studentDto.getGrade());
         student.setClassNo(studentDto.getClassNo());
         student.setStudentNo(studentDto.getStudentNo());
         student.setEnrolledAt(studentDto.getEnrolledAt());
-        user.setNickname(dto.getNickname());
+        user.setNickname(resource.getNickname());
         return userRepository.save(user);
     }
 
     @Transactional
-    private User teacherUpdate(BsmResourceResponse dto, User user) {
-        user.setNickname(dto.getNickname());
+    private User teacherUpdate(BsmUserResource resource, User user) {
+        BsmTeacher  teacherDto = resource.getTeacher();
+        Teacher teacher = user.getTeacher();
+        teacher.update(teacherDto.getName(), resource.getEmail());
+        user.setNickname(resource.getNickname());
         return userRepository.save(user);
     }
 
     public User bsmOauth(String authCode) throws IOException {
         String token;
-        BsmResourceResponse resource;
+        BsmUserResource resource;
         try {
             token = bsmOauth.getToken(authCode);
             resource = bsmOauth.getResource(token);
-        } catch (BsmAuthCodeNotFoundException e) {
+        } catch (BsmOAuthCodeNotFoundException e) {
             throw new NotFoundException("인증 코드를 찾을 수 없습니다");
-        } catch (BsmAuthTokenNotFoundException e) {
+        } catch (BsmOAuthTokenNotFoundException e) {
             throw new NotFoundException("토큰을 찾을 수 없습니다");
-        } catch (BsmAuthInvalidClientException e) {
+        } catch (BsmOAuthInvalidClientException e) {
             throw new InternalServerException();
         }
 
-        Optional<User> user = userRepository.findById(resource.getUserCode());
+        User user = userFacade.findByCodeOrNull(resource.getUserCode());
 
         // SignUp
-        if (user.isEmpty()) {
+        if (user == null) {
             return switch (resource.getRole()) {
                 case STUDENT -> studentSignUp(resource, token);
                 case TEACHER -> teacherSignUp(resource, token);
@@ -119,8 +125,8 @@ public class BsmOauthService {
         }
         // Update
         return switch (resource.getRole()) {
-            case STUDENT -> studentUpdate(resource, user.get());
-            case TEACHER -> teacherUpdate(resource, user.get());
+            case STUDENT -> studentUpdate(resource, user);
+            case TEACHER -> teacherUpdate(resource, user);
         };
     }
 

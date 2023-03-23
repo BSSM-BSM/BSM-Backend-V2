@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, CommentPk> {
 
     @EntityGraph(attributePaths = {"childComments", "writer"})
-    List<Comment> findAllByPostAndParentIdIsNull(Post post);
+    List<Comment> findAllByPostAndParentIdIsNullOrderByPkId(Post post);
 
     Optional<Comment> findByPkIdAndPost(long id, Post post);
 

@@ -21,7 +21,7 @@ public class CommentProvider {
     }
 
     public List<Comment> findCommentTree(Post post) {
-        return commentRepository.findAllByPostAndParentIdIsNull(post);
+        return commentRepository.findAllByPostAndParentIdIsNullOrderByPkId(post);
     }
 
     public long getNewCommentId(Post post) {

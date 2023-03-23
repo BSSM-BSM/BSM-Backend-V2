@@ -30,6 +30,11 @@ public class Teacher {
         this.email = email;
     }
 
+    public void update(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
     public TeacherRes toInfo() {
         return TeacherRes.builder()
                 .name(name)
