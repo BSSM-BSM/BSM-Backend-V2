@@ -5,10 +5,10 @@
 ## 프로젝트 소개
 BSM(부산소마고 지원 서비스)는 학교 홈페이지, 마이스터 인증제 사이트 등 그동안 여러 곳에 흩어져있던 학교 생활에 도움이되는 기능들을 하나의 플랫폼에서 제공하기 위해 만들어진 학교 통합 지원서비스입니다.
 
-서버는 [저(이현준)](https://github.com/leehj050211)의 집에서 라즈베리파이를 이용하여 직접 호스팅하고 있습니다.
+서버는 [저(이현준)](https://github.com/leehj050211)의 집에서 개인 서버를 이용하여 직접 개발 및 호스팅하고 있습니다.
 
-구글 애널리틱스 기준으로 하루 평균 90명 정도가 이 서비스를 사용하며  
-가입자수는 2022년 10월 24일 기준으로 111명이 가입 중입니다.
+구글 애널리틱스 기준으로 서비스 하루 평균 사용자는 160명 정도이며  
+가입자수는 2023년 3월 21일 기준으로 185명이 가입 중입니다.
 
 ## 기능 소개
 
@@ -23,13 +23,15 @@ BSM(부산소마고 지원 서비스)는 학교 홈페이지, 마이스터 인�
     - 이모티콘
 - BSM OAuth를 통한 간편 로그인
 
-## 결과 화면
+## 실제 배포된 서비스 화면
 ![메인 화면](./README_RESOURCES/1.png)
 ![시간표 화면](./README_RESOURCES/2.png)
 ![급식 화면](./README_RESOURCES/3.png)
 ![급식 알림 화면](./README_RESOURCES/4.png)
-![마이스터 점수 및 상벌점 화면](./README_RESOURCES/5.png)
-![마이스터 점수 랭킹 화면](./README_RESOURCES/6.png)
-![커뮤니티 화면](./README_RESOURCES/7.png)
-![게시글 화면](./README_RESOURCES/8.png)
-![글 작성 화면](./README_RESOURCES/9.png)
+![마이스터 점수 및 상벌점 화면 1](./README_RESOURCES/5.png)
+![마이스터 점수 및 상벌점 화면 2](./README_RESOURCES/6.png)
+![마이스터 점수 랭킹 화면](./README_RESOURCES/7.png)
+![커뮤니티 화면](./README_RESOURCES/8.png)
+![게시글 화면](./README_RESOURCES/9.png)
+![게시글 댓글 화면](./README_RESOURCES/10.png)
+![글 작성 화면](./README_RESOURCES/11.png)
