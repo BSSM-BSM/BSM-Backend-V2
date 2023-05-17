@@ -1,6 +1,7 @@
 package bssm.bsm.domain.board.emoticon.presentation;
 
 import bssm.bsm.domain.board.emoticon.presentation.dto.req.EmoticonUploadReq;
+import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonItemRes;
 import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonRes;
 import bssm.bsm.domain.board.emoticon.service.EmoticonService;
 import bssm.bsm.domain.board.emoticon.service.EmoticonUploadService;
@@ -21,7 +22,7 @@ public class EmoticonController {
     private final CurrentUser currentUser;
 
     @GetMapping("{id}")
-    public EmoticonRes getEmoticon(@PathVariable long id) {
+    public List<EmoticonItemRes> getEmoticon(@PathVariable long id) {
         return emoticonService.getEmoticon(id);
     }
 

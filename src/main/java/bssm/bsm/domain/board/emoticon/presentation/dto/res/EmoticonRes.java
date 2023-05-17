@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Builder
@@ -14,5 +13,4 @@ public class EmoticonRes {
     private String name;
     private String description;
     private LocalDateTime createdAt;
-    private List<EmoticonItemRes> items;
 }

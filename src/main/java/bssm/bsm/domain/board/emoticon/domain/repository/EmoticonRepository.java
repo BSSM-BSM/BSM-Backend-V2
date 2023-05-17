@@ -11,5 +11,5 @@ public interface EmoticonRepository extends JpaRepository<Emoticon, Long> {
     boolean existsByName(String name);
 
     @EntityGraph(attributePaths = "items")
-    List<Emoticon> findAllByActiveAndDeleted(boolean active, boolean deleted);
+    List<Emoticon> findAllByActiveAndDeletedOrderByTotalViewDesc(boolean active, boolean deleted);
 }

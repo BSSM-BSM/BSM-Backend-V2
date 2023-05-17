@@ -18,11 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmoticonAdminService {
 
+    private final EmoticonProvider emoticonProvider;
+
     private final EmoticonRepository emoticonRepository;
 
     @Transactional(readOnly = true)
     public List<EmoticonRes> getInactiveEmoticonList() {
-        List<Emoticon> emoticonList = emoticonRepository.findAllByActiveAndDeleted(false, false);
+        List<Emoticon> emoticonList = emoticonProvider.findAllEmoticon();
         return emoticonList.stream()
                 .map(Emoticon::toResponse)
                 .toList();

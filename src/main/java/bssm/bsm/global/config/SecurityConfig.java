@@ -2,7 +2,7 @@ package bssm.bsm.global.config;
 
 import bssm.bsm.global.auth.AuthFilterExceptionHandler;
 import bssm.bsm.global.error.exceptions.ForbiddenException;
-import bssm.bsm.global.jwt.JwtAuthFilter;
+import bssm.bsm.global.auth.AuthFilter;
 import bssm.bsm.global.error.HttpErrorResponse;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final AuthFilter jwtAuthFilter;
     private final AuthFilterExceptionHandler authFilterExceptionHandler;
     private final ObjectMapper objectMapper;
 

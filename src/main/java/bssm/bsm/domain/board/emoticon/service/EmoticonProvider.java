@@ -23,8 +23,12 @@ public class EmoticonProvider {
                 .orElseThrow(NoSuchEmoticonException::new);
     }
 
+    public List<Emoticon> findAllEmoticon() {
+        return emoticonRepository.findAllByActiveAndDeletedOrderByTotalViewDesc(false, false);
+    }
+
     public List<Emoticon> findAllActiveEmoticon() {
-        return emoticonRepository.findAllByActiveAndDeleted(true, false);
+        return emoticonRepository.findAllByActiveAndDeletedOrderByTotalViewDesc(true, false);
     }
 
     public void duplicateEmoticonNameCheck(String name) {

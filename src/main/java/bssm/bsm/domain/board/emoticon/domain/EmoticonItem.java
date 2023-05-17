@@ -1,8 +1,6 @@
 package bssm.bsm.domain.board.emoticon.domain;
 
-import bssm.bsm.domain.board.emoticon.presentation.dto.res.EmoticonItemRes;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,14 +21,6 @@ public class EmoticonItem {
 
     @Column(length = 4)
     private String type;
-
-    public EmoticonItemRes toResponse() {
-        return EmoticonItemRes.builder()
-                .id(emoticon.getId())
-                .idx(pk.getIdx())
-                .type(type)
-                .build();
-    }
 
     public static EmoticonItem create(Emoticon emoticon, int idx, String fileExt) {
         EmoticonItem emoticonItem = new EmoticonItem();

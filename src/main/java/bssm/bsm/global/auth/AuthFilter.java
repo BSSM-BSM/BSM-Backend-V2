@@ -1,8 +1,8 @@
-package bssm.bsm.global.jwt;
+package bssm.bsm.global.auth;
 
 import bssm.bsm.domain.user.facade.UserFacade;
-import bssm.bsm.global.auth.AuthDetailsService;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
+import bssm.bsm.global.jwt.JwtProvider;
 import bssm.bsm.global.utils.CookieProvider;
 import bssm.bsm.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class AuthFilter extends OncePerRequestFilter {
 
     private final UserFacade userFacade;
     private final JwtProvider jwtUtil;
@@ -77,6 +77,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // 쿠키 생성 및 적용
             ResponseCookie newTokenCookie = cookieProvider.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
             res.addHeader(HttpHeaders.SET_COOKIE, newTokenCookie.toString());
+            res.addHeader(HttpHeaders.SET_COOKIE, ResponseCookie.from("bsm_refresh_token", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .domain("bssm.kro.kr")
+                    .maxAge(0)
+                    .build().toString());
 
             authentication(newToken);
         } catch (Exception e) {

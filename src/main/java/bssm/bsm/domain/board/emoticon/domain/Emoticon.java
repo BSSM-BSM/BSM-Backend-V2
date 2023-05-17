@@ -22,6 +22,9 @@ public class Emoticon extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private Long totalView;
+
     @Column(length = 12)
     private String name;
 
@@ -46,6 +49,7 @@ public class Emoticon extends BaseTimeEntity {
 
     public static Emoticon create(String name, String description, User user) {
         Emoticon emoticon = new Emoticon();
+        emoticon.totalView = 0L;
         emoticon.name = name;
         emoticon.description = description;
         emoticon.user = user;
@@ -64,15 +68,16 @@ public class Emoticon extends BaseTimeEntity {
         this.deleteReason = deleteReason;
     }
 
+    public void incrementTotalView() {
+        this.totalView++;
+    }
+
     public EmoticonRes toResponse() {
         return EmoticonRes.builder()
                 .id(id)
                 .name(name)
                 .description(description)
                 .createdAt(getCreatedAt())
-                .items(items.stream()
-                        .map(EmoticonItem::toResponse)
-                        .toList())
                 .build();
     }
 }
