@@ -1,0 +1,37 @@
+package bssm.bsm.domain.board.lostfound.presentation;
+
+import bssm.bsm.domain.board.lostfound.domain.LostFound;
+import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundCompactRes;
+import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
+import bssm.bsm.domain.board.lostfound.service.LostFoundInformationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("lostfound/find")
+@RequiredArgsConstructor
+public class LostFoundInformationController {
+
+    private final LostFoundInformationService lostFoundInformationService;
+
+    @GetMapping("inprogess")
+    public List<LostFoundCompactRes> findAllInProgress() {
+        return lostFoundInformationService.findByProcess(Process.IN_PROGRESS);
+    }
+
+    @GetMapping("finished")
+    public List<LostFoundCompactRes> findAllFinished() {
+        return lostFoundInformationService.findByProcess(Process.FINISHED);
+    }
+
+    @GetMapping("/{id}")
+    public LostFoundRes findOne(@PathVariable Long id) {
+        return lostFoundInformationService.findOne(id);
+    }
+}

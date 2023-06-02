@@ -17,7 +17,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class LostFoundCreateService {
+public class LostFoundDefinitionService {
 
     private final LostFoundRepository lostFoundRepository;
     private final CurrentUser currentUser;

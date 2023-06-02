@@ -34,7 +34,7 @@ public class LostFound {
     private Process process;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "code")
+    @JoinColumn(name = "code", nullable = false)
     private User foundUser;
 
     @Builder

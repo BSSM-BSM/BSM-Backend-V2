@@ -46,7 +46,4 @@ public class LostFoundRes {
         this.foundUser = new UserRes(newLostFound.getFoundUser());
     }
 
-    public static void main(String[] args) {
-        
-    }
 }
