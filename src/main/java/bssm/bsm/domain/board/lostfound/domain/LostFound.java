@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,8 +38,12 @@ public class LostFound {
     @JoinColumn(name = "code", nullable = false)
     private User foundUser;
 
+    @CreatedDate
+    private LocalDateTime createdLocalDateTime;
+
     @Builder
-    public LostFound(String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user) {
+    public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime) {
+        this.id = id;
         this.objectName = objectName;
         this.imgSrc = imgSrc;
         this.location = location;
@@ -46,6 +51,7 @@ public class LostFound {
         this.description = description;
         this.process = process;
         this.foundUser = user;
+        this.createdLocalDateTime = createdLocalDateTime;
     }
 
     public void updateProcess(Process process) {

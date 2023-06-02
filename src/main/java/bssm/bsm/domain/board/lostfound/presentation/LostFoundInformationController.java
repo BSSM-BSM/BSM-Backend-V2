@@ -20,7 +20,7 @@ public class LostFoundInformationController {
 
     private final LostFoundInformationService lostFoundInformationService;
 
-    @GetMapping("inprogess")
+    @GetMapping("inprogress")
     public List<LostFoundCompactRes> findAllInProgress() {
         return lostFoundInformationService.findByProcess(Process.IN_PROGRESS);
     }

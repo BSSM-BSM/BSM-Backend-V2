@@ -22,6 +22,7 @@ public class CustomLostFoundRepositoryImpl implements CustomLostFoundRepository 
                 .select(Projections.constructor(LostFoundCompactRes.class, lostFound.id, lostFound.objectName, lostFound.imgSrc, lostFound.process))
                 .from(lostFound)
                 .where(lostFound.process.eq(process))
+                .orderBy(lostFound.createdLocalDateTime.desc())
                 .fetch();
     }
 }
