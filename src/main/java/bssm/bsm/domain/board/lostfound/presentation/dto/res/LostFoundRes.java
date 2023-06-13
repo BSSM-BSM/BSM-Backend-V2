@@ -4,30 +4,19 @@ import bssm.bsm.domain.board.lostfound.domain.LostFound;
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-
+@Getter
 public class LostFoundRes {
-    @JsonProperty
+
     private final Long id;
-
-    @JsonProperty
     private final String objectName;
-
-    @JsonProperty
     private final String imgSrc;
-
-    @JsonProperty
     private final String location;
-
-    @JsonProperty
     private final LocalDateTime findDateTime;
-
-    @JsonProperty
     private final String description;
-
-    @JsonProperty
     private final Process process;
 
     @JsonProperty
