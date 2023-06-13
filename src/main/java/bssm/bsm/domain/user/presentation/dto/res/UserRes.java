@@ -50,4 +50,9 @@ public class UserRes {
         userRes.nickname = "ㅇㅇ(" + anonymousId + ")";
         return userRes;
     }
+
+    public UserRes(User user) {
+        this.code = user.getCode();
+        this.nickname = user.getNickname();
+    }
 }
