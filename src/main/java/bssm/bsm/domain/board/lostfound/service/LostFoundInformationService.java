@@ -8,12 +8,13 @@ import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
 import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class LostFoundInformationService {
 
     private final LostFoundRepository lostFoundRepository;

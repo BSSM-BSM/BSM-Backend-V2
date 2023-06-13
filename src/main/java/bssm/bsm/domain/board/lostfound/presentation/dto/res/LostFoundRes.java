@@ -1,9 +1,8 @@
 package bssm.bsm.domain.board.lostfound.presentation.dto.res;
 
-import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import bssm.bsm.domain.board.lostfound.domain.LostFound;
+import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,6 @@ public class LostFoundRes {
     private final String location;
 
     @JsonProperty
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private final LocalDateTime findDateTime;
 
     @JsonProperty

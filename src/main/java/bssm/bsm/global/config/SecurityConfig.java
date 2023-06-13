@@ -69,6 +69,8 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/meal/*", "/timetable/*/*", "/banner").permitAll()
                 .antMatchers(HttpMethod.POST, "/meister/detail").authenticated()
                 .antMatchers(HttpMethod.GET, "/meister/ranking/*").authenticated()
+                .antMatchers(HttpMethod.POST, "/lost-found/def/**").authenticated()
+                .antMatchers().authenticated()
                 .antMatchers("/meister/**").hasAuthority("STUDENT")
                 .antMatchers(HttpMethod.GET, "/board/**", "/post/**", "/comment/**").permitAll()
                 .anyRequest().authenticated()

@@ -1,14 +1,14 @@
 package bssm.bsm.domain.board.lostfound.service;
 
+import bssm.bsm.domain.board.lostfound.domain.LostFound;
+import bssm.bsm.domain.board.lostfound.domain.repository.LostFoundRepository;
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.exception.NoSuchLostFoundException;
+import bssm.bsm.domain.board.lostfound.exception.NotCreatorException;
 import bssm.bsm.domain.board.lostfound.presentation.dto.req.LostFoundReq;
 import bssm.bsm.domain.board.lostfound.presentation.dto.req.UpdateProcessReq;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
-import bssm.bsm.domain.board.lostfound.domain.LostFound;
-import bssm.bsm.domain.board.lostfound.domain.repository.LostFoundRepository;
 import bssm.bsm.global.auth.CurrentUser;
-import bssm.bsm.global.error.exceptions.NotFoundException;
-import bssm.bsm.global.error.exceptions.UnAuthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,10 +45,10 @@ public class LostFoundDefinitionService {
     @Transactional
     public LostFoundRes updateProcess(Long lostFoundId, UpdateProcessReq updateProcessReq) {
         LostFound lostFound = lostFoundRepository.findById(lostFoundId)
-                .orElseThrow(() -> new NotFoundException("cannot find lostFound"));
+                .orElseThrow(NoSuchLostFoundException::new);
 
         if (!Objects.equals(currentUser.getUser().getCode(), lostFound.getFoundUser().getCode())) {
-            throw new UnAuthorizedException("you are not user create this");
+            throw new NotCreatorException();
         }
 
         lostFound.updateProcess(updateProcessReq.getProcess());

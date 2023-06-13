@@ -1,6 +1,5 @@
 package bssm.bsm.domain.board.lostfound.presentation.dto.res;
 
-import bssm.bsm.domain.board.lostfound.domain.LostFound;
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

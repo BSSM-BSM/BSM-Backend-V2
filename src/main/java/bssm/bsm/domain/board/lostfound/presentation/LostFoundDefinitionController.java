@@ -7,19 +7,21 @@ import bssm.bsm.domain.board.lostfound.service.LostFoundDefinitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
-@RequestMapping("lostfound")
+@RequestMapping("lost-found/def")
 @RequiredArgsConstructor
 public class LostFoundDefinitionController {
     private final LostFoundDefinitionService lostFoundDefinitionService;
 
     @PostMapping
-    public LostFoundRes create(@RequestBody LostFoundReq lostFoundReq) {
+    public LostFoundRes create(@Valid @RequestBody LostFoundReq lostFoundReq) {
         return lostFoundDefinitionService.create(lostFoundReq);
     }
 
     @PutMapping("/update/{id}")
-    public LostFoundRes updateProcess(@PathVariable Long id, @RequestBody UpdateProcessReq updateProcessReq) {
+    public LostFoundRes updateProcess(@PathVariable Long id, @Valid @RequestBody UpdateProcessReq updateProcessReq) {
         return lostFoundDefinitionService.updateProcess(id, updateProcessReq);
     }
 }

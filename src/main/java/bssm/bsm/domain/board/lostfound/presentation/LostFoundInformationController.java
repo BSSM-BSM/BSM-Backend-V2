@@ -1,6 +1,5 @@
 package bssm.bsm.domain.board.lostfound.presentation;
 
-import bssm.bsm.domain.board.lostfound.domain.LostFound;
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundCompactRes;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
@@ -14,20 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("lostfound/find")
+@RequestMapping("lost-found/find")
 @RequiredArgsConstructor
 public class LostFoundInformationController {
 
     private final LostFoundInformationService lostFoundInformationService;
 
-    @GetMapping("inprogress")
-    public List<LostFoundCompactRes> findAllInProgress() {
-        return lostFoundInformationService.findByProcess(Process.IN_PROGRESS);
-    }
-
-    @GetMapping("finished")
-    public List<LostFoundCompactRes> findAllFinished() {
-        return lostFoundInformationService.findByProcess(Process.FINISHED);
+    @GetMapping("process/{process}")
+    public List<LostFoundCompactRes> findAllByProcess(@PathVariable Process process) {
+        return lostFoundInformationService.findByProcess(process);
     }
 
     @GetMapping("/{id}")

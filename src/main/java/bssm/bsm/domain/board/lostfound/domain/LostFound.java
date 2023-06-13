@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LostFound {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +25,7 @@ public class LostFound {
 
     private String imgSrc;
 
-    @Column( length = 25)
+    @Column(length = 25)
     private String location;
 
     private LocalDateTime findDateTime;
