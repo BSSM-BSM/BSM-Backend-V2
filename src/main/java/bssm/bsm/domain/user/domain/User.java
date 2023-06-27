@@ -58,7 +58,7 @@ public class User extends BaseTimeEntity {
         this.oauthToken = oauthToken;
     }
 
-    public void setNickname(String nickname) {
+    public void update(String nickname) {
         this.nickname = nickname;
     }
 

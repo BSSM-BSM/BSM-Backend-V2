@@ -23,11 +23,11 @@ public class Teacher {
     @Column(length = 32)
     private String email;
 
-    @Builder
-    public Teacher(Long teacherId, String name, String email) {
-        this.teacherId = teacherId;
-        this.name = name;
-        this.email = email;
+    public static Teacher create(String name, String email) {
+        Teacher teacher = new Teacher();
+        teacher.name = name;
+        teacher.email = email;
+        return teacher;
     }
 
     public void update(String name, String email) {

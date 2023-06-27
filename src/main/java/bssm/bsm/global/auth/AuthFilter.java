@@ -71,20 +71,11 @@ public class AuthFilter extends OncePerRequestFilter {
             String refreshToken = jwtUtil.getRefreshToken(refreshTokenCookie.getValue());
             // DB에서 사용할 수 있는지 확인
             User user = userFacade.findByRefreshToken(refreshToken);
-
             // 새 엑세스 토큰 발급
             String newToken = jwtUtil.createAccessToken(user);
             // 쿠키 생성 및 적용
             ResponseCookie newTokenCookie = cookieProvider.createCookie(TOKEN_COOKIE_NAME, newToken, JWT_TOKEN_MAX_TIME);
             res.addHeader(HttpHeaders.SET_COOKIE, newTokenCookie.toString());
-            res.addHeader(HttpHeaders.SET_COOKIE, ResponseCookie.from("bsm_refresh_token", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .sameSite("None")
-                    .path("/")
-                    .domain("bssm.kro.kr")
-                    .maxAge(0)
-                    .build().toString());
 
             authentication(newToken);
         } catch (Exception e) {

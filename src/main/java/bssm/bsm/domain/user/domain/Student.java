@@ -48,19 +48,10 @@ public class Student {
         this.user = user;
     }
 
-    public void setEnrolledAt(int enrolledAt) {
+    public void update(int enrolledAt, int grade, int classNo, int studentNo) {
         this.enrolledAt = enrolledAt;
-    }
-
-    public void setGrade(int grade) {
         this.grade = grade;
-    }
-
-    public void setClassNo(int classNo) {
         this.classNo = classNo;
-    }
-
-    public void setStudentNo(int studentNo) {
         this.studentNo = studentNo;
     }
 
