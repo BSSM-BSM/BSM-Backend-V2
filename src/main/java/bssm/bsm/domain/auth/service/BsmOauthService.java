@@ -6,8 +6,6 @@ import bssm.bsm.domain.user.domain.Teacher;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.repository.TeacherRepository;
 import bssm.bsm.domain.user.domain.repository.UserRepository;
-import bssm.bsm.domain.user.domain.type.UserLevel;
-import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.domain.user.facade.StudentFacade;
 import bssm.bsm.domain.user.facade.UserFacade;
 import bssm.bsm.global.error.exceptions.InternalServerException;
@@ -86,15 +84,11 @@ public class BsmOauthService {
                 studentDto.getClassNo(),
                 studentDto.getStudentNo());
 
-        User user = User.builder()
-                .code(resource.getUserCode())
-                .nickname(resource.getNickname())
-                .role(UserRole.STUDENT)
-                .studentId(student.getStudentId())
-                .student(student)
-                .level(UserLevel.USER)
-                .oauthToken(oauthToken)
-                .build();
+        User user = User.ofStudent(
+                student,
+                resource.getUserCode(),
+                resource.getNickname(),
+                oauthToken);
         return userRepository.save(user);
     }
 
@@ -102,16 +96,11 @@ public class BsmOauthService {
         Teacher teacher = Teacher.create(resource.getEmail(), resource.getTeacher().getName());
         teacher = teacherRepository.save(teacher);
 
-        User user = User.builder()
-                .code(resource.getUserCode())
-                .nickname(resource.getNickname())
-                .role(UserRole.TEACHER)
-                .teacher(teacher)
-                .teacherId(teacher.getTeacherId())
-                .level(UserLevel.USER)
-                .oauthToken(oauthToken)
-                .build();
-
+        User user = User.ofTeacher(
+                teacher,
+                resource.getUserCode(),
+                resource.getNickname(),
+                oauthToken);
         return userRepository.save(user);
     }
 

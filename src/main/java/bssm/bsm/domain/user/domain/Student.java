@@ -1,6 +1,5 @@
 package bssm.bsm.domain.user.domain;
 
-import bssm.bsm.domain.user.presentation.dto.res.StudentRes;
 import lombok.*;
 
 import javax.persistence.*;
@@ -53,16 +52,6 @@ public class Student {
         this.grade = grade;
         this.classNo = classNo;
         this.studentNo = studentNo;
-    }
-
-    public StudentRes toInfo() {
-        return StudentRes.builder()
-                .name(name)
-                .enrolledAt(enrolledAt)
-                .grade(grade)
-                .classNo(classNo)
-                .studentNo(studentNo)
-                .build();
     }
 
 }

@@ -23,31 +23,18 @@ public class UserCache extends BaseTimeEntity {
     private UserLevel level;
     private String oauthToken;
 
-    @Builder
-    public UserCache(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken, int point) {
-        this.code = code;
-        this.nickname = nickname;
-        this.role = role;
-        this.studentId = studentId;
-        this.student = student;
-        this.teacherId = teacherId;
-        this.teacher = teacher;
-        this.level = level;
-        this.oauthToken = oauthToken;
-    }
-
-    public User toUser() {
-        return User.builder()
-                .code(code)
-                .nickname(nickname)
-                .role(role)
-                .studentId(studentId)
-                .student(student)
-                .teacherId(teacherId)
-                .teacher(teacher)
-                .level(level)
-                .oauthToken(oauthToken)
-                .build();
+    public static UserCache ofUser(User user) {
+        UserCache userCache = new UserCache();
+        userCache.code = user.getCode();
+        userCache.nickname = user.getNickname();
+        userCache.role = user.getRole();
+        userCache.studentId = user.getStudentId();
+        userCache.student = user.getStudent();
+        userCache.teacherId = user.getTeacherId();
+        userCache.teacher = user.getTeacher();
+        userCache.level = user.getLevel();
+        userCache.oauthToken = user.getOauthToken();
+        return userCache;
     }
 
 }

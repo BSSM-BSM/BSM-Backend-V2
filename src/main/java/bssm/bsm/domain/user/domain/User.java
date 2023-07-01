@@ -2,7 +2,7 @@ package bssm.bsm.domain.user.domain;
 
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
-import bssm.bsm.domain.user.presentation.dto.res.UserDetailRes;
+import bssm.bsm.domain.user.exception.NoSuchUserEmailException;
 import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -45,54 +45,57 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 32)
     private String oauthToken;
 
-    @Builder
-    public User(Long code, String nickname, UserRole role, String studentId, Student student, Long teacherId, Teacher teacher, UserLevel level, String oauthToken) {
-        this.code = code;
-        this.nickname = nickname;
-        this.role = role;
-        this.studentId = studentId;
-        this.student = student;
-        this.teacherId = teacherId;
-        this.teacher = teacher;
-        this.level = level;
-        this.oauthToken = oauthToken;
+    public String findEmailOrNull() {
+        if (this.role == UserRole.STUDENT) {
+            return this.student.getEmail();
+        }
+        if (this.role == UserRole.TEACHER) {
+            return this.teacher.getEmail();
+        }
+        throw new NoSuchUserEmailException();
+    }
+
+    public static User ofNormal(Long code, String nickname, String oauthToken) {
+        User user = new User();
+        user.code = code;
+        user.nickname = nickname;
+        user.level = UserLevel.USER;
+        user.oauthToken = oauthToken;
+        return user;
     }
 
     public void update(String nickname) {
         this.nickname = nickname;
     }
 
-    public UserDetailRes toUserInfoResponse() {
-        UserDetailRes.UserDetailResBuilder builder = UserDetailRes.builder()
-                .code(code)
-                .role(role)
-                .level(level.getValue())
-                .nickname(nickname);
-
-        return (
-            switch (role) {
-                case STUDENT -> builder
-                        .email(student.getEmail())
-                        .student(student.toInfo());
-                case TEACHER -> builder
-                        .email(teacher.getEmail())
-                        .teacher(teacher.toInfo());
-            }
-        ).build();
+    public static User ofStudent(Student student, Long code, String nickname, String oauthToken) {
+        User user = ofNormal(code, nickname, oauthToken);
+        user.student = student;
+        user.studentId = student.getStudentId();
+        user.role = UserRole.STUDENT;
+        return user;
     }
 
-    public UserCache toUserCache() {
-        return UserCache.builder()
-                .code(code)
-                .nickname(nickname)
-                .role(role)
-                .studentId(studentId)
-                .student(student)
-                .teacherId(teacherId)
-                .teacher(teacher)
-                .level(level)
-                .oauthToken(oauthToken)
-                .build();
+    public static User ofTeacher(Teacher teacher, Long code, String nickname, String oauthToken) {
+        User user = ofNormal(code, nickname, oauthToken);
+        user.teacher = teacher;
+        user.teacherId = teacher.getTeacherId();
+        user.role = UserRole.TEACHER;
+        return user;
+    }
+
+    public static User ofCache(UserCache userCache) {
+        User user = new User();
+        user.code = userCache.getCode();
+        user.nickname = userCache.getNickname();
+        user.role = userCache.getRole();
+        user.studentId = userCache.getStudentId();
+        user.student = userCache.getStudent();
+        user.teacherId = userCache.getTeacherId();
+        user.teacher = userCache.getTeacher();
+        user.level = userCache.getLevel();
+        user.oauthToken = userCache.getOauthToken();
+        return user;
     }
 
 }

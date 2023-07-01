@@ -46,19 +46,19 @@ public class UserFacade {
     }
 
     public User findCachedUserByCode(long userCode) {
-        return userRedisRepository.findById(userCode)
-                .orElseGet(() -> findAndSaveUserCache(userCode))
-                .toUser();
+        UserCache userCache = userRedisRepository.findById(userCode)
+                .orElseGet(() -> findAndSaveUserCache(userCode));
+        return User.ofCache(userCache);
     }
 
     public void saveUserCache(User user) {
-        userRedisRepository.save(user.toUserCache());
+        userRedisRepository.save(UserCache.ofUser(user));
     }
 
     private UserCache findAndSaveUserCache(long userCode) {
         User user = findByCode(userCode);
         saveUserCache(user);
-        return user.toUserCache();
+        return UserCache.ofUser(user);
     }
 
 }
