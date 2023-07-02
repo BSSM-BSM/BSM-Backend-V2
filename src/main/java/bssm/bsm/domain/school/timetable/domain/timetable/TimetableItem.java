@@ -1,9 +1,18 @@
 package bssm.bsm.domain.school.timetable.domain.timetable;
 
 import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import java.sql.Time;
 
 @Getter

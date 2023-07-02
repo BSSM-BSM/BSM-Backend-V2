@@ -1,9 +1,12 @@
 package bssm.bsm.domain.school.timetable.domain.manage;
 
 import bssm.bsm.domain.school.timetable.domain.TimetableDayType;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Getter

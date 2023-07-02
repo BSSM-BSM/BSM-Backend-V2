@@ -1,11 +1,9 @@
 package bssm.bsm.domain.school.meister.presentation.dto.request;
 
-import lombok.*;
+
+import lombok.Getter;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class MeisterDetailRequest {
 
     private int grade;

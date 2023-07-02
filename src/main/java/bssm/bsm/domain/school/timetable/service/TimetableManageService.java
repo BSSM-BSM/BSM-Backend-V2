@@ -5,7 +5,11 @@ import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageRepository;
 import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import bssm.bsm.domain.school.timetable.presentation.dto.req.*;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.ApplyTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.CreateTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.FindTimetableReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableListReq;
+import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableListRes;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +20,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.*;
+import java.util.List;
 
 @Service
 @Validated

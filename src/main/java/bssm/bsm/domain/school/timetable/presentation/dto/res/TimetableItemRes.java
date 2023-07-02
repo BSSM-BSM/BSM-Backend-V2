@@ -2,7 +2,8 @@ package bssm.bsm.domain.school.timetable.presentation.dto.res;
 
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import bssm.bsm.domain.school.timetable.domain.timetable.TimetableItem;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 

@@ -5,7 +5,12 @@ import bssm.bsm.domain.school.meister.presentation.dto.request.UpdateMeisterPriv
 import bssm.bsm.domain.school.meister.presentation.dto.response.MeisterRankingResponse;
 import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

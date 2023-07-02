@@ -6,7 +6,10 @@ import bssm.bsm.domain.school.timetable.domain.timetable.Timetable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor

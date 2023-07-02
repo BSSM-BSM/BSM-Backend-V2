@@ -1,6 +1,8 @@
 package bssm.bsm.domain.school.timetable.domain.timetable;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

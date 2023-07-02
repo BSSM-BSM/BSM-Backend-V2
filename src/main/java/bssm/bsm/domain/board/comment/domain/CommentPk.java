@@ -1,14 +1,15 @@
 package bssm.bsm.domain.board.comment.domain;
 
 import bssm.bsm.domain.board.post.domain.Post;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.io.Serializable;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Embeddable
 @NoArgsConstructor
 public class CommentPk implements Serializable {
 

@@ -5,10 +5,15 @@ import bssm.bsm.domain.board.comment.presentation.dto.req.FindCommentTreeReq;
 import bssm.bsm.domain.board.comment.service.CommentService;
 import bssm.bsm.domain.board.comment.presentation.dto.req.WriteCommentReq;
 import bssm.bsm.domain.board.comment.presentation.dto.res.CommentRes;
-import bssm.bsm.domain.board.post.presentation.dto.req.FindPostReq;
 import bssm.bsm.global.auth.CurrentUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;

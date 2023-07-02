@@ -5,10 +5,14 @@ import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.service.LikeProvider;
 import bssm.bsm.domain.board.post.domain.Post;
-import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToModifyPostException;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToWritePostOnBoardException;
-import bssm.bsm.domain.board.post.presentation.dto.req.*;
+import bssm.bsm.domain.board.post.presentation.dto.req.DeletePostReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.FindPostListReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.FindPostReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.FindRecentPostListReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.UpdatePostReq;
+import bssm.bsm.domain.board.post.presentation.dto.req.WritePostReq;
 import bssm.bsm.domain.board.post.presentation.dto.res.PostListRes;
 import bssm.bsm.domain.board.post.presentation.dto.res.DetailPostRes;
 import bssm.bsm.domain.board.post.domain.repository.PostRepository;
@@ -22,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @Service
 @Validated
