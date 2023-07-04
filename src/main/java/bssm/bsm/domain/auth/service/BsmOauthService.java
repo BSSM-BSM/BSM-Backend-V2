@@ -59,7 +59,7 @@ public class BsmOauthService {
         if (Objects.equals(resource.getRole(), BsmUserRole.STUDENT)) {
             studentUpdate(resource, user.getStudent());
         }
-        if (Objects.equals(resource.getRole(), BsmUserRole.STUDENT)) {
+        if (Objects.equals(resource.getRole(), BsmUserRole.TEACHER)) {
             teacherUpdate(resource, user.getTeacher());
         }
         user.update(resource.getNickname());
@@ -70,7 +70,7 @@ public class BsmOauthService {
         if (Objects.equals(resource.getRole(), BsmUserRole.STUDENT)) {
             return studentSignUp(resource, token);
         }
-        if (Objects.equals(resource.getRole(), BsmUserRole.STUDENT)) {
+        if (Objects.equals(resource.getRole(), BsmUserRole.TEACHER)) {
             return teacherSignUp(resource, token);
         }
         throw new InternalServerException();
@@ -107,10 +107,10 @@ public class BsmOauthService {
     private void studentUpdate(BsmUserResource resource, Student student) {
         BsmStudent studentDto = resource.getStudent();
         student.update(
+                studentDto.getEnrolledAt(),
                 studentDto.getGrade(),
                 studentDto.getClassNo(),
-                studentDto.getStudentNo(),
-                studentDto.getEnrolledAt());
+                studentDto.getStudentNo());
     }
 
     private void teacherUpdate(BsmUserResource resource, Teacher teacher) {
