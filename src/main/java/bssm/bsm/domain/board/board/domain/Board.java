@@ -1,11 +1,12 @@
 package bssm.bsm.domain.board.board.domain;
 
+import bssm.bsm.domain.board.board.exception.StudentAccessOnlyException;
+import bssm.bsm.domain.board.board.exception.TeacherAccessOnlyException;
 import bssm.bsm.domain.board.board.presentation.dto.res.BoardRes;
 import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
-import bssm.bsm.global.error.exceptions.ForbiddenException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -102,8 +103,8 @@ public class Board {
         if (nullableUser != null && accessibleRole == nullableUser.getRole()) return;
 
         switch (accessibleRole) {
-            case STUDENT -> throw new ForbiddenException("학생만 접근할 수 있는 게시판입니다");
-            case TEACHER -> throw new ForbiddenException("선생님만 접근할 수 있는 게시판입니다");
+            case STUDENT -> throw new StudentAccessOnlyException();
+            case TEACHER -> throw new TeacherAccessOnlyException();
         }
     }
     

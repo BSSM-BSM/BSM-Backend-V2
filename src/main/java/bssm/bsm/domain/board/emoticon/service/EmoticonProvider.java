@@ -1,10 +1,9 @@
 package bssm.bsm.domain.board.emoticon.service;
 
 import bssm.bsm.domain.board.emoticon.domain.Emoticon;
-import bssm.bsm.domain.board.emoticon.domain.repository.EmoticonItemRepository;
 import bssm.bsm.domain.board.emoticon.domain.repository.EmoticonRepository;
+import bssm.bsm.domain.board.emoticon.exception.AlreadyExistsEmoticonException;
 import bssm.bsm.domain.board.emoticon.exception.NoSuchEmoticonException;
-import bssm.bsm.global.error.exceptions.ConflictException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +31,6 @@ public class EmoticonProvider {
     }
 
     public void duplicateEmoticonNameCheck(String name) {
-        if (emoticonRepository.existsByName(name)) throw new ConflictException("해당 이름의 이모티콘이 이미 존재합니다");
+        if (emoticonRepository.existsByName(name)) throw new AlreadyExistsEmoticonException();
     }
 }

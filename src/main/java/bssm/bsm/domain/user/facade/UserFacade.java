@@ -1,5 +1,6 @@
 package bssm.bsm.domain.user.facade;
 
+import bssm.bsm.domain.auth.exception.NoSuchRefreshTokenException;
 import bssm.bsm.domain.user.domain.Student;
 import bssm.bsm.domain.auth.domain.repository.RefreshTokenRepository;
 import bssm.bsm.domain.user.domain.UserCache;
@@ -8,7 +9,6 @@ import bssm.bsm.domain.user.domain.repository.RedisUserRepository;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.repository.UserRepository;
 import bssm.bsm.domain.user.exception.NoSuchUserException;
-import bssm.bsm.global.error.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class UserFacade {
 
     public User findByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByTokenAndIsAvailable(refreshToken, true)
-                .orElseThrow(() -> new NotFoundException("토큰을 찾을 수 없습니다"))
+                .orElseThrow(NoSuchRefreshTokenException::new)
                 .getUser();
     }
 
