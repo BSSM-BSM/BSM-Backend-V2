@@ -2,7 +2,7 @@ package bssm.bsm.domain.board.lostfound.service;
 
 import bssm.bsm.domain.board.lostfound.domain.LostFound;
 import bssm.bsm.domain.board.lostfound.domain.repository.LostFoundRepository;
-import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.domain.type.State;
 import bssm.bsm.domain.board.lostfound.exception.NoSuchLostFoundException;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundCompactRes;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
@@ -19,8 +19,8 @@ public class LostFoundInformationService {
 
     private final LostFoundRepository lostFoundRepository;
 
-    public List<LostFoundCompactRes> findByProcess(Process process) {
-        return lostFoundRepository.findAllByProcess(process);
+    public List<LostFoundCompactRes> findByProcess(State state) {
+        return lostFoundRepository.findAllByState(state);
     }
 
     public LostFoundRes findOne(Long id) {

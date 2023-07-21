@@ -26,8 +26,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "DELETED_AT is null")
-@SQLDelete(sql = "UPDATE COMMENT SET COMMENT.DELETED_AT = CURRENT_TIMESTAMP WHERE COMMENT.COMMENT_ID = ?")
+@Where(clause = "process = \"IN_PROGRESS\"")
 public class LostFound {
 
     @Id
@@ -59,10 +58,9 @@ public class LostFound {
     @CreatedDate
     private LocalDateTime createdLocalDateTime;
 
-    private LocalDateTime deletedAt;
 
     @Builder
-    public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime) {
+    public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime, State state) {
         this.id = id;
         this.objectName = objectName;
         this.imgSrc = imgSrc;
@@ -70,6 +68,7 @@ public class LostFound {
         this.findDateTime = findDateTime;
         this.description = description;
         this.process = process;
+        this.state = state;
         this.foundUser = user;
         this.createdLocalDateTime = createdLocalDateTime;
     }
