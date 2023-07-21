@@ -1,11 +1,14 @@
 package bssm.bsm.domain.board.lostfound.domain;
 
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.domain.type.State;
 import bssm.bsm.domain.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
@@ -23,6 +26,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "DELETED_AT is null")
+@SQLDelete(sql = "UPDATE COMMENT SET COMMENT.DELETED_AT = CURRENT_TIMESTAMP WHERE COMMENT.COMMENT_ID = ?")
 public class LostFound {
 
     @Id
@@ -44,12 +49,17 @@ public class LostFound {
     @Enumerated(EnumType.STRING)
     private Process process;
 
+    @Enumerated(EnumType.STRING)
+    private State state;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "code", nullable = false)
     private User foundUser;
 
     @CreatedDate
     private LocalDateTime createdLocalDateTime;
+
+    private LocalDateTime deletedAt;
 
     @Builder
     public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime) {
