@@ -13,7 +13,7 @@ public class LostFoundCompactRes {
     private final Process process;
     private final State state;
 
-    public LostFoundCompactRes(Long id, String objectName, String imgSrc, Process process,State state) {
+    public LostFoundCompactRes(Long id, String objectName, String imgSrc, Process process, State state) {
         this.id = id;
         this.objectName = objectName;
         this.imgSrc = imgSrc;

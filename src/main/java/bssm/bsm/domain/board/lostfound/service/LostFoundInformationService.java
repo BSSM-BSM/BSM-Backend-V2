@@ -19,7 +19,7 @@ public class LostFoundInformationService {
 
     private final LostFoundRepository lostFoundRepository;
 
-    public List<LostFoundCompactRes> findByProcess(State state) {
+    public List<LostFoundCompactRes> findByState(State state) {
         return lostFoundRepository.findAllByState(state);
     }
 

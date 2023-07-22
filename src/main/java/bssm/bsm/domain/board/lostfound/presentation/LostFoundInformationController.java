@@ -20,8 +20,8 @@ public class LostFoundInformationController {
     private final LostFoundInformationService lostFoundInformationService;
 
     @GetMapping("state/{state}")
-    public List<LostFoundCompactRes> findAllByProcess(@PathVariable State state) {
-        return lostFoundInformationService.findByProcess(state);
+    public List<LostFoundCompactRes> findAllByState(@PathVariable State state) {
+        return lostFoundInformationService.findByState(state);
     }
 
     @GetMapping("/{id}")
