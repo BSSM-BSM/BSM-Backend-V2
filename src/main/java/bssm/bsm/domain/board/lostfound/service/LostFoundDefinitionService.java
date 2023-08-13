@@ -33,6 +33,7 @@ public class LostFoundDefinitionService {
                 .location(lostFoundReq.getLocation())
                 .findDateTime(lostFoundReq.getFindDateTime())
                 .process(Process.IN_PROGRESS)
+                .state(lostFoundReq.getState())
                 .user(currentUser.getUser())
                 .createdLocalDateTime(LocalDateTime.now())
                 .build();
@@ -43,7 +44,7 @@ public class LostFoundDefinitionService {
     }
 
     @Transactional
-    public LostFoundRes updateProcess(Long lostFoundId, UpdateProcessReq updateProcessReq) {
+    public LostFoundRes updateProcess(Long lostFoundId) {
         LostFound lostFound = lostFoundRepository.findById(lostFoundId)
                 .orElseThrow(NoSuchLostFoundException::new);
 
@@ -51,7 +52,7 @@ public class LostFoundDefinitionService {
             throw new NotCreatorException();
         }
 
-        lostFound.updateProcess(updateProcessReq.getProcess());
+        lostFound.updateProcess(Process.FINISHED);
 
         return new LostFoundRes(lostFound);
     }
