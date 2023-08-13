@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.lostfound.presentation;
 
-import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.domain.type.State;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundCompactRes;
 import bssm.bsm.domain.board.lostfound.presentation.dto.res.LostFoundRes;
 import bssm.bsm.domain.board.lostfound.service.LostFoundInformationService;
@@ -19,9 +19,9 @@ public class LostFoundInformationController {
 
     private final LostFoundInformationService lostFoundInformationService;
 
-    @GetMapping("process/{process}")
-    public List<LostFoundCompactRes> findAllByProcess(@PathVariable Process process) {
-        return lostFoundInformationService.findByProcess(process);
+    @GetMapping("state/{state}")
+    public List<LostFoundCompactRes> findAllByState(@PathVariable State state) {
+        return lostFoundInformationService.findByState(state);
     }
 
     @GetMapping("/{id}")

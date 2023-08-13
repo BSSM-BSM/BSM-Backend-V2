@@ -1,5 +1,6 @@
 package bssm.bsm.domain.board.lostfound.presentation.dto.req;
 
+import bssm.bsm.domain.board.lostfound.domain.type.State;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -23,5 +24,8 @@ public class LostFoundReq {
 
     @NotBlank
     private String description;
+
+    @NotNull
+    private State state;
 
 }

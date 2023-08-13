@@ -1,11 +1,14 @@
 package bssm.bsm.domain.board.lostfound.domain;
 
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
+import bssm.bsm.domain.board.lostfound.domain.type.State;
 import bssm.bsm.domain.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
@@ -23,6 +26,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "process = \"IN_PROGRESS\"")
 public class LostFound {
 
     @Id
@@ -44,6 +48,9 @@ public class LostFound {
     @Enumerated(EnumType.STRING)
     private Process process;
 
+    @Enumerated(EnumType.STRING)
+    private State state;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "code", nullable = false)
     private User foundUser;
@@ -51,8 +58,9 @@ public class LostFound {
     @CreatedDate
     private LocalDateTime createdLocalDateTime;
 
+
     @Builder
-    public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime) {
+    public LostFound(Long id, String objectName, String imgSrc, String location, LocalDateTime findDateTime, String description, Process process, User user, LocalDateTime createdLocalDateTime, State state) {
         this.id = id;
         this.objectName = objectName;
         this.imgSrc = imgSrc;
@@ -60,6 +68,7 @@ public class LostFound {
         this.findDateTime = findDateTime;
         this.description = description;
         this.process = process;
+        this.state = state;
         this.foundUser = user;
         this.createdLocalDateTime = createdLocalDateTime;
     }
