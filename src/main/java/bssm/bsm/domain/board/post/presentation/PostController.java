@@ -61,7 +61,7 @@ public class PostController {
     }
 
     @PutMapping
-    public void updatePost(@RequestBody UpdatePostReq req) {
+    public void updatePost(@Valid @RequestBody UpdatePostReq req) {
         postService.updatePost(currentUser.getUser(), req);
     }
 

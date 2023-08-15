@@ -5,7 +5,7 @@ import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class PostRes {
     protected UserRes user;
     protected String category;
     protected String title;
-    protected Date createdAt;
+    protected LocalDateTime createdAt;
     protected int view;
     protected int totalComments;
     protected int totalLikes;

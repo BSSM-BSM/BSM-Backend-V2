@@ -23,7 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -81,8 +81,8 @@ public class Post {
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private PostAnonymousType anonymous;
 
-    @CreatedDate
-    private Date createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     public static Post create(long id, Board board, User writer, String title,
                               String content, PostAnonymousType anonymous, PostCategory category) {
@@ -93,7 +93,7 @@ public class Post {
         post.title = title;
         post.content = content;
         post.delete = false;
-        post.createdAt = new Date();
+        post.createdAt = LocalDateTime.now();
         post.view = 0;
         post.totalComments = 0;
         post.totalLikes = 0;
