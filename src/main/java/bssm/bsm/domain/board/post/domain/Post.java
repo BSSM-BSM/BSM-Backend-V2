@@ -92,14 +92,21 @@ public class Post {
         post.writer = writer;
         post.title = title;
         post.content = content;
-        post.anonymous = anonymous;
         post.delete = false;
         post.createdAt = new Date();
         post.view = 0;
         post.totalComments = 0;
         post.totalLikes = 0;
         post.setCategory(category);
+        post.setAnonymous(anonymous);
         return post;
+    }
+
+    public void update(String title, String content, PostCategory category, PostAnonymousType anonymous) {
+        this.title = title;
+        this.content = content;
+        setCategory(category);
+        setAnonymous(anonymous);
     }
 
     private void setCategory(PostCategory category) {
@@ -107,11 +114,11 @@ public class Post {
         this.categoryId = category == null ? null : category.getPk().getId();
     }
 
-    public void update(String title, String content, PostCategory category, PostAnonymousType anonymous) {
-        this.title = title;
-        this.content = content;
-        setCategory(category);
+    private void setAnonymous(PostAnonymousType anonymous) {
         this.anonymous = anonymous;
+        if (anonymous == PostAnonymousType.NO_RECORD) {
+            this.writer = null;
+        }
     }
 
     public void delete() {
@@ -146,8 +153,15 @@ public class Post {
         this.totalLikes -= (prevLike.getValue() * 2);
     }
 
-    public boolean checkPermission(User user) {
-        return Objects.equals(writer.getCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
+    public boolean hasPermission(User user) {
+        if (user.getLevel() == UserLevel.ADMIN) {
+            return true;
+        }
+        if (this.anonymous == PostAnonymousType.NO_RECORD
+                || writer == null) {
+            return false;
+        }
+        return Objects.equals(writer.getCode(), user.getCode());
     }
 
 }

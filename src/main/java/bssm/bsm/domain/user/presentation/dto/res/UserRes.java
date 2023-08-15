@@ -4,6 +4,7 @@ import bssm.bsm.domain.board.anonymous.domain.AnonymousKeyType;
 import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
 import bssm.bsm.domain.board.comment.domain.Comment;
 import bssm.bsm.domain.board.post.domain.Post;
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,14 +19,14 @@ public class UserRes {
 
     public static UserRes create(Post post) {
         UserRes userRes = new UserRes();
-        if (post.isAnonymous()) {
+        if (post.getAnonymous() == PostAnonymousType.VISIBLE) {
+            User user = post.getWriter();
+            userRes.code = user.getCode();
+            userRes.nickname = user.getNickname();
+        } else {
             userRes.code = -1L;
             userRes.nickname = "ㅇㅇ";
-            return userRes;
         }
-        User user = post.getWriter();
-        userRes.code = user.getCode();
-        userRes.nickname = user.getNickname();
         return userRes;
     }
 

@@ -2,6 +2,7 @@ package bssm.bsm.domain.board.post.presentation.dto.res;
 
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.post.domain.Post;
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.presentation.dto.res.UserRes;
 import lombok.Getter;
@@ -27,9 +28,9 @@ public class DetailPostRes extends PostRes {
         detailPostRes.totalComments = post.getTotalComments();
         detailPostRes.totalLikes = post.getTotalLikes();
         detailPostRes.content = post.getContent();
-        detailPostRes.permission = nullableViewer != null && post.checkPermission(nullableViewer);
+        detailPostRes.permission = nullableViewer != null && post.hasPermission(nullableViewer);
         detailPostRes.myLike = postLike == null ? 0 : postLike.getLike().getValue();
-        detailPostRes.anonymous = post.isAnonymous();
+        detailPostRes.anonymous = post.getAnonymous() != PostAnonymousType.VISIBLE;
         return detailPostRes;
     }
 }

@@ -5,6 +5,7 @@ import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.board.like.domain.PostLike;
 import bssm.bsm.domain.board.like.service.LikeProvider;
 import bssm.bsm.domain.board.post.domain.Post;
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToModifyPostException;
 import bssm.bsm.domain.board.post.exception.DoNotHavePermissionToWritePostOnBoardException;
 import bssm.bsm.domain.board.post.presentation.dto.req.DeletePostReq;
@@ -40,6 +41,7 @@ public class PostService {
     private final CategoryProvider categoryProvider;
     private final PostProvider postProvider;
     private final LikeProvider likeProvider;
+    private final PostLogService postLogService;
 
     public PostListRes findPostList(User nullableUser, @Valid FindPostListReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
@@ -77,6 +79,11 @@ public class PostService {
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);
         Post newPost = Post.create(newPostId, board, user, req.getTitle(), req.getContent(), req.getAnonymous(), postCategory);
         postRepository.save(newPost);
+
+        if (req.getAnonymous() == PostAnonymousType.NO_RECORD) {
+            postLogService.recordTempLog(newPost, user);
+        }
+
         return newPostId;
     }
 
@@ -87,6 +94,10 @@ public class PostService {
         checkPostWriter(post, user);
         PostCategory category = categoryProvider.findCategory(req.getCategoryId(), board);
         post.update(req.getTitle(), req.getContent(), category, req.getAnonymous());
+
+        if (req.getAnonymous() == PostAnonymousType.NO_RECORD) {
+            postLogService.recordTempLog(post, user);
+        }
     }
 
     @Transactional
@@ -99,7 +110,7 @@ public class PostService {
 
     private void checkPostWriter(Post post, User user) {
         post.getBoard().checkAccessibleRole(user);
-        if (!post.checkPermission(user)) throw new DoNotHavePermissionToModifyPostException();
+        if (!post.hasPermission(user)) throw new DoNotHavePermissionToModifyPostException();
     }
 
     private void checkViewPermission(Board board, User nullableUser) {
