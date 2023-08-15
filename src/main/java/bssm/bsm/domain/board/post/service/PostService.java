@@ -75,7 +75,7 @@ public class PostService {
 
         Long newPostId = postProvider.getNewPostId(board);
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);
-        Post newPost = Post.create(newPostId, board, user, req.getTitle(), req.getContent(), req.isAnonymous(), postCategory);
+        Post newPost = Post.create(newPostId, board, user, req.getTitle(), req.getContent(), req.getAnonymous(), postCategory);
         postRepository.save(newPost);
         return newPostId;
     }
@@ -86,7 +86,7 @@ public class PostService {
         Post post = postProvider.findPost(board, req.getPostId());
         checkPostWriter(post, user);
         PostCategory category = categoryProvider.findCategory(req.getCategoryId(), board);
-        post.update(req.getTitle(), req.getContent(), category, req.isAnonymous());
+        post.update(req.getTitle(), req.getContent(), category, req.getAnonymous());
     }
 
     @Transactional

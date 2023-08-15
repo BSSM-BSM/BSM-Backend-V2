@@ -1,5 +1,6 @@
 package bssm.bsm.domain.board.post.presentation.dto.req;
 
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -22,5 +23,5 @@ public class WritePostReq {
     @Size(max = 100000)
     private String content;
 
-    private boolean anonymous;
+    private PostAnonymousType anonymous;
 }

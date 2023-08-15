@@ -3,6 +3,8 @@ package bssm.bsm.domain.board.post.domain;
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
 import bssm.bsm.domain.board.like.domain.type.LikeType;
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousConverter;
+import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.AccessLevel;
@@ -14,6 +16,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -74,14 +77,15 @@ public class Post {
     @ColumnDefault("0")
     private int totalLikes;
 
-    @Column(nullable = false, name = "is_anonymous")
-    private boolean anonymous;
+    @Convert(converter = PostAnonymousConverter.class)
+    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    private PostAnonymousType anonymous;
 
     @CreatedDate
     private Date createdAt;
 
     public static Post create(long id, Board board, User writer, String title,
-                              String content, boolean anonymous, PostCategory category) {
+                              String content, PostAnonymousType anonymous, PostCategory category) {
         Post post = new Post();
         post.pk = PostPk.create(id, board);
         post.board = board;
@@ -103,7 +107,7 @@ public class Post {
         this.categoryId = category == null ? null : category.getPk().getId();
     }
 
-    public void update(String title, String content, PostCategory category, boolean anonymous) {
+    public void update(String title, String content, PostCategory category, PostAnonymousType anonymous) {
         this.title = title;
         this.content = content;
         setCategory(category);
