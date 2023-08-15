@@ -1,8 +1,8 @@
 package bssm.bsm.domain.board.like.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
-import bssm.bsm.domain.board.like.domain.enums.Like;
-import bssm.bsm.domain.board.like.domain.enums.LikeConverter;
+import bssm.bsm.domain.board.like.domain.type.LikeType;
+import bssm.bsm.domain.board.like.domain.type.LikeConverter;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.user.domain.User;
 import lombok.AccessLevel;
@@ -44,9 +44,9 @@ public class PostLike {
 
     @Convert(converter = LikeConverter.class)
     @Column(name = "is_like", nullable = false, columnDefinition = "tinyint")
-    private Like like;
+    private LikeType like;
 
-    public static PostLike create(long likeId, Post post, User user, Like like) {
+    public static PostLike create(long likeId, Post post, User user, LikeType like) {
         PostLikePk postLikePk = PostLikePk.create(likeId, post);
         PostLike postLike = new PostLike();
         postLike.pk = postLikePk;
@@ -56,7 +56,7 @@ public class PostLike {
         return postLike;
     }
 
-    public void updateLike(Like like) {
+    public void updateLike(LikeType like) {
         this.like = like;
     }
 }

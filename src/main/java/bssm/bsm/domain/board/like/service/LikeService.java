@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.like.service;
 
-import bssm.bsm.domain.board.like.domain.enums.Like;
+import bssm.bsm.domain.board.like.domain.type.LikeType;
 import bssm.bsm.domain.board.like.presentation.dto.req.LikeReq;
 import bssm.bsm.domain.board.like.presentation.dto.res.LikeRes;
 import bssm.bsm.domain.board.like.domain.PostLike;
@@ -31,7 +31,7 @@ public class LikeService {
         Board board = boardProvider.findBoard(req.getBoardId());
         board.checkAccessibleRole(user);
         Post post = postProvider.findPost(board, req.getPostId());
-        Like like = req.getLike();
+        LikeType like = req.getLike();
         PostLike prevLike = likeProvider.findMyPostLike(user, post);
 
         // 좋아요 또는 싫어요를 누른 적이 없으면
@@ -43,29 +43,29 @@ public class LikeService {
         return LikeRes.create(like, post);
     }
 
-    private void saveNewLike(Like like, Post post, User user) {
+    private void saveNewLike(LikeType like, Post post, User user) {
         PostLike newLike = PostLike.create(likeProvider.getNewLikeId(post), post, user, like);
         likeRepository.save(newLike);
-        if (like == Like.LIKE) post.applyPostLike();
-        if (like == Like.DISLIKE) post.applyPostDislike();
+        if (like == LikeType.LIKE) post.applyPostLike();
+        if (like == LikeType.DISLIKE) post.applyPostDislike();
     }
 
-    private void updatePrevLike(PostLike prevLike, Post post, Like like) {
+    private void updatePrevLike(PostLike prevLike, Post post, LikeType like) {
         // 좋아요 또는 싫어요를 한번 더 눌렀으면
         if (prevLike.getLike() == like) {
             return;
         }
         // 취소한 좋아요 또는 싫어요를 다시 누름
-        if (prevLike.getLike() == Like.NONE && like != Like.NONE) {
-            if (like == Like.LIKE) post.applyPostLike();
-            if (like == Like.DISLIKE) post.applyPostDislike();
+        if (prevLike.getLike() == LikeType.NONE && like != LikeType.NONE) {
+            if (like == LikeType.LIKE) post.applyPostLike();
+            if (like == LikeType.DISLIKE) post.applyPostDislike();
         }
         // 좋아요 또는 싫어요 취소
-        if (like == Like.NONE && prevLike.getLike() != like) {
+        if (like == LikeType.NONE && prevLike.getLike() != like) {
             post.cancelPostLike(prevLike.getLike());
         }
         // 좋아요에서 싫어요 또는 싫어요에서 좋아요
-        if (prevLike.getLike() != like && like != Like.NONE) {
+        if (prevLike.getLike() != like && like != LikeType.NONE) {
             post.reservePostLike(prevLike.getLike());
         }
 

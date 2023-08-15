@@ -1,22 +1,22 @@
-package bssm.bsm.domain.board.like.domain.enums;
+package bssm.bsm.domain.board.like.domain.type;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class LikeConverter implements AttributeConverter<Like, Integer> {
+public class LikeConverter implements AttributeConverter<LikeType, Integer> {
 
     @Override
-    public Integer convertToDatabaseColumn(Like like) {
+    public Integer convertToDatabaseColumn(LikeType like) {
         return like.getValue();
     }
 
     @Override
-    public Like convertToEntityAttribute(Integer dbData) {
+    public LikeType convertToEntityAttribute(Integer dbData) {
         if (dbData == null) {
             return null;
         }
-        for (Like like : Like.values()) {
+        for (LikeType like : LikeType.values()) {
             if (like.getValue() == dbData) {
                 return like;
             }

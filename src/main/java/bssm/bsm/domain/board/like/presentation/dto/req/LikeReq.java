@@ -1,6 +1,6 @@
 package bssm.bsm.domain.board.like.presentation.dto.req;
 
-import bssm.bsm.domain.board.like.domain.enums.Like;
+import bssm.bsm.domain.board.like.domain.type.LikeType;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -17,5 +17,5 @@ public class LikeReq {
     private long postId;
 
     @NotNull
-    Like like;
+    LikeType like;
 }

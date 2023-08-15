@@ -2,7 +2,7 @@ package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.category.domain.PostCategory;
-import bssm.bsm.domain.board.like.domain.enums.Like;
+import bssm.bsm.domain.board.like.domain.type.LikeType;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import lombok.AccessLevel;
@@ -134,11 +134,11 @@ public class Post {
         this.totalLikes--;
     }
 
-    public void cancelPostLike(Like prevLike) {
+    public void cancelPostLike(LikeType prevLike) {
         this.totalLikes -= prevLike.getValue();
     }
 
-    public void reservePostLike(Like prevLike) {
+    public void reservePostLike(LikeType prevLike) {
         this.totalLikes -= (prevLike.getValue() * 2);
     }
 
