@@ -1,6 +1,7 @@
 package bssm.bsm.domain.board.comment.service;
 
 import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
+import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToDeleteCommentException;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToWriteCommentOnBoardException;
 import bssm.bsm.domain.board.comment.exception.NoSuchCommentException;
@@ -34,6 +35,7 @@ public class CommentService {
     private final BoardProvider boardProvider;
     private final PostProvider postProvider;
     private final AnonymousUserIdProvider anonymousUserIdProvider;
+    private final CommentLogService commentLogService;
 
     private final CommentRepository commentRepository;
 
@@ -61,6 +63,10 @@ public class CommentService {
                 req.getAnonymous());
         commentRepository.save(newComment);
         post.increaseTotalComments();
+
+        if (req.getAnonymous() == CommentAnonymousType.NO_RECORD) {
+            commentLogService.recordTempLog(newComment, user);
+        }
     }
 
     @Transactional

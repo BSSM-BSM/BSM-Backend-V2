@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "log_log", timeToLive = 86400)
-public class PostTempLog extends BaseTimeEntity {
+@RedisHash(value = "post_log", timeToLive = 86400)
+public class PostTempLog {
 
     @Id
     private String id;
