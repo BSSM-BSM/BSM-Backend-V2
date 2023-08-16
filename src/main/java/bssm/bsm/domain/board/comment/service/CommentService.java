@@ -58,7 +58,7 @@ public class CommentService {
                 req.getDepth(),
                 parentComment,
                 req.getContent(),
-                req.isAnonymous());
+                req.getAnonymous());
         commentRepository.save(newComment);
         post.increaseTotalComments();
     }
@@ -87,7 +87,7 @@ public class CommentService {
 
     private void checkCommentDeletable(Comment comment, User user) {
         comment.getBoard().checkAccessibleRole(user);
-        if (!comment.checkPermission(user)) throw new DoNotHavePermissionToDeleteCommentException();
+        if (!comment.hasPermission(user)) throw new DoNotHavePermissionToDeleteCommentException();
     }
 
     private void checkViewPermission(Board board, User nullableUser) {

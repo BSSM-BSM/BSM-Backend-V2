@@ -17,8 +17,11 @@ public class AnonymousUserIdProvider {
     // key: key -> value: new anonymous user id (새로운 익명 id 발급 시 1씩 자동 증가)
     private final Map<AnonymousKey, Long> anonymousIdMap = new HashMap<>();
 
-    public long getAnonymousId(AnonymousKeyType type, String sessionId, User user) {
-        AnonymousKey key = new AnonymousKey(type, sessionId, user.getCode());
+    public long getAnonymousId(AnonymousKeyType type, String sessionId, User nullableUser) {
+        if (nullableUser == null) {
+            return getNewId(type, sessionId);
+        }
+        AnonymousKey key = new AnonymousKey(type, sessionId, nullableUser.getCode());
         Long id = Optional.ofNullable(anonymousMap.get(key))
                 .orElseGet(() -> getNewId(type, sessionId));
         anonymousMap.put(key, id);

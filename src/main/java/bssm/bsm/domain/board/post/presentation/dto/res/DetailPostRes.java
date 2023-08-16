@@ -15,7 +15,7 @@ public class DetailPostRes extends PostRes {
     private String content;
     private boolean permission;
     private int myLike;
-    private boolean anonymous;
+    private boolean isAnonymous;
 
     public static DetailPostRes create(Post post, PostLike postLike, User nullableViewer) {
         DetailPostRes detailPostRes = new DetailPostRes();
@@ -30,7 +30,7 @@ public class DetailPostRes extends PostRes {
         detailPostRes.content = post.getContent();
         detailPostRes.permission = nullableViewer != null && post.hasPermission(nullableViewer);
         detailPostRes.myLike = postLike == null ? 0 : postLike.getLike().getValue();
-        detailPostRes.anonymous = post.getAnonymous() != PostAnonymousType.VISIBLE;
+        detailPostRes.isAnonymous = post.getAnonymous() != PostAnonymousType.VISIBLE;
         return detailPostRes;
     }
 }

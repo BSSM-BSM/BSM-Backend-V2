@@ -1,8 +1,10 @@
 package bssm.bsm.domain.board.comment.presentation.dto.req;
 
+import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
@@ -26,5 +28,6 @@ public class WriteCommentReq {
     @Size(max = 65535)
     private String content;
 
-    private boolean anonymous;
+    @NotNull
+    private CommentAnonymousType anonymous;
 }

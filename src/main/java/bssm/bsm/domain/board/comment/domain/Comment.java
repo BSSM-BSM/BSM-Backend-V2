@@ -1,6 +1,8 @@
 package bssm.bsm.domain.board.comment.domain;
 
 import bssm.bsm.domain.board.board.domain.Board;
+import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousConverter;
+import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
@@ -13,6 +15,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -23,7 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -74,38 +77,53 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, name = "is_anonymous")
-    private boolean anonymous;
+    @Convert(converter = CommentAnonymousConverter.class)
+    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    private CommentAnonymousType anonymous;
 
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     @OrderBy("id")
     private final Set<Comment> childComments = new HashSet<>();
 
-    public static Comment create(long id, Post post, User writer, int depth, Comment parent, String content, boolean anonymous) {
-        CommentPk commentPk = CommentPk.create(id, post);
+    public static Comment create(long id, Post post, User writer, int depth,
+                                 Comment parent, String content, CommentAnonymousType anonymous) {
         Comment comment = new Comment();
-        comment.pk = commentPk;
+        comment.pk = CommentPk.create(id, post);
         comment.board = post.getBoard();
         comment.writer = writer;
         comment.delete = false;
         comment.depth = depth;
         comment.content = content;
-        comment.anonymous = anonymous;
-        comment.createdAt = new Date();
+        comment.createdAt = LocalDateTime.now();
         if (parent != null) {
             comment.parentId = parent.getPk().getId();
         }
+        comment.setAnonymous(anonymous);
         return comment;
+    }
+
+    private void setAnonymous(CommentAnonymousType anonymous) {
+        this.anonymous = anonymous;
+        if (anonymous == CommentAnonymousType.NO_RECORD) {
+            this.writer = null;
+        }
     }
 
     public void delete() {
         this.delete = true;
     }
 
-    public boolean checkPermission(User user) {
-        return Objects.equals(writer.getCode(), user.getCode()) || user.getLevel() == UserLevel.ADMIN;
+    public boolean hasPermission(User user) {
+        if (user.getLevel() == UserLevel.ADMIN) {
+            return true;
+        }
+        if (this.anonymous == CommentAnonymousType.NO_RECORD
+                || writer == null) {
+            return false;
+        }
+        return Objects.equals(writer.getCode(), user.getCode());
     }
 }

@@ -3,6 +3,7 @@ package bssm.bsm.domain.user.presentation.dto.res;
 import bssm.bsm.domain.board.anonymous.domain.AnonymousKeyType;
 import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
 import bssm.bsm.domain.board.comment.domain.Comment;
+import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
@@ -31,7 +32,9 @@ public class UserRes {
     }
 
     public static UserRes create(Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
-        if (comment.isAnonymous()) return toAnonymousCommentUserRes(comment, anonymousUserIdProvider);
+        if (comment.getAnonymous() != CommentAnonymousType.VISIBLE) {
+            return toAnonymousCommentUserRes(comment, anonymousUserIdProvider);
+        }
 
         User user = comment.getWriter();
         UserRes userRes = new UserRes();

@@ -4,6 +4,7 @@ import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -23,5 +24,6 @@ public class WritePostReq {
     @Size(max = 100000)
     private String content;
 
+    @NotNull
     private PostAnonymousType anonymous;
 }
