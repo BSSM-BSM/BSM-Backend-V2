@@ -22,7 +22,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
     @Override
     public List<Post> findPostList(Board board, Long startPostId, int limit, String category) {
         return jpaQueryFactory.selectFrom(post)
-                .join(post.writer, user)
+                .leftJoin(post.writer, user)
                 .where(
                         post.delete.isFalse(),
                         post.board.eq(board),
