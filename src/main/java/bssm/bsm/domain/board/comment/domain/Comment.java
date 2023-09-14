@@ -116,6 +116,10 @@ public class Comment {
         this.delete = true;
     }
 
+    public void updateNoRecordMode() {
+        setAnonymous(CommentAnonymousType.NO_RECORD);
+    }
+
     public boolean hasPermission(User user) {
         if (user.getLevel() == UserLevel.ADMIN) {
             return true;

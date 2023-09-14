@@ -3,10 +3,12 @@ package bssm.bsm.domain.board.comment.service;
 import bssm.bsm.domain.board.anonymous.service.AnonymousUserIdProvider;
 import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToDeleteCommentException;
+import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToUpdateCommentException;
 import bssm.bsm.domain.board.comment.exception.DoNotHavePermissionToWriteCommentOnBoardException;
 import bssm.bsm.domain.board.comment.exception.NoSuchCommentException;
 import bssm.bsm.domain.board.comment.presentation.dto.req.DeleteCommentReq;
 import bssm.bsm.domain.board.comment.presentation.dto.req.FindCommentTreeReq;
+import bssm.bsm.domain.board.comment.presentation.dto.req.UpdateNoRecordCommentReq;
 import bssm.bsm.domain.board.comment.presentation.dto.req.WriteCommentReq;
 import bssm.bsm.domain.board.comment.presentation.dto.res.CommentRes;
 import bssm.bsm.domain.board.comment.domain.Comment;
@@ -81,6 +83,17 @@ public class CommentService {
         post.decreaseTotalComments();
     }
 
+    @Transactional
+    public void updateCommentNoRecord(User user, UpdateNoRecordCommentReq req) {
+        Board board = boardProvider.findBoard(req.getBoardId());
+        board.checkAccessibleRole(user);
+        Post post = postProvider.findPost(board, req.getPostId());
+        Comment comment = commentProvider.findComment(post, req.getCommentId());
+        checkCommentUpdatePermission(comment, user);
+
+        comment.updateNoRecordMode();
+    }
+
     public List<CommentRes> viewCommentTree(User nullableUser, FindCommentTreeReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkViewPermission(board, nullableUser);
@@ -89,6 +102,13 @@ public class CommentService {
         return commentProvider.findCommentTree(post).stream()
                 .map(comment -> CommentRes.create(nullableUser, comment, anonymousUserIdProvider))
                 .toList();
+    }
+
+    private void checkCommentUpdatePermission(Comment comment, User user) {
+        comment.getBoard().checkAccessibleRole(user);
+        if (!comment.hasPermission(user)) {
+            throw new DoNotHavePermissionToUpdateCommentException();
+        }
     }
 
     private void checkCommentDeletable(Comment comment, User user) {
