@@ -2,8 +2,8 @@ package bssm.bsm.domain.school.timetable.presentation.dto.req;
 
 import lombok.Getter;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 @Getter
 public class FindDayTimetableReq extends FindTimetableReq {

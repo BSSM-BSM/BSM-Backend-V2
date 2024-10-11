@@ -5,8 +5,8 @@ import bssm.bsm.domain.school.timetable.domain.manage.TimetableManage;
 import bssm.bsm.domain.school.timetable.domain.manage.TimetableManageItem;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.sql.Time;
 
 @Getter

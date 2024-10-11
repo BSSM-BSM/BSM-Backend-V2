@@ -1,7 +1,7 @@
 package bssm.bsm.domain.board.like.domain.type;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class LikeConverter implements AttributeConverter<LikeType, Integer> {

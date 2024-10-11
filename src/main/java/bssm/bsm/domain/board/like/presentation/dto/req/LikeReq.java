@@ -3,9 +3,9 @@ package bssm.bsm.domain.board.like.presentation.dto.req;
 import bssm.bsm.domain.board.like.domain.type.LikeType;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Getter
 public class LikeReq {

@@ -2,8 +2,8 @@ package bssm.bsm.domain.board.emoticon.presentation.dto.req;
 
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 @Getter
 public class EmoticonDeleteReq {

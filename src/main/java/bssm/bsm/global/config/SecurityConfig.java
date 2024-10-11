@@ -12,13 +12,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -54,28 +55,29 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable()
-                .cors().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler())
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/oauth/bsm").permitAll()
-                .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.GET, "/meal/*", "/timetable/*/*", "/banner").permitAll()
-                .antMatchers(HttpMethod.POST, "/meister/detail").authenticated()
-                .antMatchers(HttpMethod.GET, "/meister/ranking/*").authenticated()
-                .antMatchers().authenticated()
-                .antMatchers("/meister/**").hasAuthority("STUDENT")
-                .antMatchers(HttpMethod.GET, "/board/**", "/post/**", "/comment/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/lost-found/find/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().disable();
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement((configure -> {
+                    configure.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                }))
+                .exceptionHandling(configure -> {
+                    configure.authenticationEntryPoint(authenticationEntryPoint());
+                    configure.accessDeniedHandler(accessDeniedHandler());
+                })
+                .authorizeHttpRequests(configure -> {
+                    configure.requestMatchers(HttpMethod.POST, "/auth/oauth/bsm").permitAll();
+                    configure.requestMatchers("/admin/**").hasAuthority("ADMIN");
+                    configure.requestMatchers(HttpMethod.GET, "/meal/*", "/timetable/*/*", "/banner").permitAll();
+                    configure.requestMatchers(HttpMethod.POST, "/meister/detail").authenticated();
+                    configure.requestMatchers(HttpMethod.GET, "/meister/ranking/*").authenticated();
+                    configure.requestMatchers("/meister/**").hasAuthority("STUDENT");
+                    configure.requestMatchers(HttpMethod.GET, "/board/**", "/post/**", "/comment/**").permitAll();
+                    configure.requestMatchers(HttpMethod.GET, "/lost-found/find/**").permitAll();
+                    configure.anyRequest().authenticated();
+                })
+                .formLogin(AbstractHttpConfigurer::disable);
 
         http
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

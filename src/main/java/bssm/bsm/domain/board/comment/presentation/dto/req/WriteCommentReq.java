@@ -3,11 +3,11 @@ package bssm.bsm.domain.board.comment.presentation.dto.req;
 import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 @Getter
 public class WriteCommentReq {

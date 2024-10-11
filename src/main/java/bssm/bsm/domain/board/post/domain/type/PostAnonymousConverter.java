@@ -2,8 +2,8 @@ package bssm.bsm.domain.board.post.domain.type;
 
 import bssm.bsm.domain.board.like.domain.type.LikeType;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class PostAnonymousConverter implements AttributeConverter<PostAnonymousType, Integer> {

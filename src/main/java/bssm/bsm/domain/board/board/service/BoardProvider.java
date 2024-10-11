@@ -6,7 +6,7 @@ import bssm.bsm.domain.board.board.exception.NoSuchBoardException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 
 @Service

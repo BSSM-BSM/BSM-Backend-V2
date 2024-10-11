@@ -3,8 +3,8 @@ package bssm.bsm.domain.board.post.presentation.dto.req;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 @Getter
 @AllArgsConstructor

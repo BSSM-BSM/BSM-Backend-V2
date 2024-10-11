@@ -1,7 +1,7 @@
 package bssm.bsm.domain.board.comment.domain.type;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 @Converter
 public class CommentAnonymousConverter implements AttributeConverter<CommentAnonymousType, Integer> {
