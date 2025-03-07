@@ -24,7 +24,7 @@ import java.util.Objects;
 public class MealProvider {
 
     private final OkHttpClient httpClient;
-    @Value("${env.api.meal.url}")
+    @Value("${api.meal.url}")
     private String MEAL_API_URL;
 
     public List<RawMealItemDto> getRawMonthMealList(YearMonth date) throws IOException {

@@ -12,9 +12,9 @@ import java.security.Security;
 @Configuration
 class WebPushConfig {
 
-    @Value("${env.web-push.key.public}")
+    @Value("${web-push.key.public}")
     private String publicKey;
-    @Value("${env.web-push.key.private}")
+    @Value("${web-push.key.private}")
     private String privateKey;
 
     @Bean("pushService")

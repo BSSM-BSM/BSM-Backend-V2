@@ -10,11 +10,11 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class CookieProvider {
 
-    @Value("${env.cookie.domain}")
+    @Value("${cookie.domain}")
     private String COOKIE_DOMAIN;
-    @Value("${env.cookie.secure}")
+    @Value("${cookie.secure}")
     private boolean COOKIE_SECURE;
-    @Value("${env.cookie.same-site}")
+    @Value("${cookie.same-site}")
     private String COOKIE_SAME_SITE;
 
     public ResponseCookie createCookie(String name, String value, long time) {

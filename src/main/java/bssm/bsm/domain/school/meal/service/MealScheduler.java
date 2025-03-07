@@ -27,7 +27,7 @@ public class MealScheduler {
     private final MealFacade mealFacade;
     private final MealProvider mealProvider;
 
-    @Value("${env.meal.url}")
+    @Value("${meal.url}")
     private String MEAL_ACCESS_URL;
 
     @Scheduled(cron = "0 0 0 25 * ?")

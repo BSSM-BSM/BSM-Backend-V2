@@ -14,9 +14,9 @@ import java.util.Objects;
 @Service
 public class PostFileService {
 
-    @Value("${env.file.path.base}")
+    @Value("${file.path.base}")
     private String PUBLIC_RESOURCE_PATH;
-    @Value("${env.file.path.upload.board}")
+    @Value("${file.path.upload.board}")
     private String BOARD_UPLOAD_RESOURCE_PATH;
 
     public UploadFileRes uploadFile(MultipartFile file) {

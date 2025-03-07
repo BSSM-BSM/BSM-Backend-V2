@@ -1,16 +1,13 @@
 server:
-  port: ${env.server.port}
   servlet:
     contextPath: /api
 spring:
   main:
     allow-bean-definition-overriding: true
-  config:
-    import: classpath:/env.yml
   servlet:
     multipart:
-      max-file-size: ${env.file.uploadSize}
-      max-request-size: ${env.file.uploadSize}
+      max-file-size: ${FILE_UPLOAD_SIZE}
+      max-request-size: ${FILE_UPLOAD_SIZE}
   jpa:
     database: mysql
     show-sql: true
@@ -21,14 +18,14 @@ spring:
       hibernate:
         format_sql: true
   datasource:
-    url: jdbc:mysql://${env.db.host}:${env.db.port}/${env.db.name}?autoReconnect=true
-    username: ${env.db.user}
-    password: ${env.db.pw}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true
+    username: ${DB_USER}
+    password: ${DB_PW}
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
-    host: ${env.redis.host}
-    port: ${env.redis.port}
-    database: ${env.redis.database}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    database: ${REDIS_DB}
 logging:
   level:
     web: DEBUG
@@ -38,3 +35,38 @@ logging:
       type:
         descriptor:
           BasicBinder: TRACE
+---
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  time:
+    token: ${JWT_ACCESS_TOKEN_ALIVE_TIME}
+    refresh-token: ${JWT_REFRESH_TOKEN_ALIVE_TIME}
+cookie:
+  domain:
+  secure: ${COOKIE_SECURE}
+  name:
+    token: ${ACCESS_TOKEN_COOKIE_NAME}
+    refresh-token: ${REFRESH_TOKEN_COOKIE_NAME}
+  same-site: ${COOKIE_SAME_SITE}
+file:
+  path:
+    base: ${FILE_BASE_PATH}
+    upload:
+      board: ${BOARD_FILE_UPLOAD_PATH}
+      emoticon: ${EMOTICON_UPLOAD_PATH}
+oauth:
+  bsm:
+    client:
+      id: ${BSM_AUTH_CLIENT_ID}
+      secret: ${BSM_AUTH_CLIENT_SECRET}
+web-push:
+  key:
+    public: ${WEB_PUSH_PUBLIC_KEY}
+    private: ${WEB_PUSH_PRIVATE_KEY}
+api:
+  meal:
+    url: ${NEIS_MEAL_API_URL}
+meal:
+  url: https://bssm.app/meal
+timetable:
+  url: https://bssm.app/timetable

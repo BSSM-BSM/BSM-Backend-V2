@@ -58,6 +58,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+bootJar {
+	archiveFileName = "app.jar"
+}
+
 // querydsl
 def querydslDir = "$buildDir/generated/querydsl"
 

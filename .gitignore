@@ -1,5 +1,8 @@
-src/main/resources/env.yml
+docker-compose.prod.yml
+nginx.prod.conf
+
 src/main/querydsl/
+
 HELP.md
 .gradle
 build/

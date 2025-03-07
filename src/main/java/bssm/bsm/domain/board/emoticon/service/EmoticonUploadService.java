@@ -44,9 +44,9 @@ public class EmoticonUploadService {
     });
     private final String EMOTICON_THUMBNAIL_FILE_NAME = "0.png";
 
-    @Value("${env.file.path.base}")
+    @Value("${file.path.base}")
     private String PUBLIC_RESOURCE_PATH;
-    @Value("${env.file.path.upload.emoticon}")
+    @Value("${file.path.upload.emoticon}")
     private String EMOTICON_UPLOAD_PATH;
 
     public void upload(User user, @Valid EmoticonUploadReq req) {

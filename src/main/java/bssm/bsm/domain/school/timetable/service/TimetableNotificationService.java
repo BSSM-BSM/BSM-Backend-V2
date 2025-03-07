@@ -22,7 +22,7 @@ public class TimetableNotificationService {
     private final SendWebPushService webPushUtil;
     private final WebPushRepository webPushRepository;
 
-    @Value("${env.timetable.url}")
+    @Value("${timetable.url}")
     private String TIMETABLE_ACCESS_URL;
 
     public void sendChangeTimetableNotification(TimetableManage timetableManage) throws JsonProcessingException {

@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class BsmOauthConfig {
 
-    @Value("${env.oauth.bsm.client.id}")
+    @Value("${oauth.bsm.client.id}")
     private String BSM_AUTH_CLIENT_ID;
-    @Value("${env.oauth.bsm.client.secret}")
+    @Value("${oauth.bsm.client.secret}")
     private String BSM_AUTH_CLIENT_SECRET;
 
     @Bean("bsmOauth")

@@ -1,0 +1,87 @@
+services:
+  nginx:
+    container_name: bsm-backend-proxy
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro # readonly
+      - ./.docker-data/public:/app/public
+    ports:
+      - '8080:80'
+    networks:
+      - proxy
+    depends_on:
+      - app
+  app:
+    container_name: bsm-backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./.docker-data/public/resource:/app/resource
+    expose:
+      - '8080:8080'
+    networks:
+      - backend
+      - proxy
+    depends_on:
+      - db
+      - redis
+    environment:
+      FILE_UPLOAD_SIZE: 10MB
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: bsm
+      DB_USER: bsm
+      DB_PW: bsm
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      JWT_SECRET_KEY: JWT_SECRET_KEY
+      JWT_ACCESS_TOKEN_ALIVE_TIME: 1800
+      JWT_REFRESH_TOKEN_ALIVE_TIME: 5184000
+      COOKIE_SECURE: false
+      ACCESS_TOKEN_COOKIE_NAME: token
+      REFRESH_TOKEN_COOKIE_NAME: refresh_token
+      COOKIE_SAME_SITE: None
+      FILE_BASE_PATH: /app/resource/
+      BOARD_FILE_UPLOAD_PATH: board/upload/
+      EMOTICON_UPLOAD_PATH: board/emoticon/
+      BSM_AUTH_CLIENT_ID: BSM_AUTH_CLIENT_ID
+      BSM_AUTH_CLIENT_SECRET: BSM_AUTH_CLIENT_SECRET
+      WEB_PUSH_PUBLIC_KEY: WEB_PUSH_PUBLIC_KEY
+      WEB_PUSH_PRIVATE_KEY: WEB_PUSH_PRIVATE_KEY
+      NEIS_MEAL_API_URL: NEIS_MEAL_API_URL
+  db:
+    container_name: bsm-backend-db
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - ./.docker-data/mysql/config:/etc/mysql/conf.d
+      - ./.docker-data/mysql/data:/var/lib/mysql
+    expose:
+      - '3306:3306'
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: bsm
+      MYSQL_DATABASE: bsm
+      MYSQL_USER: bsm
+      MYSQL_PASSWORD: bsm
+  redis:
+    container_name: bsm-backend-redis
+    image: redis:latest
+    restart: always
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./.docker-data/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./.docker-data/redis/data:/data
+    expose:
+      - '6379:6379'
+    networks:
+      - backend
+
+networks:
+  backend: {}
+  proxy: {}
