@@ -46,7 +46,7 @@ services:
       COOKIE_SECURE: false
       ACCESS_TOKEN_COOKIE_NAME: token
       REFRESH_TOKEN_COOKIE_NAME: refresh_token
-      COOKIE_SAME_SITE: None
+      COOKIE_SAME_SITE: Strict
       FILE_BASE_PATH: /app/resource/
       BOARD_FILE_UPLOAD_PATH: board/upload/
       EMOTICON_UPLOAD_PATH: board/emoticon/
