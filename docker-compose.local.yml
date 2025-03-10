@@ -1,15 +1,17 @@
+name: bsm-backend
+
 services:
   nginx:
     container_name: bsm-backend-proxy
     image: nginx:latest
     restart: always
     volumes:
-      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro # readonly
-      - ./.docker-data/public:/app/public
+      - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
+      - ./.docker-data/public:/app/public:ro
     ports:
       - '8080:80'
     networks:
-      - proxy
+      - reverse-proxy
     depends_on:
       - app
   app:
@@ -24,7 +26,7 @@ services:
       - '8080:8080'
     networks:
       - backend
-      - proxy
+      - reverse-proxy
     depends_on:
       - db
       - redis
@@ -84,4 +86,4 @@ services:
 
 networks:
   backend: {}
-  proxy: {}
+  reverse-proxy: {}
