@@ -3,7 +3,7 @@ name: bsm-backend
 services:
   nginx:
     container_name: bsm-backend-proxy
-    image: nginx:latest
+    image: nginx:1.27.4
     restart: always
     volumes:
       - ./nginx.local.conf:/etc/nginx/nginx.conf:ro
@@ -57,8 +57,11 @@ services:
       NEIS_MEAL_API_URL: NEIS_MEAL_API_URL
   db:
     container_name: bsm-backend-db
-    image: mysql:8.0
+    image: mariadb:11.7.2
     restart: always
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./.docker-data/mysql/config:/etc/mysql/conf.d
       - ./.docker-data/mysql/data:/var/lib/mysql
@@ -67,13 +70,13 @@ services:
     networks:
       - backend
     environment:
-      MYSQL_ROOT_PASSWORD: bsm
-      MYSQL_DATABASE: bsm
-      MYSQL_USER: bsm
-      MYSQL_PASSWORD: bsm
+      MARIADB_ROOT_PASSWORD: bsm
+      MARIADB_DATABASE: bsm
+      MARIADB_USER: bsm
+      MARIADB_PASSWORD: bsm
   redis:
     container_name: bsm-backend-redis
-    image: redis:latest
+    image: redis:7.4.2
     restart: always
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:

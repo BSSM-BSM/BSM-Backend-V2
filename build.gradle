@@ -36,8 +36,8 @@ dependencies {
 	// bsm oauth
 	implementation 'com.github.leehj050211:bsm-oauth-java:1.1.0'
 
-	// mysql
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	// mariadb
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 	// http client
 	implementation 'com.squareup.okhttp3:okhttp:4.12.0'
