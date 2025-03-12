@@ -2,7 +2,6 @@ package bssm.bsm.domain.board.post.service;
 
 import bssm.bsm.domain.board.board.domain.Board;
 import bssm.bsm.domain.board.post.domain.Post;
-import bssm.bsm.domain.board.post.domain.PostPk;
 import bssm.bsm.domain.board.post.exception.NoSuchPostException;
 import bssm.bsm.domain.board.post.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +17,8 @@ public class PostProvider {
     private final PostRepository postRepository;
 
     public Post findPost(Board board, long postId) {
-        return postRepository.findByPkAndDelete(PostPk.create(postId, board), false)
+        return postRepository.findByIdAndBoard(postId, board)
                 .orElseThrow(NoSuchPostException::new);
-    }
-
-    public Long getNewPostId(Board board) {
-        return postRepository.countByBoard(board) + 1;
     }
 
     public List<Post> findRecentPostList(Board board, int limit, String category) {

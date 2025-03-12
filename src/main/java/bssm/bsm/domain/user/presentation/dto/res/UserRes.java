@@ -7,7 +7,6 @@ import bssm.bsm.domain.board.comment.domain.type.CommentAnonymousType;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +19,7 @@ public class UserRes {
 
     public static UserRes create(Post post) {
         UserRes userRes = new UserRes();
-        if (post.getAnonymous() == PostAnonymousType.VISIBLE) {
+        if (post.getAnonymousType() == PostAnonymousType.VISIBLE) {
             User user = post.getWriter();
             userRes.code = user.getCode();
             userRes.nickname = user.getNickname();
@@ -32,7 +31,7 @@ public class UserRes {
     }
 
     public static UserRes create(Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
-        if (comment.getAnonymous() != CommentAnonymousType.VISIBLE) {
+        if (comment.getAnonymousType() != CommentAnonymousType.VISIBLE) {
             return toAnonymousCommentUserRes(comment, anonymousUserIdProvider);
         }
 
@@ -46,7 +45,7 @@ public class UserRes {
     private static UserRes toAnonymousCommentUserRes(Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
         User user = comment.getWriter();
         Post post = comment.getPost();
-        String sessionId = post.getBoard() + "/" + post.getPk().getId();
+        String sessionId = post.getBoard() + "/" + post.getId();
         long anonymousId = anonymousUserIdProvider.getAnonymousId(AnonymousKeyType.COMMENT, sessionId, user);
 
         UserRes userRes = new UserRes();

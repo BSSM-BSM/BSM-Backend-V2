@@ -44,7 +44,10 @@ public class CommentService {
     @Transactional
     public void writeComment(User user, @Valid WriteCommentReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkWritePermission(board, user);
+        board.checkAccessibleRole(user);
+        if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) {
+            throw new DoNotHavePermissionToWriteCommentOnBoardException();
+        }
         Post post = postProvider.findPost(board, req.getPostId());
 
         Comment parentComment = null;
@@ -56,7 +59,6 @@ public class CommentService {
         }
 
         Comment newComment = Comment.create(
-                commentProvider.getNewCommentId(post),
                 post,
                 user,
                 req.getDepth(),
@@ -64,7 +66,7 @@ public class CommentService {
                 req.getContent(),
                 req.getAnonymous());
         commentRepository.save(newComment);
-        post.increaseTotalComments();
+        post.increaseCommentCount();
 
         if (req.getAnonymous() == CommentAnonymousType.NO_RECORD) {
             commentLogService.recordTempLog(newComment, user);
@@ -75,55 +77,43 @@ public class CommentService {
     public void deleteComment(User user, DeleteCommentReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         board.checkAccessibleRole(user);
+
         Post post = postProvider.findPost(board, req.getPostId());
         Comment comment = commentProvider.findComment(post, req.getCommentId());
-        checkCommentDeletable(comment, user);
+        if (!comment.hasPermission(user)) {
+            throw new DoNotHavePermissionToDeleteCommentException();
+        }
 
         comment.delete();
-        post.decreaseTotalComments();
+        post.decreaseCommentCount();
     }
 
     @Transactional
     public void updateCommentNoRecord(User user, UpdateNoRecordCommentReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
         board.checkAccessibleRole(user);
+
         Post post = postProvider.findPost(board, req.getPostId());
         Comment comment = commentProvider.findComment(post, req.getCommentId());
-        checkCommentUpdatePermission(comment, user);
+        if (!comment.hasPermission(user)) {
+            throw new DoNotHavePermissionToUpdateCommentException();
+        }
 
         comment.updateNoRecordMode();
     }
 
     public List<CommentRes> viewCommentTree(User nullableUser, FindCommentTreeReq req) {
         Board board = boardProvider.findBoard(req.getBoardId());
-        checkViewPermission(board, nullableUser);
+        board.checkAccessibleRole(nullableUser);
+        if (!board.isPublicComment() && nullableUser == null) {
+            throw new UnAuthorizedException();
+        }
+
         Post post = postProvider.findPost(board, req.getPostId());
 
         return commentProvider.findCommentTree(post).stream()
                 .map(comment -> CommentRes.create(nullableUser, comment, anonymousUserIdProvider))
                 .toList();
-    }
-
-    private void checkCommentUpdatePermission(Comment comment, User user) {
-        comment.getBoard().checkAccessibleRole(user);
-        if (!comment.hasPermission(user)) {
-            throw new DoNotHavePermissionToUpdateCommentException();
-        }
-    }
-
-    private void checkCommentDeletable(Comment comment, User user) {
-        comment.getBoard().checkAccessibleRole(user);
-        if (!comment.hasPermission(user)) throw new DoNotHavePermissionToDeleteCommentException();
-    }
-
-    private void checkViewPermission(Board board, User nullableUser) {
-        board.checkAccessibleRole(nullableUser);
-        if (!board.isPublicComment() && nullableUser == null) throw new UnAuthorizedException();
-    }
-
-    public void checkWritePermission(Board board, User user) {
-        board.checkAccessibleRole(user);
-        if (board.getWriteCommentLevel().getValue() > user.getLevel().getValue()) throw new DoNotHavePermissionToWriteCommentOnBoardException();
     }
 
 }

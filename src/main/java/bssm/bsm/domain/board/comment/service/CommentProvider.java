@@ -16,16 +16,12 @@ public class CommentProvider {
     private final CommentRepository commentRepository;
 
     public Comment findComment(Post post, long id) {
-        return commentRepository.findByPkIdAndPost(id, post)
+        return commentRepository.findByIdAndPost(id, post)
                 .orElseThrow(NoSuchCommentException::new);
     }
 
     public List<Comment> findCommentTree(Post post) {
-        return commentRepository.findAllByPostAndParentIdIsNullOrderByPkId(post);
-    }
-
-    public long getNewCommentId(Post post) {
-        return commentRepository.countByPost(post) + 1;
+        return commentRepository.findAllByPostAndParentIdIsNullOrderById(post);
     }
 
 }

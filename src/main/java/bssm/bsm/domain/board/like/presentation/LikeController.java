@@ -19,7 +19,7 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping
-    public LikeRes like(@RequestBody LikeReq req) {
-        return likeService.like(currentUser.getUser(), req);
+    public LikeRes findMyLike(@RequestBody LikeReq req) {
+        return likeService.findMyLike(currentUser.getUser(), req);
     }
 }

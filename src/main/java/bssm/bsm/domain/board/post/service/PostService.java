@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
+
 import java.util.List;
 
 @Service
@@ -66,7 +67,7 @@ public class PostService {
         Post post = postProvider.findPost(board, req.getPostId());
         PostLike postLike = likeProvider.findMyPostLike(nullableUser, post);
 
-        post.increaseTotalViews();
+        post.increaseViewCount();
         return DetailPostRes.create(post, postLike, nullableUser);
     }
 
@@ -75,16 +76,14 @@ public class PostService {
         Board board = boardProvider.findBoard(req.getBoardId());
         checkWritePermission(board, user);
 
-        Long newPostId = postProvider.getNewPostId(board);
         PostCategory postCategory = categoryProvider.findCategory(req.getCategoryId(), board);
-        Post newPost = Post.create(newPostId, board, user, req.getTitle(), req.getContent(), req.getAnonymous(), postCategory);
-        postRepository.save(newPost);
+        Post post = postRepository.save(Post.create(board, user, req.getTitle(), req.getContent(), req.getAnonymous(), postCategory));
 
         if (req.getAnonymous() == PostAnonymousType.NO_RECORD) {
-            postLogService.recordTempLog(newPost, user);
+            postLogService.recordTempLog(post, user);
         }
 
-        return newPostId;
+        return post.getId();
     }
 
     @Transactional
@@ -120,7 +119,8 @@ public class PostService {
 
     private void checkWritePermission(Board board, User user) {
         board.checkAccessibleRole(user);
-        if (board.getWritePostLevel().getValue() > user.getLevel().getValue()) throw new DoNotHavePermissionToWritePostOnBoardException();
+        if (board.getWritePostLevel().getValue() > user.getLevel().getValue())
+            throw new DoNotHavePermissionToWritePostOnBoardException();
     }
 
 }

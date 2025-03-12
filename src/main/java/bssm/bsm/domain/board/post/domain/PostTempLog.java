@@ -29,8 +29,8 @@ public class PostTempLog {
 
     public static PostTempLog create(Post post, User writer) {
         PostTempLog log = new PostTempLog();
-        String boardId = post.getPk().getBoardId();
-        long postId = post.getPk().getId();
+        String boardId = post.getBoard().getId();
+        long postId = post.getId();
 
         log.id = boardId + ":" + postId;
         log.boardId = boardId;

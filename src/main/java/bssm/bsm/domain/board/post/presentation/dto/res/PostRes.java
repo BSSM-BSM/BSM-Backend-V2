@@ -22,14 +22,14 @@ public class PostRes {
 
     public static PostRes create(Post post) {
         PostRes postRes = new PostRes();
-        postRes.id = post.getPk().getId();
+        postRes.id = post.getId();
         postRes.user = UserRes.create(post);
         postRes.category =  post.getCategoryId();
         postRes.title = post.getTitle();
         postRes.createdAt = post.getCreatedAt();
-        postRes.view = post.getView();
-        postRes.totalComments = post.getTotalComments();
-        postRes.totalLikes = post.getTotalLikes();
+        postRes.view = post.getViewCount();
+        postRes.totalComments = post.getCommentCount();
+        postRes.totalLikes = post.getLikeCount();
         return postRes;
     }
 }

@@ -18,7 +18,6 @@ public class CommentTempLog {
     @Id
     private String id;
 
-    private String boardId;
     private long postId;
     private long commentId;
     private long userCode;
@@ -29,16 +28,14 @@ public class CommentTempLog {
 
     public static CommentTempLog create(Comment comment, User writer) {
         CommentTempLog log = new CommentTempLog();
-        String boardId = comment.getPk().getBoardId();
-        long postId = comment.getPk().getPostId();
-        long commentId = comment.getPk().getId();
+        long postId = comment.getPost().getId();
+        long commentId = comment.getId();
 
-        log.id = boardId + ":" + postId + ":" + commentId;
-        log.boardId = boardId;
+        log.id = postId + ":" + commentId;
         log.postId = postId;
         log.commentId = commentId;
         log.userCode = writer.getCode();
-        log.parentId = comment.getParentId();
+        log.parentId = comment.getParent() != null ? comment.getParent().getId() : null;
         log.depth = comment.getDepth();
         log.content = comment.getContent();
         log.createdAt = comment.getCreatedAt();

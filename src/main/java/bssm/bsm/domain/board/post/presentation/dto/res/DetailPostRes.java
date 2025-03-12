@@ -19,18 +19,18 @@ public class DetailPostRes extends PostRes {
 
     public static DetailPostRes create(Post post, PostLike postLike, User nullableViewer) {
         DetailPostRes detailPostRes = new DetailPostRes();
-        detailPostRes.id = post.getPk().getId();
+        detailPostRes.id = post.getId();
         detailPostRes.user = UserRes.create(post);
         detailPostRes.category =  post.getCategoryId();
         detailPostRes.title = post.getTitle();
         detailPostRes.createdAt = post.getCreatedAt();
-        detailPostRes.view = post.getView();
-        detailPostRes.totalComments = post.getTotalComments();
-        detailPostRes.totalLikes = post.getTotalLikes();
+        detailPostRes.view = post.getViewCount();
+        detailPostRes.totalComments = post.getCommentCount();
+        detailPostRes.totalLikes = post.getLikeCount();
         detailPostRes.content = post.getContent();
         detailPostRes.permission = nullableViewer != null && post.hasPermission(nullableViewer);
-        detailPostRes.myLike = postLike == null ? 0 : postLike.getLike().getValue();
-        detailPostRes.isAnonymous = post.getAnonymous() != PostAnonymousType.VISIBLE;
+        detailPostRes.myLike = postLike == null ? 0 : postLike.getType().getValue();
+        detailPostRes.isAnonymous = post.getAnonymousType() != PostAnonymousType.VISIBLE;
         return detailPostRes;
     }
 }

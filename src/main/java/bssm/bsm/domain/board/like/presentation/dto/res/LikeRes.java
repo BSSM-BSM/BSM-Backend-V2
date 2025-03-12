@@ -15,7 +15,7 @@ public class LikeRes {
     public static LikeRes create(LikeType like, Post post) {
         LikeRes likeRes = new LikeRes();
         likeRes.like = like.getValue();
-        likeRes.totalLikes = post.getTotalLikes();
+        likeRes.totalLikes = post.getLikeCount();
         return likeRes;
     }
 }

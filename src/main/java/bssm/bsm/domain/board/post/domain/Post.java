@@ -7,38 +7,39 @@ import bssm.bsm.domain.board.post.domain.type.PostAnonymousConverter;
 import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
+import bssm.bsm.global.entity.BaseTimeEntity;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLRestriction;
+
 import java.util.Objects;
 
 @Getter
 @Entity
 @DynamicInsert
 @DynamicUpdate
+@SQLRestriction("is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Post extends BaseTimeEntity {
 
-    @EmbeddedId
-    private PostPk pk;
+    @Id
+    @Column(columnDefinition = "INT UNSIGNED")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
-    @MapsId("boardId")
     private Board board;
 
     @Column(name = "category_id")
@@ -51,9 +52,9 @@ public class Post {
     })
     private PostCategory category;
 
-    @Column(name = "isDelete", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     @ColumnDefault("0")
-    private boolean delete;
+    private boolean isDeleted;
 
     @ManyToOne
     @JoinColumn(name = "user_code")
@@ -67,38 +68,33 @@ public class Post {
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
-    private int view;
+    private int viewCount;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     @ColumnDefault("0")
-    private int totalComments;
+    private int commentCount;
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private int totalLikes;
+    private int likeCount;
 
     @Convert(converter = PostAnonymousConverter.class)
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
-    private PostAnonymousType anonymous;
+    private PostAnonymousType anonymousType;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    public static Post create(long id, Board board, User writer, String title,
-                              String content, PostAnonymousType anonymous, PostCategory category) {
+    public static Post create(Board board, User writer, String title,
+                              String content, PostAnonymousType anonymousType, PostCategory category) {
         Post post = new Post();
-        post.pk = PostPk.create(id, board);
         post.board = board;
         post.writer = writer;
         post.title = title;
         post.content = content;
-        post.delete = false;
-        post.createdAt = LocalDateTime.now();
-        post.view = 0;
-        post.totalComments = 0;
-        post.totalLikes = 0;
+        post.isDeleted = false;
+        post.viewCount = 0;
+        post.commentCount = 0;
+        post.likeCount = 0;
         post.setCategory(category);
-        post.setAnonymous(anonymous);
+        post.setAnonymousType(anonymousType);
         return post;
     }
 
@@ -106,7 +102,7 @@ public class Post {
         this.title = title;
         this.content = content;
         setCategory(category);
-        setAnonymous(anonymous);
+        setAnonymousType(anonymous);
     }
 
     private void setCategory(PostCategory category) {
@@ -114,50 +110,50 @@ public class Post {
         this.categoryId = category == null ? null : category.getPk().getId();
     }
 
-    private void setAnonymous(PostAnonymousType anonymous) {
-        this.anonymous = anonymous;
-        if (anonymous == PostAnonymousType.NO_RECORD) {
+    private void setAnonymousType(PostAnonymousType anonymousType) {
+        this.anonymousType = anonymousType;
+        if (anonymousType == PostAnonymousType.NO_RECORD) {
             this.writer = null;
         }
     }
 
     public void delete() {
-        this.delete = true;
+        this.isDeleted = true;
     }
 
-    public void increaseTotalViews() {
-        this.view++;
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 
-    public void increaseTotalComments() {
-        this.totalComments++;
+    public void increaseCommentCount() {
+        this.commentCount++;
     }
 
-    public void decreaseTotalComments() {
-        this.totalComments--;
+    public void decreaseCommentCount() {
+        this.commentCount--;
     }
 
     public void applyPostLike() {
-        this.totalLikes++;
+        this.likeCount++;
     }
 
     public void applyPostDislike() {
-        this.totalLikes--;
+        this.likeCount--;
     }
 
     public void cancelPostLike(LikeType prevLike) {
-        this.totalLikes -= prevLike.getValue();
+        this.likeCount -= prevLike.getValue();
     }
 
     public void reservePostLike(LikeType prevLike) {
-        this.totalLikes -= (prevLike.getValue() * 2);
+        this.likeCount -= (prevLike.getValue() * 2);
     }
 
     public boolean hasPermission(User user) {
         if (user.getLevel() == UserLevel.ADMIN) {
             return true;
         }
-        if (this.anonymous == PostAnonymousType.NO_RECORD
+        if (this.anonymousType == PostAnonymousType.NO_RECORD
                 || writer == null) {
             return false;
         }

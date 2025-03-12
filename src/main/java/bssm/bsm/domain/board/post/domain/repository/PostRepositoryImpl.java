@@ -24,14 +24,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         return jpaQueryFactory.selectFrom(post)
                 .leftJoin(post.writer, user)
                 .where(
-                        post.delete.isFalse(),
+                        post.isDeleted.isFalse(),
                         post.board.eq(board),
                         categoryEq(board, category),
                         postIdLt(startPostId)
                 )
                 .limit(limit)
                 .orderBy(
-                        post.pk.id.desc()
+                        post.id.desc()
                 )
                 .fetch();
     }
@@ -51,7 +51,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom {
         if (startPostId == null) {
             return null;
         }
-        return post.pk.id.lt(startPostId);
+        return post.id.lt(startPostId);
     }
 
 }

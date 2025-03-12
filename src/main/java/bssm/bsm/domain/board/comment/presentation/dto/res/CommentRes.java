@@ -29,9 +29,9 @@ public class CommentRes {
 
     public static CommentRes create(User nullableUser, Comment comment, AnonymousUserIdProvider anonymousUserIdProvider) {
         CommentRes res = new CommentRes();
-        res.id = comment.getPk().getId();
+        res.id = comment.getId();
         res.depth = comment.getDepth();
-        if (comment.isDelete()) {
+        if (comment.isDeleted()) {
             res.setDeletedComment();
         } else {
             res.setNormalComment(nullableUser, comment, anonymousUserIdProvider);
@@ -51,7 +51,7 @@ public class CommentRes {
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.permission = nullableUser != null && comment.hasPermission(nullableUser);
-        this.isAnonymous = comment.getAnonymous() != CommentAnonymousType.VISIBLE;
+        this.isAnonymous = comment.getAnonymousType() != CommentAnonymousType.VISIBLE;
     }
 
     private void setDeletedComment() {
