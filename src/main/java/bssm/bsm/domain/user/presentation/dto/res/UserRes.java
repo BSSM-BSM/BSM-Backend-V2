@@ -14,17 +14,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserRes {
 
-    private Long code;
+    private Long id;
     private String nickname;
 
     public static UserRes create(Post post) {
         UserRes userRes = new UserRes();
         if (post.getAnonymousType() == PostAnonymousType.VISIBLE) {
             User user = post.getWriter();
-            userRes.code = user.getCode();
+            userRes.id = user.getId();
             userRes.nickname = user.getNickname();
         } else {
-            userRes.code = -1L;
+            userRes.id = -1L;
             userRes.nickname = "ㅇㅇ";
         }
         return userRes;
@@ -37,7 +37,7 @@ public class UserRes {
 
         User user = comment.getWriter();
         UserRes userRes = new UserRes();
-        userRes.code = user.getCode();
+        userRes.id = user.getId();
         userRes.nickname = user.getNickname();
         return userRes;
     }
@@ -49,13 +49,13 @@ public class UserRes {
         long anonymousId = anonymousUserIdProvider.getAnonymousId(AnonymousKeyType.COMMENT, sessionId, user);
 
         UserRes userRes = new UserRes();
-        userRes.code = -1L;
+        userRes.id = -1L;
         userRes.nickname = "ㅇㅇ(" + anonymousId + ")";
         return userRes;
     }
 
     public UserRes(User user) {
-        this.code = user.getCode();
+        this.id = user.getId();
         this.nickname = user.getNickname();
     }
 }

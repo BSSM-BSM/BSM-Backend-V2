@@ -47,7 +47,7 @@ public class LostFoundDefinitionService {
         LostFound lostFound = lostFoundRepository.findById(lostFoundId)
                 .orElseThrow(NoSuchLostFoundException::new);
 
-        if (!Objects.equals(currentUser.getUser().getCode(), lostFound.getFoundUser().getCode())) {
+        if (!Objects.equals(currentUser.getUser().getId(), lostFound.getFoundUser().getId())) {
             throw new NotCreatorException();
         }
 

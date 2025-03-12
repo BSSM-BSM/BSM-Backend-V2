@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDetailRes {
 
-    private Long code;
+    private Long id;
     private String nickname;
     private String email;
     private int level;
@@ -21,7 +21,7 @@ public class UserDetailRes {
 
     public static UserDetailRes create(User user) {
         UserDetailRes res = new UserDetailRes();
-        res.code = user.getCode();
+        res.id = user.getId();
         res.nickname = user.getNickname();
         res.email = user.findEmailOrNull();
         res.level = user.getLevel().getValue();

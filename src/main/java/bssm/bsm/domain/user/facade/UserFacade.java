@@ -35,19 +35,19 @@ public class UserFacade {
                 .getUser();
     }
 
-    public User findByCode(long userCode) {
-        return userRepository.findById(userCode)
+    public User findByCode(long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(NoSuchUserException::new);
     }
 
-    public User findByCodeOrNull(long userCode) {
-        return userRepository.findById(userCode)
+    public User findByCodeOrNull(long userId) {
+        return userRepository.findById(userId)
                 .orElseGet(() -> null);
     }
 
-    public User findCachedUserByCode(long userCode) {
-        UserCache userCache = userRedisRepository.findById(userCode)
-                .orElseGet(() -> findAndSaveUserCache(userCode));
+    public User findCachedUserByCode(long userId) {
+        UserCache userCache = userRedisRepository.findById(userId)
+                .orElseGet(() -> findAndSaveUserCache(userId));
         return User.ofCache(userCache);
     }
 
@@ -55,8 +55,8 @@ public class UserFacade {
         userRedisRepository.save(UserCache.ofUser(user));
     }
 
-    private UserCache findAndSaveUserCache(long userCode) {
-        User user = findByCode(userCode);
+    private UserCache findAndSaveUserCache(long userId) {
+        User user = findByCode(userId);
         saveUserCache(user);
         return UserCache.ofUser(user);
     }

@@ -21,7 +21,7 @@ public class AnonymousUserIdProvider {
         if (nullableUser == null) {
             return getNewId(type, sessionId);
         }
-        AnonymousKey key = new AnonymousKey(type, sessionId, nullableUser.getCode());
+        AnonymousKey key = new AnonymousKey(type, sessionId, nullableUser.getId());
         Long id = Optional.ofNullable(anonymousMap.get(key))
                 .orElseGet(() -> getNewId(type, sessionId));
         anonymousMap.put(key, id);

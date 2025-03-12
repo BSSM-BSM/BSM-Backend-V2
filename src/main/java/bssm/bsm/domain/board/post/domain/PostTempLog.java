@@ -1,19 +1,19 @@
 package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.user.domain.User;
-import bssm.bsm.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @RedisHash(value = "post_log", timeToLive = 86400)
-public class PostTempLog {
+public class PostTempLog implements Serializable {
 
     @Id
     private String id;
@@ -21,7 +21,7 @@ public class PostTempLog {
     private String boardId;
     private Long postId;
     private String categoryId;
-    private Long userCode;
+    private Long userId;
     private String title;
     private String content;
     private LocalDateTime createdAt;
@@ -36,7 +36,7 @@ public class PostTempLog {
         log.boardId = boardId;
         log.postId = postId;
         log.categoryId = post.getCategoryId();
-        log.userCode = writer.getCode();
+        log.userId = writer.getId();
         log.title = post.getTitle();
         log.content = post.getContent();
         log.createdAt = post.getCreatedAt();

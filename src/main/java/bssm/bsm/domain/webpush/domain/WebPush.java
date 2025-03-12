@@ -13,48 +13,36 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Setter;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WebPush extends BaseTimeEntity {
 
+    @Setter
     @Id
     @Column(length = 512)
     private String endpoint;
 
+    @Setter
     @Column
     private String auth;
 
+    @Setter
     @Column
     private String p256dh;
 
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Long userCode;
-
     @OneToOne
-    @JoinColumn(name = "userCode", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     private User user;
 
     @Builder
-    public WebPush(String endpoint, String auth, String p256dh, Long userCode, User user) {
+    public WebPush(String endpoint, String auth, String p256dh, User user) {
         this.endpoint = endpoint;
         this.auth = auth;
         this.p256dh = p256dh;
-        this.userCode = userCode;
         this.user = user;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public void setAuth(String auth) {
-        this.auth = auth;
-    }
-
-    public void setP256dh(String p256dh) {
-        this.p256dh = p256dh;
     }
 
     public void updateWebPush(WebPushSubscribeRequest dto) {

@@ -47,7 +47,7 @@ public class Emoticon extends BaseTimeEntity {
     private String deleteReason;
 
     @ManyToOne
-    @JoinColumn(name = "user_code")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "emoticon", cascade = CascadeType.REMOVE)

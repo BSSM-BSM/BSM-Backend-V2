@@ -35,7 +35,7 @@ public class AuthService {
 
     public AuthTokenRes loginPostProcess(HttpServletResponse res, User user) {
         String token = jwtProvider.createAccessToken(user);
-        String refreshToken = jwtProvider.createRefreshToken(user.getCode());
+        String refreshToken = jwtProvider.createRefreshToken(user);
 
         ResponseCookie tokenCookie = cookieProvider.createCookie(TOKEN_COOKIE_NAME, token, JWT_TOKEN_MAX_TIME);
         ResponseCookie refreshTokenCookie = cookieProvider.createCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, JWT_REFRESH_TOKEN_MAX_TIME);

@@ -4,6 +4,8 @@ import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.domain.user.domain.type.UserRole;
 import bssm.bsm.domain.user.exception.NoSuchUserEmailException;
 import bssm.bsm.global.entity.BaseTimeEntity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +24,8 @@ import jakarta.persistence.OneToOne;
 public class User extends BaseTimeEntity {
 
     @Id
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Long code;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 40, unique = true)
     private String nickname;
@@ -63,9 +65,9 @@ public class User extends BaseTimeEntity {
         throw new NoSuchUserEmailException();
     }
 
-    public static User ofNormal(Long code, String nickname, String oauthToken) {
+    public static User ofNormal(Long id, String nickname, String oauthToken) {
         User user = new User();
-        user.code = code;
+        user.id = id;
         user.nickname = nickname;
         user.level = UserLevel.USER;
         user.oauthToken = oauthToken;
@@ -76,16 +78,16 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
-    public static User ofStudent(Student student, Long code, String nickname, String oauthToken) {
-        User user = ofNormal(code, nickname, oauthToken);
+    public static User ofStudent(Student student, Long id, String nickname, String oauthToken) {
+        User user = ofNormal(id, nickname, oauthToken);
         user.student = student;
         user.studentId = student.getStudentId();
         user.role = UserRole.STUDENT;
         return user;
     }
 
-    public static User ofTeacher(Teacher teacher, Long code, String nickname, String oauthToken) {
-        User user = ofNormal(code, nickname, oauthToken);
+    public static User ofTeacher(Teacher teacher, Long id, String nickname, String oauthToken) {
+        User user = ofNormal(id, nickname, oauthToken);
         user.teacher = teacher;
         user.teacherId = teacher.getTeacherId();
         user.role = UserRole.TEACHER;
@@ -94,7 +96,7 @@ public class User extends BaseTimeEntity {
 
     public static User ofCache(UserCache userCache) {
         User user = new User();
-        user.code = userCache.getCode();
+        user.id = userCache.getId();
         user.nickname = userCache.getNickname();
         user.role = userCache.getRole();
         user.studentId = userCache.getStudentId();

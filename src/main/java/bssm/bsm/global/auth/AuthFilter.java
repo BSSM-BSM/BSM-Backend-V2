@@ -49,7 +49,7 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private void authentication(String token) {
-        UserDetails userDetails = authDetailsService.loadUserByUsername(String.valueOf(jwtUtil.getUserCode(token)));
+        UserDetails userDetails = authDetailsService.loadUserByUsername(String.valueOf(jwtUtil.getUserId(token)));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }

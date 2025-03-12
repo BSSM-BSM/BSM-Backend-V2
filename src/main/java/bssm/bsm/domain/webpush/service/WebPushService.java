@@ -19,12 +19,12 @@ public class WebPushService {
     public void subscribe(WebPushSubscribeRequest dto) {
         User user = currentUser.getUser();
 
-        WebPush webPush = webpushRepository.findByUserCodeAndEndpoint(user.getCode(), dto.getEndpoint())
+        WebPush webPush = webpushRepository.findByUserIdAndEndpoint(user.getId(), dto.getEndpoint())
                 .orElseGet(() -> WebPush.builder()
                         .endpoint(dto.getEndpoint())
                         .auth(dto.getAuth())
                         .p256dh(dto.getP256dh())
-                        .userCode(user.getCode())
+                        .user(user)
                         .build()
                 );
 

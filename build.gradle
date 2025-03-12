@@ -63,7 +63,7 @@ bootJar {
 }
 
 // querydsl
-def querydslDir = "$buildDir/generated/querydsl"
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
 
 sourceSets {
 	main.java.srcDirs += [ querydslDir ]

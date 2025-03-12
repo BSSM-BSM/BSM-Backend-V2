@@ -13,14 +13,14 @@ public class CurrentUser {
     private final UserFacade userFacade;
 
     public User getUser() {
-        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userFacade.findCachedUserByCode(Long.parseLong(userCode));
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userFacade.findCachedUserByCode(Long.parseLong(userId));
     }
 
     public User getUserOrNull() {
-        String userCode = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (userCode.equals("anonymousUser")) return null;
-        return userFacade.findCachedUserByCode(Long.parseLong(userCode));
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (userId.equals("anonymousUser")) return null;
+        return userFacade.findCachedUserByCode(Long.parseLong(userId));
     }
 
 }

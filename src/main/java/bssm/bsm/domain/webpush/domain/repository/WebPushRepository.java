@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface WebPushRepository extends JpaRepository<WebPush, String> {
 
-    Optional<WebPush> findByUserCodeAndEndpoint(long userCode, String endpoint);
+    Optional<WebPush> findByUserIdAndEndpoint(long userId, String endpoint);
 
-    List<WebPush> findAllByUserCode(long userCode);
+    List<WebPush> findAllByUserId(long userId);
 
     List<WebPush> findAllByUserIn(List<User> userList);
 

@@ -1,7 +1,7 @@
 docker-compose.prod.yml
 nginx.prod.conf
 
-src/main/querydsl/
+src/main/generated
 
 HELP.md
 .gradle

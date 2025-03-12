@@ -8,6 +8,8 @@ import bssm.bsm.domain.board.post.domain.type.PostAnonymousType;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.domain.user.domain.type.UserLevel;
 import bssm.bsm.global.entity.BaseTimeEntity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,7 +37,7 @@ import java.util.Objects;
 public class Post extends BaseTimeEntity {
 
     @Id
-    @Column(columnDefinition = "INT UNSIGNED")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -57,7 +59,7 @@ public class Post extends BaseTimeEntity {
     private boolean isDeleted;
 
     @ManyToOne
-    @JoinColumn(name = "user_code")
+    @JoinColumn(name = "user_id")
     private User writer;
 
     @Column(nullable = false, length = 50)
@@ -157,7 +159,7 @@ public class Post extends BaseTimeEntity {
                 || writer == null) {
             return false;
         }
-        return Objects.equals(writer.getCode(), user.getCode());
+        return Objects.equals(writer.getId(), user.getId());
     }
 
 }

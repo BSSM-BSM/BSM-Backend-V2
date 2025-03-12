@@ -12,6 +12,8 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -34,7 +36,7 @@ import java.util.Set;
 public class Comment extends BaseTimeEntity {
 
     @Id
-    @Column(columnDefinition = "INT UNSIGNED")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -42,7 +44,7 @@ public class Comment extends BaseTimeEntity {
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "user_code")
+    @JoinColumn(name = "user_id")
     private User writer;
 
     @Column(name = "is_deleted", nullable = false)
@@ -105,6 +107,6 @@ public class Comment extends BaseTimeEntity {
                 || writer == null) {
             return false;
         }
-        return Objects.equals(writer.getCode(), user.getCode());
+        return Objects.equals(writer.getId(), user.getId());
     }
 }

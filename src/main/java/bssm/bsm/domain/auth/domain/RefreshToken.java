@@ -27,11 +27,8 @@ public class RefreshToken {
     @Column(nullable = false)
     private boolean isAvailable;
 
-    @Column(columnDefinition = "INT UNSIGNED")
-    private Long userCode;
-
     @ManyToOne
-    @JoinColumn(name = "userCode", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
@@ -39,10 +36,9 @@ public class RefreshToken {
     private Date createdAt;
 
     @Builder
-    public RefreshToken(String token, boolean isAvailable, Long userCode, User user, Date createdAt) {
+    public RefreshToken(String token, boolean isAvailable, User user, Date createdAt) {
         this.token = token;
         this.isAvailable = isAvailable;
-        this.userCode = userCode;
         this.user = user;
         this.createdAt = createdAt;
     }

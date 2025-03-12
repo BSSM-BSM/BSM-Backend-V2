@@ -4,6 +4,8 @@ import bssm.bsm.domain.board.like.domain.type.LikeType;
 import bssm.bsm.domain.board.like.domain.type.LikeConverter;
 import bssm.bsm.domain.board.post.domain.Post;
 import bssm.bsm.domain.user.domain.User;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +23,7 @@ import jakarta.persistence.ManyToOne;
 public class PostLike {
 
     @Id
-    @Column(columnDefinition = "INT UNSIGNED")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -29,7 +31,7 @@ public class PostLike {
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "user_code")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Convert(converter = LikeConverter.class)
