@@ -1,4 +1,4 @@
-name: bsm-backend
+name: bsm-backend-local
 
 services:
   nginx:
@@ -31,6 +31,7 @@ services:
       - db
       - redis
     environment:
+      SPRING_PROFILES_ACTIVE: local
       FILE_UPLOAD_SIZE: 10MB
       DB_HOST: db
       DB_PORT: 3306
@@ -62,11 +63,14 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+      - --lower_case_table_names=1
     volumes:
       - ./.docker-data/mysql/config:/etc/mysql/conf.d
       - ./.docker-data/mysql/data:/var/lib/mysql
     expose:
       - '3306:3306'
+    ports:
+      - '53306:3306'
     networks:
       - backend
     environment:
@@ -84,6 +88,8 @@ services:
       - ./.docker-data/redis/data:/data
     expose:
       - '6379:6379'
+    ports:
+      - '56379:56379'
     networks:
       - backend
 

@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    web: DEBUG
+  org:
+    hibernate:
+      SQL: DEBUG
+      type:
+        descriptor:
+          BasicBinder: TRACE

@@ -2,39 +2,21 @@ server:
   servlet:
     contextPath: /api
 spring:
-  main:
-    allow-bean-definition-overriding: true
   servlet:
     multipart:
       max-file-size: ${FILE_UPLOAD_SIZE}
       max-request-size: ${FILE_UPLOAD_SIZE}
-  jpa:
-    database: mysql
-    show-sql: true
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
   datasource:
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/${DB_NAME}?autoReconnect=true
     username: ${DB_USER}
     password: ${DB_PW}
     driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    database: mysql
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
     database: ${REDIS_DB}
-logging:
-  level:
-    web: DEBUG
-  org:
-    hibernate:
-      SQL: DEBUG
-      type:
-        descriptor:
-          BasicBinder: TRACE
 ---
 jwt:
   secret-key: ${JWT_SECRET_KEY}
