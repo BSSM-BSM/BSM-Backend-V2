@@ -28,7 +28,7 @@ public class MeisterScheduler {
         studentList.forEach(student -> {
             // 이미 정보가 저장되어있는 학생인지 확인
             Optional<MeisterData> data = meisterDataList.stream()
-                    .filter(meisterData -> meisterData.getStudentId().equals(student.getStudentId()))
+                    .filter(meisterData -> meisterData.getStudentId().equals(student.getId()))
                     .findFirst();
 
             MeisterData meisterData = data.orElseGet(

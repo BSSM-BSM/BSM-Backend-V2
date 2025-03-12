@@ -28,7 +28,7 @@ public class MeisterRankingService {
     private final MeisterInfoFacade meisterInfoFacade;
 
     public void updatePrivateRanking(User user, boolean privateRanking) {
-        MeisterInfo meisterInfo = meisterInfoFacade.getMeisterInfo(user.getStudentId());
+        MeisterInfo meisterInfo = meisterInfoFacade.getMeisterInfo(user.getStudent().getId());
 
         LocalDateTime availableTime = meisterInfo.getLastPrivateDate().plusDays(1);
         if (LocalDateTime.now().isBefore(availableTime)) {

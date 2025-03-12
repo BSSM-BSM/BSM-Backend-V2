@@ -25,16 +25,16 @@ public class MeisterDataProvider {
     private final MeisterAuthProvider meisterAuthProvider;
 
     public MeisterData findOrElseCreateMeisterData(Student student) {
-        return meisterDataRepository.findById(student.getStudentId()).orElseGet(
+        return meisterDataRepository.findById(student.getId()).orElseGet(
                 () -> {
                     MeisterInfo meisterInfo = meisterInfoRepository.save(
                             MeisterInfo.builder()
-                                    .studentId(student.getStudentId())
+                                    .studentId(student.getId())
                                     .lastPrivateDate(LocalDateTime.now())
                                     .build()
                     );
                     return MeisterData.builder()
-                            .studentId(student.getStudentId())
+                            .studentId(student.getId())
                             .meisterInfo(meisterInfo)
                             .build();
                 }

@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.Column;
@@ -23,21 +24,25 @@ import java.time.LocalDateTime;
 public class MeisterInfo {
 
     @Id
-    @Column(length = 10)
+    @Column(name = "student_id", length = 10)
     private String studentId;
 
+    @Setter
     @OneToOne
-    @JoinColumn(name = "studentId", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "student_id", nullable = false, insertable = false, updatable = false)
     private Student student;
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean loginError;
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean privateRanking;
 
+    @Setter
     @Column(nullable = false)
     private LocalDateTime lastPrivateDate;
 
@@ -50,26 +55,10 @@ public class MeisterInfo {
         this.lastPrivateDate = lastPrivateDate;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
-    public void setPrivateRanking(boolean privateRanking) {
-        this.privateRanking = privateRanking;
-    }
-
-    public void setLastPrivateDate(LocalDateTime lastPrivateDate) {
-        this.lastPrivateDate = lastPrivateDate;
-    }
-
-    public void setLoginError(boolean loginError) {
-        this.loginError = loginError;
-    }
-
     public void privateCheck(User user) {
         if (user.getRole() == UserRole.TEACHER) return;
 
-        if (privateRanking && !student.getStudentId().equals(user.getStudentId())) {
+        if (privateRanking && !student.getId().equals(user.getStudent().getId())) {
             throw new ForbiddenException("정보 공유를 거부한 유저입니다");
         }
     }

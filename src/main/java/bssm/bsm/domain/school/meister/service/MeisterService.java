@@ -40,7 +40,7 @@ public class MeisterService {
         MeisterInfo meisterInfo = meisterData.getMeisterInfo();
         meisterInfo.privateCheck(user);
 
-        meisterAuthProvider.login(student, dto.getPw().isEmpty()? student.getStudentId(): dto.getPw());
+        meisterAuthProvider.login(student, dto.getPw().isEmpty()? student.getId(): dto.getPw());
         MeisterDetailResponse detailInfo = meisterProvider.getAllInfo(student);
 
         if (meisterInfo.isLoginError()) {
@@ -60,7 +60,7 @@ public class MeisterService {
     }
 
     public MeisterResponse get(User user) {
-        MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudentId(), LocalDate.now().atStartOfDay())
+        MeisterData meisterData = meisterDataRepository.findByStudentIdAndModifiedAtGreaterThan(user.getStudent().getId(), LocalDate.now().atStartOfDay())
                 .orElseGet(() -> meisterDataProvider.getAndUpdateMeisterData(
                         meisterDataProvider.findOrElseCreateMeisterData(user.getStudent())
                 ));

@@ -26,8 +26,8 @@ public class MeisterInfoFacade {
     public void viewPermissionCheck(User user) {
         if (user.getRole() == UserRole.TEACHER) return;
 
-        MeisterInfo info = meisterInfoRepository.findById(user.getStudentId())
-                .orElseThrow(() -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");});
+        MeisterInfo info = meisterInfoRepository.findById(user.getStudent().getId())
+                .orElseThrow(() -> new NotFoundException("마이스터 정보를 가져올 수 없습니다"));
         if (info.isLoginError()) {
             throw new ForbiddenException("자신의 마이스터 정보를 불러올 수 있도록 설정해야 볼 수 있습니다\n마이스터 인증제 사이트에서 계정의 비밀번호를 초기 비밀번호로 설정해주세요");
         }
@@ -39,8 +39,8 @@ public class MeisterInfoFacade {
     public void viewPermissionCheck(User user, Student student) {
         if (user.getRole() == UserRole.TEACHER) return;
 
-        MeisterInfo info = meisterInfoRepository.findById(user.getStudentId())
-                .orElseThrow(() -> {throw new NotFoundException("마이스터 정보를 가져올 수 없습니다");});
+        MeisterInfo info = meisterInfoRepository.findById(user.getStudent().getId())
+                .orElseThrow(() -> new NotFoundException("마이스터 정보를 가져올 수 없습니다"));
         if (info.isLoginError()) {
             throw new ForbiddenException("자신의 마이스터 정보를 불러올 수 있도록 설정해야 볼 수 있습니다\n마이스터 인증제 사이트에서 계정의 비밀번호를 초기 비밀번호로 설정해주세요");
         }

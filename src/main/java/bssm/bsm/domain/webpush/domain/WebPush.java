@@ -34,7 +34,7 @@ public class WebPush extends BaseTimeEntity {
     private String p256dh;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder

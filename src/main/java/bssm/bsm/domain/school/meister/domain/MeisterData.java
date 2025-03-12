@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,31 +24,37 @@ import java.time.LocalDateTime;
 public class MeisterData {
 
     @Id
-    @Column(length = 10)
+    @Column(name = "student_id", length = 10)
     private String studentId;
 
     @OneToOne
-    @JoinColumn(name = "meisterId", nullable = false)
+    @JoinColumn(name = "student_id", nullable = false)
     private MeisterInfo meisterInfo;
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("0")
     private float score;
 
+    @Setter
     @Column(columnDefinition = "MEDIUMTEXT")
     private String scoreRawData;
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("0")
     private int positivePoint;
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("0")
     private int negativePoint;
 
+    @Setter
     @Column(columnDefinition = "MEDIUMTEXT")
     private String pointRawData;
 
+    @Setter
     @LastModifiedDate
     private LocalDateTime modifiedAt;
 
@@ -60,30 +67,6 @@ public class MeisterData {
         this.positivePoint = positivePoint;
         this.negativePoint = negativePoint;
         this.pointRawData = pointRawData;
-    }
-
-    public void setScore(float score) {
-        this.score = score;
-    }
-
-    public void setScoreRawData(String scoreRawData) {
-        this.scoreRawData = scoreRawData;
-    }
-
-    public void setPositivePoint(int positivePoint) {
-        this.positivePoint = positivePoint;
-    }
-
-    public void setNegativePoint(int negativePoint) {
-        this.negativePoint = negativePoint;
-    }
-
-    public void setPointRawData(String pointRawData) {
-        this.pointRawData = pointRawData;
-    }
-
-    public void setModifiedAt(LocalDateTime modifiedAt) {
-        this.modifiedAt = modifiedAt;
     }
 
 }

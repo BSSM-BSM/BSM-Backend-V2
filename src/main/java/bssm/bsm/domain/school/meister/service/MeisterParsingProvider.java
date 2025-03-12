@@ -77,7 +77,7 @@ public class MeisterParsingProvider {
                 .post(new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("caseBy", "getViewer")
-                        .addFormDataPart("uniqNo", student.getStudentId())
+                        .addFormDataPart("uniqNo", student.getId())
                         .build()
                 )
                 .build();

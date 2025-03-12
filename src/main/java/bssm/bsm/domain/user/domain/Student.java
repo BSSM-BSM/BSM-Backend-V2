@@ -17,7 +17,7 @@ public class Student {
 
     @Id
     @Column(length = 10)
-    private String studentId;
+    private String id;
 
     @Column(columnDefinition = "year")
     private int enrolledAt;
@@ -42,8 +42,8 @@ public class Student {
     private User user;
 
     @Builder
-    public Student(String studentId, int enrolledAt, int grade, int classNo, int studentNo, String name, String email, User user) {
-        this.studentId = studentId;
+    public Student(String id, int enrolledAt, int grade, int classNo, int studentNo, String name, String email, User user) {
+        this.id = id;
         this.enrolledAt = enrolledAt;
         this.grade = grade;
         this.classNo = classNo;

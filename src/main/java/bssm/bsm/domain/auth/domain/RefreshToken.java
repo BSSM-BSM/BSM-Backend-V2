@@ -24,11 +24,11 @@ public class RefreshToken {
     @Column(length = 64)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 

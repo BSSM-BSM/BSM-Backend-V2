@@ -17,9 +17,7 @@ public class UserCache {
     private Long id;
     private String nickname;
     private UserRole role;
-    private String studentId;
     private Student student;
-    private Long teacherId;
     private Teacher teacher;
     private UserLevel level;
     private String oauthToken;
@@ -29,9 +27,7 @@ public class UserCache {
         userCache.id = user.getId();
         userCache.nickname = user.getNickname();
         userCache.role = user.getRole();
-        userCache.studentId = user.getStudentId();
         userCache.student = user.getStudent();
-        userCache.teacherId = user.getTeacherId();
         userCache.teacher = user.getTeacher();
         userCache.level = user.getLevel();
         userCache.oauthToken = user.getOauthToken();
