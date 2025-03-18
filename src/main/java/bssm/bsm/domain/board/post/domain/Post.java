@@ -59,7 +59,7 @@ public class Post extends BaseTimeEntity {
     private boolean isDeleted;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User writer;
 
     @Column(nullable = false, length = 50)
