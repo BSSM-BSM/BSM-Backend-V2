@@ -47,7 +47,7 @@ public class BsmOauthService {
             throw new InternalServerException();
         }
 
-        User user = userFacade.findByCodeOrNull(resource.getUserCode());
+        User user = userFacade.findByCodeOrNull(resource.getId());
         return signUpOrUpdate(user, resource, token);
     }
 
@@ -86,7 +86,7 @@ public class BsmOauthService {
 
         User user = User.ofStudent(
                 student,
-                resource.getUserCode(),
+                resource.getId(),
                 resource.getNickname(),
                 oauthToken);
         return userRepository.save(user);
@@ -98,7 +98,7 @@ public class BsmOauthService {
 
         User user = User.ofTeacher(
                 teacher,
-                resource.getUserCode(),
+                resource.getId(),
                 resource.getNickname(),
                 oauthToken);
         return userRepository.save(user);
