@@ -2,6 +2,7 @@ package bssm.bsm.domain.board.lostfound.domain;
 
 import bssm.bsm.domain.board.lostfound.domain.type.Process;
 import bssm.bsm.domain.user.domain.User;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +18,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 
 @Getter
@@ -44,7 +44,7 @@ public class LostFound {
     @Enumerated(EnumType.STRING)
     private Process process;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User foundUser;
 
