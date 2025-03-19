@@ -8,7 +8,7 @@ COPY settings.gradle .
 COPY src src
 RUN gradle clean bootJar
 
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 COPY --from=builder /gradle/build/libs/app.jar app.jar
