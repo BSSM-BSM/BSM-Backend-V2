@@ -20,12 +20,12 @@ public class LostFoundInformationController {
     private final LostFoundInformationService lostFoundInformationService;
 
     @GetMapping("process/{process}")
-    public List<LostFoundCompactRes> findAllByProcess(@PathVariable Process process) {
+    public List<LostFoundCompactRes> findAllByProcess(@PathVariable(value = "process") Process process) {
         return lostFoundInformationService.findByProcess(process);
     }
 
     @GetMapping("/{id}")
-    public LostFoundRes findOne(@PathVariable Long id) {
+    public LostFoundRes findOne(@PathVariable(value = "id") Long id) {
         return lostFoundInformationService.findOne(id);
     }
 }

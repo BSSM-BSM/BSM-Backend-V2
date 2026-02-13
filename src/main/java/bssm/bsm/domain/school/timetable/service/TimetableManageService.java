@@ -12,7 +12,6 @@ import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableList
 import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableListRes;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +51,7 @@ public class TimetableManageService {
     }
 
     @Transactional
-    public void applyTimetable(ApplyTimetableReq req) throws JsonProcessingException {
+    public void applyTimetable(ApplyTimetableReq req) {
         TimetableManage timetableManage = timetableManageProvider.findManage(req.getId());
         Timetable timetable = timetableProvider.findTimetable(timetableManage.getGrade(), timetableManage.getClassNo());
 

@@ -18,8 +18,8 @@ public class TimetableController {
 
     @GetMapping("{grade}/{classNo}")
     public TimetableListRes findTimetable(
-            @PathVariable int grade,
-            @PathVariable int classNo
+            @PathVariable(value = "grade") int grade,
+            @PathVariable(value = "classNo") int classNo
     ) {
         return timetableService.findTimetableList(new FindTimetableReq(grade, classNo));
     }

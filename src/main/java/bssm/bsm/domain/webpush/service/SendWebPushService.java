@@ -3,14 +3,13 @@ package bssm.bsm.domain.webpush.service;
 import bssm.bsm.domain.webpush.domain.WebPush;
 import bssm.bsm.domain.webpush.presentation.dto.request.WebPushMsgDto;
 import bssm.bsm.global.async.AsyncService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class SendWebPushService {
     }
 
     @Async("threadPoolTaskExecutor")
-    public void sendNotificationToAll(List<WebPush> webPushList, WebPushMsgDto dto) throws JsonProcessingException {
+    public void sendNotificationToAll(List<WebPush> webPushList, WebPushMsgDto dto) {
         List<Subscription> subscriptionList = webPushList.stream()
                 .map(this::toSubscription)
                 .toList();

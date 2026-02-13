@@ -21,11 +21,9 @@ public class MeisterRankingResponse implements Comparable<MeisterRankingResponse
     @Override
     public int compareTo(@NotNull MeisterRankingResponse ranking) {
         if (score == null) return 1;
-        if (ranking.score == null || ranking.score < score) {
+        if (ranking.score == null || ranking.score <= score) {
             return -1;
-        } else if (ranking.score > score) {
-            return 1;
         }
-        return 0;
+        return 1;
     }
 }

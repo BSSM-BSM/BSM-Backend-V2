@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "comment_log", timeToLive = 86400)
+@RedisHash(value = "comment_log")
 public class CommentTempLog implements Serializable {
 
     @Id

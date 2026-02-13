@@ -25,7 +25,7 @@ public class LostFoundDefinitionController {
     }
 
     @PutMapping("/update/{id}")
-    public LostFoundRes updateProcess(@PathVariable Long id, @Valid @RequestBody UpdateProcessReq updateProcessReq) {
+    public LostFoundRes updateProcess(@PathVariable(value = "id") Long id, @Valid @RequestBody UpdateProcessReq updateProcessReq) {
         return lostFoundDefinitionService.updateProcess(id, updateProcessReq);
     }
 }

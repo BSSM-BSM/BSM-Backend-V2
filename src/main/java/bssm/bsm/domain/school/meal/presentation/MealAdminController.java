@@ -19,7 +19,7 @@ public class MealAdminController {
     private final MealService mealService;
 
     @PutMapping("{date}")
-    public void updateMonthMeal(@PathVariable @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) throws IOException {
+    public void updateMonthMeal(@PathVariable(value = "date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) throws IOException {
         mealService.updateMonthMeal(date);
     }
 

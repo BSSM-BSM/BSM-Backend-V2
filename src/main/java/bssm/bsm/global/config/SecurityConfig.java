@@ -5,7 +5,6 @@ import bssm.bsm.global.error.exceptions.ForbiddenException;
 import bssm.bsm.global.auth.AuthFilter;
 import bssm.bsm.global.error.HttpErrorResponse;
 import bssm.bsm.global.error.exceptions.UnAuthorizedException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity

@@ -23,7 +23,7 @@ public class MeisterRankingController {
     private final CurrentUser currentUser;
 
     @GetMapping("ranking/{grade}")
-    public List<MeisterRankingResponse> getRanking(@PathVariable int grade) {
+    public List<MeisterRankingResponse> getRanking(@PathVariable(value = "grade") int grade) {
         return meisterRankingService.getRanking(currentUser.getUser(), grade);
     }
 

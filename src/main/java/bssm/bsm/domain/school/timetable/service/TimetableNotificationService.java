@@ -7,7 +7,6 @@ import bssm.bsm.domain.webpush.domain.WebPush;
 import bssm.bsm.domain.webpush.domain.repository.WebPushRepository;
 import bssm.bsm.domain.webpush.presentation.dto.request.WebPushMsgDto;
 import bssm.bsm.domain.webpush.service.SendWebPushService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class TimetableNotificationService {
     @Value("${timetable.url}")
     private String TIMETABLE_ACCESS_URL;
 
-    public void sendChangeTimetableNotification(TimetableManage timetableManage) throws JsonProcessingException {
+    public void sendChangeTimetableNotification(TimetableManage timetableManage) {
         WebPushMsgDto dto = WebPushMsgDto.create(
                 "시간표가 " + timetableManage.getName() + "(으)로 변경되었습니다",
                 "여기를 클릭하여 변경된 시간표를 확인해보세요",

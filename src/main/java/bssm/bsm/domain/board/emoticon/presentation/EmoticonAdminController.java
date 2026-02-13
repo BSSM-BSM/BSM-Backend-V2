@@ -33,7 +33,7 @@ public class EmoticonAdminController {
     }
 
     @PutMapping("{id}")
-    public void activateEmoticon(@PathVariable long id) {
+    public void activateEmoticon(@PathVariable(value = "id") long id) {
         emoticonAdminService.activateEmoticon(id);
     }
 

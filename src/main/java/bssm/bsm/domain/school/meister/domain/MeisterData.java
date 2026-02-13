@@ -56,6 +56,7 @@ public class MeisterData {
 
     @Setter
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
     @Builder

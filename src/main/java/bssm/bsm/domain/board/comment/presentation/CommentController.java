@@ -35,26 +35,26 @@ public class CommentController {
 
     @DeleteMapping("/{boardId}/{postId}/{commentId}")
     public void deleteComment(
-            @PathVariable String boardId,
-            @PathVariable long postId,
-            @PathVariable int commentId
+            @PathVariable(value = "boardId") String boardId,
+            @PathVariable(value = "postId") long postId,
+            @PathVariable(value = "commentId") int commentId
     ) {
         commentService.deleteComment(currentUser.getUser(), new DeleteCommentReq(boardId, postId, commentId));
     }
 
     @PutMapping("/{boardId}/{postId}/{commentId}/no-record")
     public void updateCommentNoRecord(
-            @PathVariable String boardId,
-            @PathVariable long postId,
-            @PathVariable int commentId
+            @PathVariable(value = "boardId") String boardId,
+            @PathVariable(value = "postId") long postId,
+            @PathVariable(value = "commentId") int commentId
     ) {
         commentService.updateCommentNoRecord(currentUser.getUser(), new UpdateNoRecordCommentReq(boardId, postId, commentId));
     }
 
     @GetMapping("/{boardId}/{postId}")
     public List<CommentRes> viewCommentTree(
-            @PathVariable String boardId,
-            @PathVariable int postId
+            @PathVariable(value = "boardId") String boardId,
+            @PathVariable(value = "postId") int postId
     ) {
         return commentService.viewCommentTree(currentUser.getUserOrNull(), new FindCommentTreeReq(boardId, postId));
     }

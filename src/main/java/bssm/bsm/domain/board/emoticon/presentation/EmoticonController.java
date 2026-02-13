@@ -27,7 +27,7 @@ public class EmoticonController {
     private final CurrentUser currentUser;
 
     @GetMapping("{id}")
-    public List<EmoticonItemRes> getEmoticon(@PathVariable long id) {
+    public List<EmoticonItemRes> getEmoticon(@PathVariable(value = "id") long id) {
         return emoticonService.getEmoticon(id);
     }
 

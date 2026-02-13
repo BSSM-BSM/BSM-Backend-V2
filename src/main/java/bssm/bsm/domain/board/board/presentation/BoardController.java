@@ -18,7 +18,7 @@ public class BoardController {
     private final CurrentUser currentUser;
 
     @GetMapping("/{boardId}")
-    public BoardRes findBoardInfo(@PathVariable String boardId) {
+    public BoardRes findBoardInfo(@PathVariable(value = "boardId") String boardId) {
         return boardService.findBoardInfo(boardId, currentUser.getUserOrNull());
     }
 

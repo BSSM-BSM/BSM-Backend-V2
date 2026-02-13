@@ -33,7 +33,7 @@ public class PostController {
 
     @GetMapping("/{boardId}")
     public PostListRes findPostList(
-            @PathVariable String boardId,
+            @PathVariable(value = "boardId") String boardId,
             @RequestParam(value = "limit", defaultValue = "15") int limit,
             @RequestParam(value = "category", defaultValue = "all") String category,
             @RequestParam(value = "startPostId") long startPostId
@@ -43,7 +43,7 @@ public class PostController {
 
     @GetMapping("/{boardId}/recent")
     public PostListRes findRecentPostList(
-            @PathVariable String boardId,
+            @PathVariable(value = "boardId") String boardId,
             @RequestParam(value = "limit", defaultValue = "15") int limit,
             @RequestParam(value = "category", defaultValue = "all") String category
     ) {
@@ -51,7 +51,10 @@ public class PostController {
     }
 
     @GetMapping("/{boardId}/{postId}")
-    public DetailPostRes findPost(@PathVariable String boardId, @PathVariable int postId) {
+    public DetailPostRes findPost(
+            @PathVariable(value = "boardId") String boardId,
+            @PathVariable(value = "postId") int postId
+    ) {
         return postService.findPost(currentUser.getUserOrNull(), new FindPostReq(boardId, postId));
     }
 
@@ -66,7 +69,10 @@ public class PostController {
     }
 
     @DeleteMapping("/{boardId}/{postId}")
-    public void deletePost(@PathVariable String boardId, @PathVariable int postId) {
+    public void deletePost(
+            @PathVariable(value = "boardId") String boardId,
+            @PathVariable(value = "postId") int postId
+    ) {
         postService.deletePost(currentUser.getUser(), new DeletePostReq(boardId, postId));
     }
 }

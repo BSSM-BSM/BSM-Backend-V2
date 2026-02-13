@@ -19,7 +19,7 @@ public class MealController {
     private final MealService mealService;
 
     @GetMapping("{date}")
-    public MealRes getMeal(@PathVariable @DateTimeFormat(pattern = "yyMMdd") LocalDate date) {
+    public MealRes getMeal(@PathVariable(value = "date") @DateTimeFormat(pattern = "yyMMdd") LocalDate date) {
         return mealService.getMeal(date);
     }
 }

@@ -1,4 +1,4 @@
-FROM gradle:8.8-jdk21-alpine AS builder
+FROM gradle:9.3-jdk25-alpine AS builder
 WORKDIR /gradle
 
 COPY gradlew .
@@ -8,7 +8,7 @@ COPY settings.gradle .
 COPY src src
 RUN gradle clean bootJar
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 
 COPY --from=builder /gradle/build/libs/app.jar app.jar

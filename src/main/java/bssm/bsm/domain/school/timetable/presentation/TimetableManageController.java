@@ -8,7 +8,6 @@ import bssm.bsm.domain.school.timetable.presentation.dto.req.UpdateTimetableReq;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableListRes;
 import bssm.bsm.domain.school.timetable.presentation.dto.res.TimetableManageRes;
 import bssm.bsm.domain.school.timetable.service.TimetableManageService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,10 @@ public class TimetableManageController {
     private final TimetableManageService timetableManageService;
 
     @GetMapping("{grade}/{classNo}")
-    public List<TimetableManageRes> findManageList(@PathVariable int grade, @PathVariable int classNo) {
+    public List<TimetableManageRes> findManageList(
+            @PathVariable(value = "grade") int grade,
+            @PathVariable(value = "classNo") int classNo
+    ) {
         return timetableManageService.findManageList(new FindTimetableReq(grade, classNo));
     }
 
@@ -50,17 +52,17 @@ public class TimetableManageController {
     }
 
     @PutMapping("apply")
-    public void applyTimetable(@RequestBody ApplyTimetableReq req) throws JsonProcessingException {
+    public void applyTimetable(@RequestBody ApplyTimetableReq req) {
         timetableManageService.applyTimetable(req);
     }
 
     @DeleteMapping("{id}")
-    public void deleteTimetable(@PathVariable long id) {
+    public void deleteTimetable(@PathVariable(value = "id") long id) {
         timetableManageService.deleteTimetable(id);
     }
 
     @GetMapping("{id}")
-    public TimetableListRes getTimetable(@PathVariable long id) {
+    public TimetableListRes getTimetable(@PathVariable(value = "id") long id) {
         return timetableManageService.getTimetableList(id);
     }
 

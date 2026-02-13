@@ -2,7 +2,6 @@ package bssm.bsm.global.auth;
 
 import bssm.bsm.global.error.HttpException;
 import bssm.bsm.global.error.HttpErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -11,6 +10,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 
 @Service

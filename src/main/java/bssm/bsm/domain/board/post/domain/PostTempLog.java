@@ -1,6 +1,7 @@
 package bssm.bsm.domain.board.post.domain;
 
 import bssm.bsm.domain.user.domain.User;
+import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RedisHash(value = "post_log", timeToLive = 86400)
+@RedisHash(value = "post_log")
 public class PostTempLog implements Serializable {
 
     @Id
@@ -24,7 +25,9 @@ public class PostTempLog implements Serializable {
     private Long userId;
     private String title;
     private String content;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
     public static PostTempLog create(Post post, User writer) {
