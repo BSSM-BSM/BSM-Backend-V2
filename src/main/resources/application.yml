@@ -19,10 +19,16 @@ spring:
     database: ${REDIS_DB}
 ---
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
+  secret-key:
+    auth: ${JWT_AUTH_SECRET_KEY}
+    api-token: ${JWT_API_SECRET_KEY}
   time:
     token: ${JWT_ACCESS_TOKEN_ALIVE_TIME}
     refresh-token: ${JWT_REFRESH_TOKEN_ALIVE_TIME}
+    api-token: ${JWT_API_TOKEN_ALIVE_TIME}
+header:
+  name:
+    api-token: ${API_TOKEN_HEADER_NAME}
 cookie:
   domain:
   secure: ${COOKIE_SECURE}

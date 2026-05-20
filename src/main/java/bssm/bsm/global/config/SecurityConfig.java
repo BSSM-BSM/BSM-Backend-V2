@@ -26,7 +26,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthFilter jwtAuthFilter;
+    private final AuthFilter authFilter;
     private final AuthFilterExceptionHandler authFilterExceptionHandler;
     private final ObjectMapper objectMapper;
 
@@ -36,17 +36,6 @@ public class SecurityConfig {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             res.setContentType("application/json;charset=UTF-8");
             res.getWriter().write(objectMapper.writeValueAsString(new HttpErrorResponse(new UnAuthorizedException())));
-            res.getWriter().flush();
-            res.getWriter().close();
-        };
-    }
-
-    @Bean
-    public AccessDeniedHandler accessDeniedHandler() {
-        return (req, res, e) -> {
-            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            res.setContentType("application/json;charset=UTF-8");
-            res.getWriter().write(objectMapper.writeValueAsString(new HttpErrorResponse(new ForbiddenException())));
             res.getWriter().flush();
             res.getWriter().close();
         };
@@ -64,7 +53,6 @@ public class SecurityConfig {
                 }))
                 .exceptionHandling(configure -> {
                     configure.authenticationEntryPoint(authenticationEntryPoint());
-                    configure.accessDeniedHandler(accessDeniedHandler());
                 })
                 .authorizeHttpRequests(configure -> {
                     configure.requestMatchers(HttpMethod.POST, "/auth/oauth/bsm").permitAll();
@@ -76,12 +64,11 @@ public class SecurityConfig {
                     configure.requestMatchers(HttpMethod.GET, "/board/**", "/post/**", "/comment/**").permitAll();
                     configure.requestMatchers(HttpMethod.GET, "/lost-found/find/**").permitAll();
                     configure.anyRequest().authenticated();
-                })
-                .formLogin(AbstractHttpConfigurer::disable);
+                });
 
         http
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(authFilterExceptionHandler, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authFilterExceptionHandler, AuthFilter.class);
 
         return http.build();
     }

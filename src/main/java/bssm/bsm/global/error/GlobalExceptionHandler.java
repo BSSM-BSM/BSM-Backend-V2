@@ -23,13 +23,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.valueOf(e.getStatusCode()));
     }
 
-    @ExceptionHandler(InternalServerException.class)
-    public ResponseEntity<HttpErrorResponse> handleException(InternalServerException e) {
-        e.printStackTrace();
-        HttpErrorResponse response = new HttpErrorResponse(e);
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ValidationErrorResponse> bindException(BadRequestException e) {
         ValidationErrorResponse response = new ValidationErrorResponse(e.getFields());
@@ -52,7 +45,7 @@ public class GlobalExceptionHandler {
         for (ConstraintViolation<?> violation : e.getConstraintViolations()) {
             String propertyPath = violation.getPropertyPath().toString();
             errorMap.put(
-                    propertyPath.substring(propertyPath.lastIndexOf(".") + 1),
+                    propertyPath.substring(propertyPath.lastIndexOf(".")+1),
                     violation.getMessage());
         }
         ValidationErrorResponse response = new ValidationErrorResponse(errorMap);

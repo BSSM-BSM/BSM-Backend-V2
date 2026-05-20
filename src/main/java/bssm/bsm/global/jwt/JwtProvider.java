@@ -27,8 +27,8 @@ public class JwtProvider {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserFacade userFacade;
 
-    @Value("${jwt.secret-key}")
-    private String JWT_SECRET_KEY;
+    @Value("${jwt.secret-key.auth}")
+    private String JWT_AUTH_SECRET_KEY;
     @Value("${jwt.time.token}")
     private long JWT_TOKEN_MAX_TIME;
     @Value("${jwt.time.refresh-token}")
@@ -53,7 +53,6 @@ public class JwtProvider {
                 .token(newRandomToken)
                 .user(user)
                 .isAvailable(true)
-                .createdAt(new Date())
                 .build();
         refreshTokenRepository.save(newRefreshToken);
 
@@ -69,22 +68,7 @@ public class JwtProvider {
                 .claims(payload)
                 .issuedAt(date)
                 .expiration(new Date(date.getTime() + (time * 1000)))
-                .signWith(Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
+                .signWith(Keys.hmacShaKeyFor(JWT_AUTH_SECRET_KEY.getBytes(StandardCharsets.UTF_8)), Jwts.SIG.HS256)
                 .compact();
-    }
-
-    public String getRefreshToken(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("token", String.class);
-    }
-
-    public Long getUserId(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("id", Long.class);
-    }
-
-    private Claims extractAllClaims(String token) {
-        SecretKey secretKey = Keys.hmacShaKeyFor(JWT_SECRET_KEY.getBytes());
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
     }
 }

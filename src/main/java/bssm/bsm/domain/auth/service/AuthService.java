@@ -4,6 +4,7 @@ import bssm.bsm.domain.auth.domain.repository.RefreshTokenRepository;
 import bssm.bsm.domain.auth.presentation.dto.res.AuthTokenRes;
 import bssm.bsm.domain.user.domain.User;
 import bssm.bsm.global.jwt.JwtProvider;
+import bssm.bsm.global.jwt.JwtResolver;
 import bssm.bsm.global.utils.CookieProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,7 @@ public class AuthService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
+    private final JwtResolver jwtResolver;
     private final CookieProvider cookieProvider;
 
     @Value("${cookie.name.token}")
@@ -58,7 +60,7 @@ public class AuthService {
         if (refreshTokenCookie == null) return;
 
         try {
-            String refreshToken = jwtProvider.getRefreshToken(refreshTokenCookie.getValue());
+            String refreshToken = jwtResolver.getRefreshToken(refreshTokenCookie.getValue());
             refreshTokenRepository.findById(refreshToken)
                     .ifPresent(token -> token.setAvailable(false));
         } catch (Exception ignored) {}
