@@ -13,7 +13,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.util.Date;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -33,10 +34,10 @@ public class RefreshToken {
     private User user;
 
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Builder
-    public RefreshToken(String token, boolean isAvailable, User user, Date createdAt) {
+    public RefreshToken(String token, boolean isAvailable, User user, LocalDateTime createdAt) {
         this.token = token;
         this.isAvailable = isAvailable;
         this.user = user;
